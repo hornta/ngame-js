@@ -7,12 +7,22 @@ import {
 	StructureType,
 } from "./enum-data";
 
+export enum EntityProp {
+	ENTITY_PROP_TYPE = 0,
+	ENTITY_PROP_X = 1,
+	ENTITY_PROP_Y = 2,
+	ENTITY_PROP_DIRECTION = 3,
+	ENTITY_PROP_MOVE = 4,
+}
+
+export type EntityProps = [number, number, number, number, number];
+
 export const NUM_COLS = 31;
 export const NUM_ROWS = 23;
 
 export class EditorState {
 	tileIDs: number[];
-	entities: number[][];
+	entities: EntityProps[];
 
 	constructor() {
 		this.tileIDs = [];
@@ -52,7 +62,7 @@ export class EditorState {
 			const prevPosition = byteArray.position;
 
 			for (let k = 0; k < num; ++k) {
-				const entity: number[] = [];
+				const entity: EntityProps = [];
 				editorState.entities.push(entity);
 				entity.push(StructureToEntity[structureId]);
 				const extraEntity: number[] = [];

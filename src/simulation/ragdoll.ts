@@ -1,6 +1,6 @@
 import type { CollisionResultLogical } from "./collision-result-logical";
 import type { CollisionResultPhysical } from "./collision-result-physical";
-import type { EntityBase } from "./entity-base";
+import type { EntityBase } from "./entities/entity-base";
 import type { RagdollParticle } from "./ragdoll-particle";
 import type { RagdollStick } from "./ragdoll-stick";
 import type { Vector2 } from "./vector2";
@@ -127,5 +127,9 @@ export class Ragdoll {
 				),
 			],
 		};
+		this.entityList = [];
+		this.resultLogical = new CollisionResultLogical();
+		this.resultPhysical = new CollisionResultPhysical();
+		this.cp = new Vector2();
 	}
 }

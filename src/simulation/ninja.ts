@@ -1,3 +1,6 @@
+import type { CollisionResultLogical } from "./collision-result-logical";
+import type { CollisionResultPhysical } from "./collision-result-physical";
+import type { EntityBase } from "./entities/entity-base";
 import type { Vector2 } from "./vector2";
 
 enum PlayerState {
@@ -50,6 +53,29 @@ export class Ninja {
 	impulseScale: number;
 	playerId: number;
 	raggy: Ragdoll;
+	// ninjaGfx: EntityGraphicsNinja,
+	crushThreshold: number;
+	crushVector: Vector2;
+	crushDistance: number;
+	crushFlag: boolean;
+	deathType: number;
+	deathForce: number;
+	deathPosition: Vector2;
+	deathForce: Vector2;
+	tmpNearPosition: Vector2;
+	entityList: EntityBase[];
+	segmentList: Segment[];
+	segmentClosestPoint: Vector2;
+	wallListX: number[];
+	wallListY: number[];
+	resultLogical: CollisionResultLogical;
+	resultPhysical: CollisionResultPhysical;
+	closestPoint: Vector2;
+	tempV: Vector2;
+	tempP: Vector2;
+	publicPosition: Vector2;
+	publicVelocity: Vector2;
+	gfxColor: number;
 
-	constructor() {}
+	constructor(playerId: number) {}
 }

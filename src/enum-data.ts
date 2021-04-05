@@ -1,3 +1,6 @@
+export const QUANTIZE_STEPS_PER_CELL = 4;
+export const QUANTIZE_STEP_SIZE = 6;
+
 export const StructureType = {
 	PLAYER: 0,
 	MINE: 1,

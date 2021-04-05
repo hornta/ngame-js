@@ -62,7 +62,13 @@
         {
           "useTabs": true
         }
-      ]
+      ],
+			"@typescript-eslint/restrict-template-expressions": [
+				"error",
+				{
+					"allowBoolean": true
+				}
+			]
     }
   }
 }
