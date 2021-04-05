@@ -1,7 +1,7 @@
 import type { Simulator } from "../simulator";
 import { EntityDoorBase } from "./entity-door-base";
 
-export class EntityDoorRegular extends EntityDoorBase {
+export class EntityDoorTrap extends EntityDoorBase {
 	constructor(
 		entityGrid: GridEntity,
 		segmentGrid: GridSegment,
