@@ -1,3 +1,4 @@
+import { EdgeType } from "src/enum-data";
 import { GridBase } from "./grid-base";
 
 export class GridEdges extends GridBase {
@@ -13,6 +14,133 @@ export class GridEdges extends GridBase {
 		this.edgesTileY = new Array(this.numCells).fill(0);
 		this.edgesDoorX = new Array(this.numCells).fill(0);
 		this.edgesDoorY = new Array(this.numCells).fill(0);
+	}
+
+	getGridCoordinateFromWorldspace1D(param1: number): number {
+		return this.worldspaceToGridspace(param1);
+	}
+
+	getIndexFromGridspaceAndOffset(
+		param1: number,
+		param2: number,
+		param3: number,
+		param4: number
+	): number {
+		let _loc5_ = -1;
+		if (param4 === 0) {
+			if (param3 === -1) {
+				_loc5_ = this.getCellIndexFromGridspacePosition(param1 - 1, param2);
+			} else if (param3 === 1) {
+				_loc5_ = this.getCellIndexFromGridspacePosition(param1, param2);
+			}
+		} else if (param3 === 0) {
+			if (param4 === -1) {
+				_loc5_ = this.getCellIndexFromGridspacePosition(param1, param2 - 1);
+			} else if (param4 === 1) {
+				_loc5_ = this.getCellIndexFromGridspacePosition(param1, param2);
+			}
+		}
+		return _loc5_;
+	}
+
+	isEmpty(
+		param1: number,
+		param2: number,
+		param3: number,
+		param4: number
+	): boolean {
+		const _loc5_ = this.getIndexFromGridspaceAndOffset(
+			param1,
+			param2,
+			param3,
+			param4
+		);
+		if (param4 === 0) {
+			return (
+				this.edgesTileX[_loc5_] === EdgeType.EMPTY &&
+				this.edgesDoorX[_loc5_] === 0
+			);
+		}
+		return (
+			this.edgesTileY[_loc5_] === EdgeType.EMPTY &&
+			this.edgesDoorY[_loc5_] === 0
+		);
+	}
+
+	isEmptyColumn(
+		param1: number,
+		param2: number,
+		param3: number,
+		param4: number
+	): boolean {
+		let _loc5_ = param2;
+		while (_loc5_ <= param3) {
+			if (!this.isEmpty(param1, _loc5_, param4, 0)) {
+				return false;
+			}
+			_loc5_++;
+		}
+		return true;
+	}
+
+	isEmptyRow(
+		param1: number,
+		param2: number,
+		param3: number,
+		param4: number
+	): boolean {
+		let _loc5_ = param2;
+		while (_loc5_ <= param3) {
+			if (!this.isEmpty(_loc5_, param1, 0, param4)) {
+				return false;
+			}
+			_loc5_++;
+		}
+		return true;
+	}
+
+	scanHorizontalDirected(
+		param1: number,
+		param2: number,
+		param3: number,
+		param4: number,
+		param5: number
+	): boolean {
+		let _loc6_ = param3;
+		while (_loc6_ !== param4) {
+			if (!this.isEmptyColumn(_loc6_, param1, param2, param5)) {
+				return false;
+			}
+			_loc6_ += param5;
+			if (Math.abs(_loc6_) > 100) {
+				throw new Error(
+					`-infinite loop in scanHorizontalDirected: ${param1}-${param2} .. ${param3},${param5}`
+				);
+			}
+		}
+		return true;
+	}
+
+	scanVerticalDirected(
+		param1: number,
+		param2: number,
+		param3: number,
+		param4: number,
+		param5: number
+	): boolean {
+		let _loc6_ = param3;
+		while (_loc6_ !== param4) {
+			if (!this.isEmptyRow(_loc6_, param1, param2, param5)) {
+				return false;
+			}
+			_loc6_ += param5;
+			if (Math.abs(_loc6_) > 100) {
+				throw new Error(
+					`-infinite loop in scanVerticalDirected: ${param1}-${param2} .. ${param3},${param5}`
+				);
+			}
+		}
+		return true;
 	}
 
 	incrementDoorEdge(edgeIndex: number, isHorizontal: boolean): void {

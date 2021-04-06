@@ -14,6 +14,25 @@ export class GridEntity extends GridBase {
 		}
 	}
 
+	moveEntity(position: Vector2, entity: EntityBase): void {
+		const gridIndex = entity.getGridIndex();
+		const cellIndex = this.getCellIndexFromWorldspacePosition(
+			position.x,
+			position.y
+		);
+		if (gridIndex !== cellIndex) {
+			if (gridIndex === -1) {
+				throw new Error(
+					`moveEntity() was called with an entity that's not in the grid: ${entity.getId()}`
+				);
+			} else {
+				this.removeEntityFromCell(gridIndex, entity);
+				this.insertEntityIntoCell(cellIndex, entity);
+				entity.setGridIndex(cellIndex);
+			}
+		}
+	}
+
 	addEntity(position: Vector2, entity: EntityBase): void {
 		const gridIndex = entity.getGridIndex();
 		if (gridIndex !== -1) {

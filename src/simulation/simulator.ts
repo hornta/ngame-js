@@ -3,6 +3,24 @@ import type { EntityBase } from "./entities/entity-base";
 import type { GridEdges } from "./grid-edges";
 import type { GridEntity } from "./grid-entity";
 import type { GridSegment } from "./grid-segment";
+import type { Ninja } from "./ninja";
+
+export const SimulationRate = 60;
+
+export enum PlayerKillType {
+	SUICIDE = 0,
+	FALL = 1,
+	CRUSH = 2,
+	TIME = 3,
+	ZAP = 4,
+	CHAINGUN = 5,
+	LASER = 6,
+	TURRET = 7,
+	ROCKET = 8,
+	FLOOR_GUARD = 9,
+	THWOMP = 10,
+	MINE = 11,
+}
 
 export class Simulator {
 	static GRID_NUM_COLUMNS = NUM_COLS + 2;
@@ -37,5 +55,16 @@ export class Simulator {
 		this.frameNumber = 0;
 		this.numGoldCollectedDuringTick = new Array(playerList.length).fill(0);
 		this.stateFlagWon = false;
+	}
+
+	killPlayer(
+		ninja: Ninja,
+		killType: PlayerKillType,
+		x: number,
+		y: number,
+		forceX: number,
+		forceY: number
+	): void {
+		ninja.kill(x, y, forceX, forceY);
 	}
 }

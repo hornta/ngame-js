@@ -1,6 +1,12 @@
 export const QUANTIZE_STEPS_PER_CELL = 4;
 export const QUANTIZE_STEP_SIZE = 6;
 
+export enum EdgeType {
+	EMPTY = 0,
+	PARTIAL = 1,
+	SOLID = 2,
+}
+
 export const StructureType = {
 	PLAYER: 0,
 	MINE: 1,

@@ -63,12 +63,15 @@
           "useTabs": true
         }
       ],
-			"@typescript-eslint/restrict-template-expressions": [
-				"error",
-				{
-					"allowBoolean": true
-				}
-			]
+			"@typescript-eslint/restrict-template-expressions": "off",
+			"eqeqeq": "error",
+			"block-scoped-var": "error",
+			"class-methods-use-this": "off",
+			"consistent-return": "error",
+			"curly": "error",
+			"default-case": "error",
+			"default-case-last": "error",
+			"default-param-last": "error"
     }
   }
 }
