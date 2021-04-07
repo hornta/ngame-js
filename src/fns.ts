@@ -97,3 +97,33 @@ export const tryToAcquireTarget = (
 	}
 	return -1;
 };
+
+export const overlapCircleVsSegment = (
+	position: Vector2,
+	radius: number,
+	segStart: Vector2,
+	segEnd: Vector2,
+	distance: number
+): boolean => {
+	const _loc6_ = position.x - segStart.x;
+	const _loc7_ = position.y - segStart.y;
+	const _loc8_ = (segEnd.x - segStart.x) / distance;
+	const _loc9_ = (segEnd.y - segStart.y) / distance;
+	const _loc10_ = _loc6_ * _loc8_ + _loc7_ * _loc9_;
+	const cp = new Vector2();
+	if (_loc10_ <= 0) {
+		cp.setFrom(segStart);
+	} else if (_loc10_ >= distance) {
+		cp.setFrom(segEnd);
+	} else {
+		cp.x = segStart.x + _loc10_ * _loc8_;
+		cp.y = segStart.y + _loc10_ * _loc9_;
+	}
+	const _loc11_ = position.x - cp.x;
+	const _loc12_ = position.y - cp.y;
+	const _loc13_ = _loc11_ * _loc11_ + _loc12_ * _loc12_;
+	if (_loc13_ < radius * radius) {
+		return true;
+	}
+	return false;
+};

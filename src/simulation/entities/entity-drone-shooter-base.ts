@@ -71,7 +71,7 @@ export class EntityDroneShooterBase extends EntityDroneBase {
 				if (simulator.playerList[this.targetIndex].isDead()) {
 					this.internalStartPostfiring(simulator);
 				} else {
-					this.Update_Prefiring(
+					this.updatePrefiring(
 						simulator,
 						simulator.playerList[this.targetIndex].getPosition()
 					);
@@ -85,7 +85,7 @@ export class EntityDroneShooterBase extends EntityDroneBase {
 					}
 				}
 			} else if (this.currentFiringState === FiringState.FIRING) {
-				if (this.Update_Firing(simulator)) {
+				if (this.updateFiring(simulator)) {
 					this.internalStartPostfiring(simulator);
 				}
 			} else if (this.currentFiringState === FiringState.POSTFIRING) {
@@ -131,7 +131,7 @@ export class EntityDroneShooterBase extends EntityDroneBase {
 		this.firingTimer = 0;
 		this.currentFiringState = FiringState.PREFIRING;
 		this.targetIndex = playerIndex;
-		this.Start_Prefiring(simulator, position);
+		this.startPrefiring(simulator, position);
 	}
 
 	internalStartFiring(
@@ -140,13 +140,13 @@ export class EntityDroneShooterBase extends EntityDroneBase {
 		velocity: Vector2
 	): void {
 		this.currentFiringState = FiringState.FIRING;
-		this.Start_Firing(simulator, position, velocity);
+		this.startFiring(simulator, position, velocity);
 	}
 
 	internalStartPostfiring(simulator: Simulator): void {
 		this.firing_timer = 0;
 		this.currentFiringState = FiringState.POSTFIRING;
-		this.Start_Postfiring(simulator);
+		this.startPostfiring(simulator);
 	}
 
 	internalStartIdling(): void {

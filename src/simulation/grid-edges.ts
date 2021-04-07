@@ -178,4 +178,40 @@ export class GridEdges extends GridBase {
 			this.edgesDoorY[edgeIndex] = this.edgesDoorY[edgeIndex] - 1;
 		}
 	}
+
+	sweepHorizontal(
+		param1: number,
+		param2: number,
+		param3: number,
+		param4: number
+	): number {
+		let _loc5_ = param3;
+		while (this.isEmptyColumn(_loc5_, param1, param2, param4)) {
+			_loc5_ += param4;
+			if (Math.abs(_loc5_) > 100) {
+				throw new Error(
+					`-infinite loop in sweepHorizontal: ${param1}-${param2} .. ${param3},${param4}`
+				);
+			}
+		}
+		return _loc5_;
+	}
+
+	sweepVertical(
+		param1: number,
+		param2: number,
+		param3: number,
+		param4: number
+	): number {
+		let _loc5_ = param3;
+		while (this.isEmptyRow(_loc5_, param1, param2, param4)) {
+			_loc5_ += param4;
+			if (Math.abs(_loc5_) > 100) {
+				throw new Error(
+					`-infinite loop in sweepVertical: ${param1}-${param2} .. ${param3},${param4}`
+				);
+			}
+		}
+		return _loc5_;
+	}
 }

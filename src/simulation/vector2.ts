@@ -19,4 +19,16 @@ export class Vector2 {
 	toString(): string {
 		return `(${this.x}, ${this.y})`;
 	}
+
+	normalize(): void {
+		const length = Math.sqrt(this.x * this.x + this.y * this.y);
+		if (length !== 0) {
+			this.x /= length;
+			this.y /= length;
+		}
+	}
+
+	length(): number {
+		return Math.sqrt(this.x * this.x + this.y * this.y);
+	}
 }
