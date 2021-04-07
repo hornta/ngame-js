@@ -19,6 +19,12 @@ export class GridSegment extends GridBase {
 		this.tmpN = new Vector2();
 	}
 
+	clear(): void {
+		for (const cells of this.cells) {
+			cells.length = 0;
+		}
+	}
+
 	intersectRayVsCellContents(
 		gridX: number,
 		gridY: number,

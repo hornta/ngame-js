@@ -5,10 +5,10 @@ import type { GridSegment } from "../grid-segment";
 import type { Simulator } from "../simulator";
 import type { Vector2 } from "../vector2";
 import {
-	DirectionToRadians,
-	DirectionToVector,
-	MoveList,
-} from "./entity-utills";
+	EntityDroneDirectionToRadians,
+	EntityDroneDirectionToVector,
+	EntityDroneMoveList,
+} from "./entity-drone-utils";
 
 export class EntityDroneBase extends EntityBase {
 	position: Vector2;
@@ -35,7 +35,7 @@ export class EntityDroneBase extends EntityBase {
 		this.nextGoal = this.position.clone();
 		this.facingDirection = facingDirection;
 		this.moveType = moveType;
-		this.gfxOrientation = DirectionToRadians[this.facingDirection];
+		this.gfxOrientation = EntityDroneDirectionToRadians[this.facingDirection];
 		entityGrid.addEntity(this.pos);
 	}
 
@@ -46,7 +46,7 @@ export class EntityDroneBase extends EntityBase {
 			simulator.entityGrid,
 			simulator.playerList
 		);
-		const radians = DirectionToRadians[this.facingDirection];
+		const radians = EntityDroneDirectionToRadians[this.facingDirection];
 		const shortestAngle = wrapAngleShortest(radians - this.gfxorn);
 		this.gfxOrientation = wrapAnglePosition(
 			this.gfxOrientation + 0.3 * shortestAngle
@@ -59,7 +59,7 @@ export class EntityDroneBase extends EntityBase {
 		entityGrid: GridEntity,
 		ninjas: Ninja[]
 	): void {
-		const directionVec = DirectionToVector[this.facingDirection];
+		const directionVec = EntityDroneDirectionToVector[this.facingDirection];
 		const _loc6_ = directionVec.x * this.speed;
 		const _loc7_ = directionVec.y * this.speed;
 		const _loc8_ = this.position.x + _loc6_;
@@ -74,7 +74,7 @@ export class EntityDroneBase extends EntityBase {
 			this.position.setFrom(this.nextGoal);
 			if (this.chooseNextDirectionAndGoal(edgeGrid, ninjas)) {
 				const _loc16_ = Math.max(0, this.speed - distanceSquared);
-				const _loc17_ = DirectionToVector[this.facingDirection];
+				const _loc17_ = EntityDroneDirectionToVector[this.facingDirection];
 				this.position.x += _loc17_.x * _loc16_;
 				this.position.y += _loc17_.y * _loc16_;
 			}
@@ -87,7 +87,8 @@ export class EntityDroneBase extends EntityBase {
 
 	chooseNextDirectionAndGoal(edgeGrid: GridEdges): boolean {
 		for (let i = 0; i < 4; ++i) {
-			const _loc4_ = (this.facingDirection + MoveList[this.moveType][i]) % 4;
+			const _loc4_ =
+				(this.facingDirection + EntityDroneMoveList[this.moveType][i]) % 4;
 			if (
 				this.chooseNextDirectionAndGoalTestDir(edgeGrid, _loc4_, this.nextGoal)
 			) {
@@ -104,15 +105,15 @@ export class EntityDroneBase extends EntityBase {
 		param2: number,
 		nextGoal: Vector2
 	): boolean {
-		let _loc7_: int = 0;
-		let _loc8_: int = 0;
-		let _loc9_: int = 0;
-		let _loc10_: int = 0;
-		let _loc11_: int = 0;
-		let _loc12_: int = 0;
-		let _loc13_: int = 0;
-		let _loc14_: int = 0;
-		const _loc4_ = DirectionToVector[param2];
+		let _loc7_ = 0;
+		let _loc8_ = 0;
+		let _loc9_ = 0;
+		let _loc10_ = 0;
+		let _loc11_ = 0;
+		let _loc12_ = 0;
+		let _loc13_ = 0;
+		let _loc14_ = 0;
+		const _loc4_ = EntityDroneDirectionToVector[param2];
 		const _loc5_ = this.position.x + _loc4_.x * this.stepSize;
 		const _loc6_ = this.position.y + _loc4_.y * this.stepSize;
 		if (_loc4_.y === 0) {

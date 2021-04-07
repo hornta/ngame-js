@@ -1,6 +1,7 @@
 import type { ByteArray } from "./byte-array";
 
 import {
+	Direction,
 	EntityType,
 	StructureSize,
 	StructureToEntity,
@@ -15,7 +16,7 @@ export enum EntityProp {
 	ENTITY_PROP_MOVE = 4,
 }
 
-export type EntityProps = [number, number, number, number, number];
+export type EntityProps = [number, number, number, Direction, number];
 
 export const NUM_COLS = 31;
 export const NUM_ROWS = 23;

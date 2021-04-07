@@ -1,32 +1,55 @@
+import { overlapCircleVsCircle } from "src/fns";
+import type { CollisionResultLogical } from "../collision-result-logical";
+import type { GridEntity } from "../grid-entity";
+import type { Ninja } from "../ninja";
+import type { Simulator } from "../simulator";
+import type { Vector2 } from "../vector2";
 import { EntityBase } from "./entity-base";
+import type { EntityExitDoor } from "./entity-exit-door";
 
 export class EntityExitSwitch extends EntityBase {
-	constructor() {}
+	position: Vector2;
+	radius: number;
+	door: EntityExitDoor;
 
-	collideVsCirclePhysical(
-		collision: CollisionResultPhysical,
-		param2: vec2,
-		param3: vec2,
-		param4: vec2,
-		param5: number
-	): boolean {
-		return false;
+	constructor(
+		entityGrid: GridEntity,
+		x: number,
+		y: number,
+		door: EntityExitDoor
+	) {
+		super();
+		this.position = new Vector2(x, y);
+		this.radius = 12 * 0.5;
+		this.door = door;
+		entityGrid.addEntity(this.position, this);
 	}
 
 	collideVsCircleLogical(
 		simulator: Simulator,
-		ninja: Ninja,
-		collision: CollisionResultLogical,
-		param4: vec2,
-		param5: vec2,
-		param6: vec2,
-		param7: number,
+		player: Ninja,
+		param3: CollisionResultLogical,
+		otherPosition: Vector2,
+		param5: Vector2,
+		param6: Vector2,
+		otherRadius: number,
 		param8: number
 	): boolean {
+		if (player !== null) {
+			if (
+				overlapCircleVsCircle(
+					this.position,
+					this.radius,
+					otherPosition,
+					otherRadius
+				)
+			) {
+				this.door.switchOpenTheExit(simulator.entityGrid);
+				simulator.entityGrid.removeEntity(this);
+			}
+		}
 		return false;
 	}
-
-	think(simulator: Simulator): void {}
 
 	move(simulator: Simulator): void {}
 

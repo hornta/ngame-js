@@ -5,9 +5,9 @@ export class EntityLaunchPad extends EntityBase {
 
 	collideVsCirclePhysical(
 		collision: CollisionResultPhysical,
-		param2: vec2,
-		param3: vec2,
-		param4: vec2,
+		param2: Vector2,
+		param3: Vector2,
+		param4: Vector2,
 		param5: number
 	): boolean {
 		return false;
@@ -17,9 +17,9 @@ export class EntityLaunchPad extends EntityBase {
 		simulator: Simulator,
 		ninja: Ninja,
 		collision: CollisionResultLogical,
-		param4: vec2,
-		param5: vec2,
-		param6: vec2,
+		param4: Vector2,
+		param5: Vector2,
+		param6: Vector2,
 		param7: number,
 		param8: number
 	): boolean {

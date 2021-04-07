@@ -177,7 +177,22 @@ export class Ninja {
 		this.deathPosition.y = y;
 		this.deathForce.x = forceX;
 		this.deathForce.y = forceY;
+		this.exitCurrentState();
 		this.currentState = PlayerState.STATE_AWAITINGDEATH;
+	}
+
+	win() {
+		if (
+			this.currentState === PlayerState.STATE_DISABLED ||
+			this.currentState === PlayerState.STATE_CELEBRATING ||
+			this.currentState === PlayerState.STATE_AWAITINGDEATH ||
+			this.currentState === PlayerState.STATE_DEAD
+		) {
+			return false;
+		}
+		this.exitCurrentState();
+		this.currentState = PlayerState.STATE_CELEBRATING;
+		return true;
 	}
 
 	exitCurrentState(): void {

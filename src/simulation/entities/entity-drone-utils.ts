@@ -7,14 +7,14 @@ const Direction = {
 	UP: 3,
 };
 
-export const DirectionToRadians = {
+export const EntityDroneDirectionToRadians = {
 	[Direction.RIGHT]: 0 * Math.PI,
 	[Direction.DOWN]: 0.5 * Math.PI,
 	[Direction.LEFT]: 1 * Math.PI,
 	[Direction.UP]: 1.5 * Math.PI,
 };
 
-export const DirectionToVector = {
+export const EntityDroneDirectionToVector = {
 	[Direction.RIGHT]: new Vector2(1, 0),
 	[Direction.DOWN]: new Vector2(0, 1),
 	[Direction.LEFT]: new Vector2(-1, 0),
@@ -35,26 +35,26 @@ const Rotation = {
 	ROTATION_270: 3,
 };
 
-export const MoveList: number[][] = [];
-MoveList[MoveType.MOVE_TYPE_SURFACE_CW] = [
+export const EntityDroneMoveList: number[][] = [];
+EntityDroneMoveList[MoveType.MOVE_TYPE_SURFACE_CW] = [
 	Rotation.ROTATION_90,
 	Rotation.ROTATION_0,
 	Rotation.ROTATION_270,
 	Rotation.ROTATION_180,
 ];
-MoveList[MoveType.MOVE_TYPE_SURFACE_CCW] = [
+EntityDroneMoveList[MoveType.MOVE_TYPE_SURFACE_CCW] = [
 	Rotation.ROTATION_270,
 	Rotation.ROTATION_0,
 	Rotation.ROTATION_90,
 	Rotation.ROTATION_180,
 ];
-MoveList[MoveType.MOVE_TYPE_WANDER_CW] = [
+EntityDroneMoveList[MoveType.MOVE_TYPE_WANDER_CW] = [
 	Rotation.ROTATION_0,
 	Rotation.ROTATION_90,
 	Rotation.ROTATION_270,
 	Rotation.ROTATION_180,
 ];
-MoveList[MoveType.MOVE_TYPE_WANDER_CCW] = [
+EntityDroneMoveList[MoveType.MOVE_TYPE_WANDER_CCW] = [
 	Rotation.ROTATION_0,
 	Rotation.ROTATION_270,
 	Rotation.ROTATION_90,

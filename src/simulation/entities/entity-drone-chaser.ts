@@ -2,7 +2,10 @@ import type { GridEdges } from "../grid-edges";
 import type { GridEntity } from "../grid-entity";
 import type { Ninja } from "../ninja";
 import { EntityDroneZap } from "./entity-drone-zap";
-import { DirectionToVector, MoveList } from "./entity-utills";
+import {
+	EntityDroneDirectionToVector,
+	EntityDroneMoveList,
+} from "./entity-drone-utils";
 
 export class EntityDroneChaser extends EntityDroneZap {
 	isChasing: boolean;
@@ -60,7 +63,7 @@ export class EntityDroneChaser extends EntityDroneZap {
 				return true;
 			}
 			const newDirection =
-				(this.facingDirection - MoveList[this.moveType][0] + 4) % 4;
+				(this.facingDirection - EntityDroneMoveList[this.moveType][0] + 4) % 4;
 			this.stopChasing(newDirection);
 		}
 		let _loc3_ = this.facingDirection;
@@ -74,7 +77,7 @@ export class EntityDroneChaser extends EntityDroneZap {
 				const playerPosition_ = player.getPosition();
 				for (let _loc7_ = -1; _loc7_ <= 1; _loc7_++) {
 					const _loc8_ = (_loc3_ + _loc7_ + 4) % 4;
-					const _loc9_ = DirectionToVector[_loc8_];
+					const _loc9_ = EntityDroneDirectionToVector[_loc8_];
 					const _loc10_ = playerPosition_.x - this.position.x;
 					const _loc11_ = playerPosition_.y - this.position.y;
 					if (_loc9_.x * _loc10_ + _loc9_.y * _loc11_ > 0) {

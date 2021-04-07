@@ -1,38 +1,86 @@
+import { overlapCircleVsCircle } from "src/fns";
+import type { CollisionResultLogical } from "../collision-result-logical";
+import type { GridEntity } from "../grid-entity";
+import type { Simulator } from "../simulator";
+import type { Vector2 } from "../vector2";
 import { EntityBase } from "./entity-base";
 
-export class EntityBounceBlock extends EntityBase {
-	constructor() {}
+export class EntityExitDoor extends EntityBase {
+	position: Vector2;
+	radius: number;
+	isOpen: false;
 
-	collideVsCirclePhysical(
-		collision: CollisionResultPhysical,
-		param2: vec2,
-		param3: vec2,
-		param4: vec2,
-		param5: number
-	): boolean {
-		return false;
+	constructor(x: number, y: number) {
+		super();
+		this.position = new Vector2(x, y);
+		this.radius = 12;
+		this.isOpen = false;
 	}
 
 	collideVsCircleLogical(
 		simulator: Simulator,
-		ninja: Ninja,
-		collision: CollisionResultLogical,
-		param4: vec2,
-		param5: vec2,
-		param6: vec2,
-		param7: number,
+		player: Ninja,
+		param3: CollisionResultLogical,
+		otherPosition: Vector2,
+		param5: Vector2,
+		param6: Vector2,
+		otherRadius: number,
 		param8: number
 	): boolean {
+		if (player !== null) {
+			if (
+				overlapCircleVsCircle(
+					this.position,
+					this.radius,
+					otherPosition,
+					otherRadius
+				)
+			) {
+				simulator.exitPlayer();
+			}
+		}
 		return false;
 	}
 
-	think(simulator: Simulator): void {}
-
-	move(simulator: Simulator): void {}
-
-	generateGraphicComponent(): EntityGraphics {
-		return null;
+	switchOpenTheExit(entityGrid: GridEntity): void {
+		this.isOpen = true;
+		entityGrid.addEntity(this.position, this);
 	}
 
-	debugDraw(context: CanvasRenderingContext2D): void {}
+	switchIsOpen(): boolean {
+		return this.isOpen;
+	}
+
+	// override public function GenerateGraphicComponent() : EntityGraphics
+	// {
+	//    return new EntityGraphics_ExitDoor(this,this.pos.x,this.pos.y);
+	// }
+
+	// public function GFX_UpdateState(param1:EntityGraphics_ExitDoor) : void
+	// {
+	//    if(this.isOpen)
+	//    {
+	//       param1.anim = EntityGraphics_ExitDoor.ANIM_OPEN;
+	//    }
+	//    else
+	//    {
+	//       param1.anim = EntityGraphics_ExitDoor.ANIM_CLOSED;
+	//    }
+	// }
+
+	// override public function Debug_Draw(param1:SimpleRenderer) : void
+	// {
+	//    if(this.isOpen)
+	//    {
+	//       param1.SetStyle(0,0,100);
+	//       param1.DrawSquare(this.pos.x,this.pos.y,this.r);
+	//       param1.DrawSquare(this.pos.x,this.pos.y,this.r - 2);
+	//    }
+	//    else
+	//    {
+	//       param1.SetStyle(0,0,30);
+	//       param1.DrawCross(this.pos.x,this.pos.y,this.r);
+	//       param1.DrawSquare(this.pos.x,this.pos.y,this.r);
+	//    }
+	// }
 }

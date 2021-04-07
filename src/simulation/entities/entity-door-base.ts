@@ -54,9 +54,9 @@ export abstract class EntityDoorBase extends EntityBase {
 		simulator: Simulator,
 		ninja: Ninja,
 		collision: CollisionResultLogical,
-		position: vec2,
-		param5: vec2,
-		param6: vec2,
+		position: Vector2,
+		param5: Vector2,
+		param6: Vector2,
 		radius: number,
 		param8: number
 	): boolean {

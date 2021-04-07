@@ -58,13 +58,20 @@ export class Simulator {
 	}
 
 	killPlayer(
-		ninja: Ninja,
+		player: Ninja,
 		killType: PlayerKillType,
 		x: number,
 		y: number,
 		forceX: number,
 		forceY: number
 	): void {
-		ninja.kill(x, y, forceX, forceY);
+		player.kill(x, y, forceX, forceY);
+	}
+
+	exitPlayer(): void {
+		this.stateFlagWon = true;
+		for (const player of this.playerList) {
+			player.win();
+		}
 	}
 }

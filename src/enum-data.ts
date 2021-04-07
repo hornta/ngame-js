@@ -1,3 +1,5 @@
+import { Vector2 } from "./simulation/vector2";
+
 export const QUANTIZE_STEPS_PER_CELL = 4;
 export const QUANTIZE_STEP_SIZE = 6;
 
@@ -92,4 +94,26 @@ export const StructureToEntity = {
 	[StructureType.THWOMP]: EntityType.THWOMP,
 	[StructureType.TURRET]: EntityType.TURRET,
 	[StructureType.ZAP]: EntityType.ZAP,
+};
+
+export enum Direction {
+	RIGHT = 0,
+	RIGHT_DOWN = 1,
+	DOWN = 2,
+	LEFT_DOWN = 3,
+	LEFT = 4,
+	LEFT_UP = 5,
+	UP = 6,
+	RIGHT_UP = 7,
+}
+
+export const DirectionToVector = {
+	[Direction.RIGHT]: new Vector2(1, 0),
+	[Direction.RIGHT_DOWN]: new Vector2(1 / Math.SQRT2, 1 / Math.SQRT2),
+	[Direction.DOWN]: new Vector2(0, 1),
+	[Direction.LEFT_DOWN]: new Vector2(-1 / Math.SQRT2, 1 / Math.SQRT2),
+	[Direction.LEFT]: new Vector2(-1, 0),
+	[Direction.LEFT_UP]: new Vector2(-1 / Math.SQRT2, -1 / Math.SQRT2),
+	[Direction.UP]: new Vector2(0, -1),
+	[Direction.RIGHT_UP]: new Vector2(1 / Math.SQRT2, -1 / Math.SQRT2),
 };

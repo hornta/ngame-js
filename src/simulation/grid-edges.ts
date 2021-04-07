@@ -16,6 +16,15 @@ export class GridEdges extends GridBase {
 		this.edgesDoorY = new Array(this.numCells).fill(0);
 	}
 
+	clear(): void {
+		for (let i = 0; i < this.numCells; ++i) {
+			this.edgesTileX[i] = EdgeType.EMPTY;
+			this.edgesTileY[i] = EdgeType.EMPTY;
+			this.edgesDoorX[i] = 0;
+			this.edgesDoorY[i] = 0;
+		}
+	}
+
 	getGridCoordinateFromWorldspace1D(param1: number): number {
 		return this.worldspaceToGridspace(param1);
 	}

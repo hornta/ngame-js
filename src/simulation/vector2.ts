@@ -31,4 +31,25 @@ export class Vector2 {
 	length(): number {
 		return Math.sqrt(this.x * this.x + this.y * this.y);
 	}
+
+	dot(vector: Vector2): number {
+		return this.x * vector.x + this.y * vector.y;
+	}
+
+	perp(): Vector2 {
+		return new Vector2(-this.y, this.x);
+	}
+
+	scale(scalar: number): void {
+		this.x *= scalar;
+		this.y *= scalar;
+	}
+
+	plus(vector: Vector2): Vector2 {
+		return new Vector2(this.x + vector.x, this.y + vector.y);
+	}
+
+	minus(vector: Vector2): Vector2 {
+		return new Vector2(this.x - vector.x, this.y - vector.y);
+	}
 }
