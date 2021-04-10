@@ -25,6 +25,17 @@ export class GridSegment extends GridBase {
 		}
 	}
 
+	addSegToCell = (x: number, y: number, segment: Segment): void => {
+		const cellIndex = this.getCellIndexFromGridspacePosition(x, y);
+		if (cellIndex < 0) {
+			throw new Error(
+				`addSegToCell() was passed invalid cell coords: ${x},${y}`
+			);
+			return;
+		}
+		this.cells[cellIndex].push(segment);
+	};
+
 	intersectRayVsCellContents(
 		gridX: number,
 		gridY: number,

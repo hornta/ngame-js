@@ -1,9 +1,9 @@
 import type { ByteArray } from "./byte-array";
 
 export enum InputBit {
-	INPUT_JUMP = 1,
-	INPUT_LEFT = 2,
-	INPUT_RIGHT = 3,
+	JUMP = 1,
+	LEFT = 2,
+	RIGHT = 3,
 }
 
 export abstract class InputSourceBase {

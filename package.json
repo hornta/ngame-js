@@ -5,6 +5,7 @@
     "lint": "eslint . --ext \"src/**/*.{js,jsx,ts,tsx}\""
   },
   "dependencies": {
+    "@pixi/ticker": "^6.0.2",
     "buffer": "^6.0.3",
     "node-fetch": "^2.6.1",
     "pako": "^2.0.3",
@@ -63,15 +64,15 @@
           "useTabs": true
         }
       ],
-			"@typescript-eslint/restrict-template-expressions": "off",
-			"eqeqeq": "error",
-			"block-scoped-var": "error",
-			"class-methods-use-this": "off",
-			"consistent-return": "error",
-			"curly": "error",
-			"default-case": "error",
-			"default-case-last": "error",
-			"default-param-last": "error"
+      "@typescript-eslint/restrict-template-expressions": "off",
+      "eqeqeq": "error",
+      "block-scoped-var": "error",
+      "class-methods-use-this": "off",
+      "consistent-return": "error",
+      "curly": "error",
+      "default-case": "error",
+      "default-case-last": "error",
+      "default-param-last": "error"
     }
   }
 }

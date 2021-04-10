@@ -1,4 +1,6 @@
+import { getEdgeStateX, getEdgeStateY } from "src/edge-definitions";
 import { EdgeType } from "src/enum-data";
+import type { TileType } from "src/tile-type";
 import { GridBase } from "./grid-base";
 
 export class GridEdges extends GridBase {
@@ -22,6 +24,58 @@ export class GridEdges extends GridBase {
 			this.edgesTileY[i] = EdgeType.EMPTY;
 			this.edgesDoorX[i] = 0;
 			this.edgesDoorY[i] = 0;
+		}
+	}
+
+	loadTileEdges(x: number, y: number, tileType: TileType): void {
+		let _loc7_ = 0;
+		let _loc8_ = 0;
+		let _loc9_ = 0;
+		let _loc10_ = 0;
+		let _loc11_ = 0;
+		let _loc12_ = 0;
+		let _loc13_ = 0;
+		let _loc14_ = 0;
+		const _loc4_ = x * 2;
+		const _loc5_ = y * 2;
+		let _loc6_ = 0;
+		while (_loc6_ < 3) {
+			_loc7_ = 0;
+			while (_loc7_ < 2) {
+				_loc8_ = _loc4_ - 1 + _loc6_;
+				_loc9_ = _loc5_ + _loc7_;
+				_loc10_ = _loc4_ + _loc7_;
+				_loc11_ = _loc5_ - 1 + _loc6_;
+				_loc12_ = this.getCellIndexFromGridspacePosition(_loc8_, _loc9_);
+				_loc13_ = this.getCellIndexFromGridspacePosition(_loc10_, _loc11_);
+				_loc14_ = _loc6_ + _loc7_ * 3;
+				this.loadEdgeStateX(_loc12_, getEdgeStateX(tileType, _loc14_));
+				this.loadEdgeStateY(_loc13_, getEdgeStateY(tileType, _loc14_));
+				_loc7_++;
+			}
+			_loc6_++;
+		}
+	}
+
+	loadEdgeStateX(param1: number, param2: number): void {
+		if (
+			this.edgesTileX[param1] === EdgeType.SOLID &&
+			param2 === EdgeType.SOLID
+		) {
+			this.edgesTileX[param1] = EdgeType.EMPTY;
+		} else {
+			this.edgesTileX[param1] = Math.max(this.edgesTileX[param1], param2);
+		}
+	}
+
+	loadEdgeStateY(param1: number, param2: number): void {
+		if (
+			this.edgesTileY[param1] === EdgeType.SOLID &&
+			param2 === EdgeType.SOLID
+		) {
+			this.edgesTileY[param1] = EdgeType.EMPTY;
+		} else {
+			this.edgesTileY[param1] = Math.max(this.edgesTileY[param1], param2);
 		}
 	}
 

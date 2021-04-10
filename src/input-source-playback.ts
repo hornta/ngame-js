@@ -20,9 +20,9 @@ export class InputSourcePlayback extends InputSourceBase {
 		} else {
 			this.frames.position = frame;
 			const frameInput = this.frames.readByte();
-			this.currentJump = (frameInput & InputBit.INPUT_JUMP) > 0;
-			this.currentLeft = (frameInput & InputBit.INPUT_LEFT) > 0;
-			this.currentRight = (frameInput & InputBit.INPUT_RIGHT) > 0;
+			this.currentJump = (frameInput & InputBit.JUMP) > 0;
+			this.currentLeft = (frameInput & InputBit.LEFT) > 0;
+			this.currentRight = (frameInput & InputBit.RIGHT) > 0;
 		}
 	}
 }

@@ -14,4 +14,12 @@ export class RagdollParticle {
 		this.r = r;
 		this.d = d;
 	}
+
+	public preIntegrate(gravity: number): void {
+		this.velocity.x *= this.d;
+		this.velocity.y *= this.d;
+		this.velocity.y += gravity;
+		this.solverPosition.x = this.position.x + this.velocity.x;
+		this.solverPosition.y = this.position.y + this.velocity.y;
+	}
 }

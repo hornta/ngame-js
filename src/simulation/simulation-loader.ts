@@ -1,3 +1,4 @@
+import type { ByteArray } from "src/byte-array";
 import {
 	EditorState,
 	EntityProp,
@@ -10,7 +11,12 @@ import {
 	EntityType,
 	QUANTIZE_STEP_SIZE,
 } from "src/enum-data";
+import type { Input } from "src/input";
+import { InputSourcePlayback } from "src/input-source-playback";
+import { InputSourceRecorder } from "src/input-source-recorder";
 import { NUM_TILE_TYPES, TileType } from "src/tile-type";
+import { BoundaryDefinition } from "./boundary-definitions";
+import { BoundaryFlags } from "./boundary-flags";
 import type { EntityBase } from "./entities/entity-base";
 import { EntityBounceBlock } from "./entities/entity-bounce-block";
 import { EntityDoorLocked } from "./entities/entity-door-locked";
@@ -33,6 +39,9 @@ import { EntityTurret } from "./entities/entity-turret";
 import type { GridEdges } from "./grid-edges";
 import { GridEntity } from "./grid-entity";
 import { GridSegment } from "./grid-segment";
+import { Ninja } from "./ninja";
+import type { Segment } from "./segment";
+import { SegmentDefinition } from "./segment-definitions";
 import { SegmentLinearDoubleSided } from "./segment-linear-double-sided";
 import type { Simulator } from "./simulator";
 import type { Vector2 } from "./vector2";
@@ -359,27 +368,27 @@ const generateTileSegmentsFiltered = (
 			`generateTileSegmentsFiltered() was passed an invalid tiletype: ${tileType}`
 		);
 	}
-	const _loc6_ = [];
-	let _loc7_: int = 0;
+	const segments: Segment[] = [];
+	let _loc7_ = 0;
 	while (_loc7_ < 4) {
 		_loc9_ =
-			boundaryflags[tileType][_loc7_ * 2] &&
-			!boundaryflags[param2[_loc7_]][(_loc7_ * 2 + 4) % 8];
+			BoundaryFlags[tileType][_loc7_ * 2] &&
+			!BoundaryFlags[param2[_loc7_]][(_loc7_ * 2 + 4) % 8];
 		_loc10_ =
-			boundaryflags[tileType][_loc7_ * 2 + 1] &&
-			!boundaryflags[param2[_loc7_]][(_loc7_ * 2 + 1 + 4) % 8];
+			BoundaryFlags[tileType][_loc7_ * 2 + 1] &&
+			!BoundaryFlags[param2[_loc7_]][(_loc7_ * 2 + 1 + 4) % 8];
 		if (_loc9_) {
 			if (_loc10_) {
-				_loc6_.push(
-					boundarydefs[_loc7_ * 3 + 2].GenerateCollisionSegment(
+				segments.push(
+					BoundaryDefinition[_loc7_ * 3 + 2].generateCollisionSegment(
 						param3,
 						param4,
 						param5
 					)
 				);
 			} else {
-				_loc6_.push(
-					boundarydefs[_loc7_ * 3].GenerateCollisionSegment(
+				segments.push(
+					BoundaryDefinition[_loc7_ * 3].generateCollisionSegment(
 						param3,
 						param4,
 						param5
@@ -387,8 +396,8 @@ const generateTileSegmentsFiltered = (
 				);
 			}
 		} else if (_loc10_) {
-			_loc6_.push(
-				boundarydefs[_loc7_ * 3 + 1].GenerateCollisionSegment(
+			segments.push(
+				BoundaryDefinition[_loc7_ * 3 + 1].generateCollisionSegment(
 					param3,
 					param4,
 					param5
@@ -397,33 +406,31 @@ const generateTileSegmentsFiltered = (
 		}
 		_loc7_++;
 	}
-	let _loc8_: TileEdgeArchetype;
-	if ((_loc8_ = segdefs[tileType]) != null) {
-		_loc6_.push(_loc8_.GenerateCollisionSegment(param3, param4, param5));
+	const tileEdge = SegmentDefinition[tileType];
+	if (tileEdge !== null) {
+		segments.push(tileEdge.generateCollisionSegment(param3, param4, param5));
 	}
-	return _loc6_;
+	return segments;
 };
 
 const buildTileSegs = (
 	segmentGrid: GridSegment,
-	cellSize,
-	halfCellSize,
+	cellSize: number,
+	halfCellSize: number,
 	param4: number,
 	param5: number,
 	tileType: TileType,
 	param7: number[]
 ): void => {
-	const _loc8_ = generateTileSegmentsFiltered(
+	const segments = generateTileSegmentsFiltered(
 		tileType,
 		param7,
-		param4 * param2 + param3,
-		param5 * param2 + param3,
-		param3
+		param4 * cellSize + halfCellSize,
+		param5 * cellSize + halfCellSize,
+		halfCellSize
 	);
-	let _loc9_: int = 0;
-	while (_loc9_ < _loc8_.length) {
-		param1.AddSegToCell(param4, param5, _loc8_[_loc9_]);
-		_loc9_++;
+	for (const segment of segments) {
+		segmentGrid.addSegToCell(param4, param5, segment);
 	}
 };
 
@@ -480,13 +487,16 @@ const loadLevelEditorStateTiles = (
 			tileIds[i],
 			_loc10_
 		);
-		LoadLevel_BuildTileEdges(edgeGrid, x, y, tileIds[i]);
+		edgeGrid.loadTileEdges(x, y, tileIds[i]);
 	}
 };
 
 export const loadLevelFromEditorState = (
-	playerActions: number[],
+	playerActions: string[],
+	playerColors: number[],
+	input: Input,
 	numberOfPlayers: number,
+	input: ByteArray,
 	editorState: EditorState
 ): Simulator => {
 	const tileIds = new Array(Simulator.GRID_NUM_COLS * Simulator.GRID_NUM_ROWS);
@@ -535,5 +545,45 @@ export const loadLevelFromEditorState = (
 		playerLocations.push(playerLocations[0].clone());
 	}
 
-	return new Simulator();
+	while (playerLocations.length > numberOfPlayers) {
+		playerLocations.pop();
+	}
+	if (playerLocations.length === 2) {
+		playerLocations[0].x -= 4;
+		playerLocations[1].x += 4;
+	}
+
+	const players = [];
+	playerLocations.forEach((location, index) => {
+		let inputSource;
+		if (input === null) {
+			inputSource = new InputSourceRecorder(
+				input,
+				playerActions[(index * 3) % playerActions.length],
+				playerActions[(index * 3 + 1) % playerActions.length],
+				playerActions[(index * 3 + 2) % playerActions.length]
+			);
+		} else {
+			inputSource = new InputSourcePlayback(input);
+		}
+
+		players.push(
+			new Ninja(
+				_loc14_,
+				inputSource,
+				location.x,
+				location.y,
+				playerColors[index]
+			)
+		);
+	});
+
+	return new Simulator(
+		tileIds,
+		gridSegment,
+		gridEdges,
+		gridEntity,
+		entities,
+		players
+	);
 };

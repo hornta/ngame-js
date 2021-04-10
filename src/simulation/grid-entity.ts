@@ -76,4 +76,20 @@ export class GridEntity extends GridBase {
 		const cell = this.cells[cellIndex];
 		cell.push(entity);
 	}
+
+	gatherCellContentsInNeighbourhood(position: Vector2): EntityBase[] {
+		const gridX = this.worldspaceToGridspace(position.x);
+		const gridY = this.worldspaceToGridspace(position.y);
+		const entities = [];
+		for (let x = -1; x < 2; ++x) {
+			for (let y = -1; y < 2; ++y) {
+				const cellIndex = this.getCellIndexFromGridspacePosition(
+					gridX + x,
+					gridY + y
+				);
+				entities.push(...this.cells[cellIndex]);
+			}
+		}
+		return entities;
+	}
 }

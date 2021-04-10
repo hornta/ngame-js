@@ -4,6 +4,9 @@ import React, { useEffect } from "react";
 import { Route, useParams } from "react-router";
 import { ByteArray } from "./byte-array";
 import { EditorState } from "./editor-state";
+import { prepareSessionFromBytes } from "./fns";
+import { PlayerKey, PlayerKeys, soloKeys } from "./player-keys";
+import { loadLevelFromEditorState } from "./simulation/simulation-loader";
 
 // const bucketUrl = 'http://bucket.thewayoftheninja.org';
 // const levelUrl = `${bucketUrl}/411787.txt`;
@@ -26,11 +29,15 @@ const Level = () => {
 			const buffer = Buffer.from(inflator.result);
 			const ba = new ByteArray(buffer);
 			const levelName = ba.readUTF();
-			console.log(levelName);
 			const rest = ba.newFromAvailable();
-			console.log(ba, rest);
+
 			const editorState = EditorState.loadFromBytes(rest);
-			console.log(editorState);
+			const playerActions = soloKeys.getActions([
+				PlayerKey.JUMP,
+				PlayerKey.LEFT,
+				PlayerKey.RIGHT,
+			]);
+			loadLevelFromEditorState(playerActions, [0x000, 0x000], 1, editorState);
 		};
 
 		void makeEditorState();
