@@ -1,7 +1,7 @@
 import {
 	timeOfIntersectionCircleVsArc,
 	timeOfIntersectionCircleVsCircle,
-} from "src/fns";
+} from "../fns";
 import type { AABB } from "./AABB";
 import type { Segment } from "./segment";
 import type { Vector2 } from "./vector2";
@@ -38,20 +38,20 @@ export class SegmentCircular implements Segment {
 	getClosestPoint(param1: Vector2, param2: Vector2): void {
 		let _loc17_ = NaN;
 		let _loc18_ = NaN;
-		const _loc3_: number = this.p0.x - this.pC.x;
-		const _loc4_: number = this.p0.y - this.pC.y;
-		const _loc5_: number = this.p1.x - this.pC.x;
-		const _loc6_: number = this.p1.y - this.pC.y;
-		let _loc7_: number = param1.x - this.pC.x;
-		let _loc8_: number = param1.y - this.pC.y;
-		const _loc9_: number = _loc7_ * -_loc4_ + _loc8_ * _loc3_;
-		const _loc10_: number = _loc7_ * -_loc6_ + _loc8_ * _loc5_;
-		const _loc11_: number = this.p1.x - this.p0.x;
-		const _loc12_: number = this.p1.y - this.p0.y;
-		const _loc13_: number = _loc11_ * -_loc4_ + _loc12_ * _loc3_;
-		const _loc14_: number = _loc11_ * -_loc6_ + _loc12_ * _loc5_;
-		const _loc15_: * = _loc9_ * _loc13_ <= 0;
-		const _loc16_: * = _loc10_ * _loc14_ >= 0;
+		const _loc3_ = this.p0.x - this.pC.x;
+		const _loc4_ = this.p0.y - this.pC.y;
+		const _loc5_ = this.p1.x - this.pC.x;
+		const _loc6_ = this.p1.y - this.pC.y;
+		let _loc7_ = param1.x - this.pC.x;
+		let _loc8_ = param1.y - this.pC.y;
+		const _loc9_ = _loc7_ * -_loc4_ + _loc8_ * _loc3_;
+		const _loc10_ = _loc7_ * -_loc6_ + _loc8_ * _loc5_;
+		const _loc11_ = this.p1.x - this.p0.x;
+		const _loc12_ = this.p1.y - this.p0.y;
+		const _loc13_ = _loc11_ * -_loc4_ + _loc12_ * _loc3_;
+		const _loc14_ = _loc11_ * -_loc6_ + _loc12_ * _loc5_;
+		const _loc15_ = _loc9_ * _loc13_ <= 0;
+		const _loc16_ = _loc10_ * _loc14_ >= 0;
 		if (_loc15_) {
 			if (_loc16_) {
 				if (_loc7_ * _loc11_ + _loc8_ * _loc12_ <= 0) {
@@ -81,21 +81,21 @@ export class SegmentCircular implements Segment {
 		let _loc21_ = NaN;
 		let _loc22_ = NaN;
 		let _loc23_ = NaN;
-		const _loc3_: number = this.p0.x - this.pC.x;
-		const _loc4_: number = this.p0.y - this.pC.y;
-		const _loc5_: number = this.p1.x - this.pC.x;
-		const _loc6_: number = this.p1.y - this.pC.y;
-		let _loc7_: number = param1.x - this.pC.x;
-		let _loc8_: number = param1.y - this.pC.y;
-		const _loc9_: number = _loc7_ * -_loc4_ + _loc8_ * _loc3_;
-		const _loc10_: number = _loc7_ * -_loc6_ + _loc8_ * _loc5_;
-		const _loc11_: number = this.p1.x - this.p0.x;
-		const _loc12_: number = this.p1.y - this.p0.y;
-		const _loc13_: number = _loc11_ * -_loc4_ + _loc12_ * _loc3_;
-		const _loc14_: number = _loc11_ * -_loc6_ + _loc12_ * _loc5_;
-		const _loc15_: * = _loc9_ * _loc13_ <= 0;
-		const _loc16_: * = _loc10_ * _loc14_ >= 0;
-		let _loc17_: int = -1;
+		const _loc3_ = this.p0.x - this.pC.x;
+		const _loc4_ = this.p0.y - this.pC.y;
+		const _loc5_ = this.p1.x - this.pC.x;
+		const _loc6_ = this.p1.y - this.pC.y;
+		let _loc7_ = param1.x - this.pC.x;
+		let _loc8_ = param1.y - this.pC.y;
+		const _loc9_ = _loc7_ * -_loc4_ + _loc8_ * _loc3_;
+		const _loc10_ = _loc7_ * -_loc6_ + _loc8_ * _loc5_;
+		const _loc11_ = this.p1.x - this.p0.x;
+		const _loc12_ = this.p1.y - this.p0.y;
+		const _loc13_ = _loc11_ * -_loc4_ + _loc12_ * _loc3_;
+		const _loc14_ = _loc11_ * -_loc6_ + _loc12_ * _loc5_;
+		const _loc15_ = _loc9_ * _loc13_ <= 0;
+		const _loc16_ = _loc10_ * _loc14_ >= 0;
+		let _loc17_ = -1;
 		if (_loc15_) {
 			if (_loc16_) {
 				if (_loc7_ * _loc11_ + _loc8_ * _loc12_ <= 0) {
@@ -122,8 +122,8 @@ export class SegmentCircular implements Segment {
 			param2.x = this.pC.x + _loc7_;
 			param2.y = this.pC.y + _loc8_;
 		}
-		const _loc18_: number = param2.x - param1.x;
-		const _loc19_: number = param2.y - param1.y;
+		const _loc18_ = param2.x - param1.x;
+		const _loc19_ = param2.y - param1.y;
 		if (_loc17_ < 0) {
 			return _loc18_ * -_loc12_ + _loc19_ * _loc11_ > 0;
 		}
@@ -169,8 +169,8 @@ export class SegmentCircular implements Segment {
 		);
 		let _loc8_ = 2;
 		this.getClosestPoint(param1, cp);
-		const _loc9_: number = param1.x - cp.x;
-		const _loc10_: number = param1.y - cp.y;
+		const _loc9_ = param1.x - cp.x;
+		const _loc10_ = param1.y - cp.y;
 		let _loc11_: number;
 		if ((_loc11_ = Math.sqrt(_loc9_ * _loc9_ + _loc10_ * _loc10_)) <= param3) {
 			_loc8_ = -1;
@@ -219,31 +219,49 @@ export class SegmentCircular implements Segment {
 		return _loc12_;
 	}
 
-	// public function DebugDraw(param1:SimpleRenderer) : void
-	// {
-	//    param1.SetStyle(0,0,100);
-	//    this.DebugDraw_NoStyle(param1);
-	// }
+	public debugDraw(/* param1: SimpleRenderer */): void {
+		// param1.SetStyle(0, 0, 100);
+		// this.DebugDraw_NoStyle(param1);
+	}
 
-	// public function DebugDraw_Simple(param1:SimpleRenderer) : void
-	// {
-	//    param1.DrawCircularArc_Convex(this.pC.x,this.pC.y,this.p0.x,this.p0.y,this.p1.x,this.p1.y,this.pC.To(this.p0).Len());
-	// }
+	public debugDrawSimple(/* param1: SimpleRenderer */): void {
+		// param1.DrawCircularArc_Convex(
+		// 	this.pC.x,
+		// 	this.pC.y,
+		// 	this.p0.x,
+		// 	this.p0.y,
+		// 	this.p1.x,
+		// 	this.p1.y,
+		// 	this.pC.To(this.p0).Len()
+		// );
+	}
 
-	// public function DebugDraw_NoStyle(param1:SimpleRenderer) : void
-	// {
-	//    param1.DrawCircularArc_Convex(this.pC.x,this.pC.y,this.p0.x,this.p0.y,this.p1.x,this.p1.y,this.pC.To(this.p0).Len());
-	//    param1.DrawSquare(this.p0.x,this.p0.y,2);
-	//    param1.DrawSquare(this.p1.x,this.p1.y,2);
-	//    param1.DrawPlus(this.pC.x,this.pC.y,2);
-	//    var _loc2_:Number = this.pC.To(this.p0).Len();
-	//    var _loc3_:vec2 = this.p0.To(this.p1);
-	//    var _loc4_:vec2;
-	//    (_loc4_ = _loc3_.Perp()).Normalize();
-	//    _loc3_.Scale(0.5);
-	//    var _loc5_:vec2;
-	//    (_loc5_ = this.pC.To(this.p0.Plus(_loc3_))).Normalize();
-	//    _loc5_.Scale(_loc2_);
-	//    param1.DrawLine(this.pC.x + _loc5_.x,this.pC.y + _loc5_.y,this.pC.x + _loc5_.x + 4 * _loc4_.x,this.pC.y + _loc5_.y + 4 * _loc4_.y);
-	// }
+	public debugDrawNoStyle(/*param1: SimpleRenderer*/): void {
+		// param1.DrawCircularArc_Convex(
+		// 	this.pC.x,
+		// 	this.pC.y,
+		// 	this.p0.x,
+		// 	this.p0.y,
+		// 	this.p1.x,
+		// 	this.p1.y,
+		// 	this.pC.To(this.p0).Len()
+		// );
+		// param1.DrawSquare(this.p0.x, this.p0.y, 2);
+		// param1.DrawSquare(this.p1.x, this.p1.y, 2);
+		// param1.DrawPlus(this.pC.x, this.pC.y, 2);
+		// const _loc2_: number = this.pC.To(this.p0).Len();
+		// const _loc3_: vec2 = this.p0.To(this.p1);
+		// let _loc4_: vec2;
+		// (_loc4_ = _loc3_.Perp()).Normalize();
+		// _loc3_.Scale(0.5);
+		// let _loc5_: vec2;
+		// (_loc5_ = this.pC.To(this.p0.Plus(_loc3_))).Normalize();
+		// _loc5_.Scale(_loc2_);
+		// param1.DrawLine(
+		// 	this.pC.x + _loc5_.x,
+		// 	this.pC.y + _loc5_.y,
+		// 	this.pC.x + _loc5_.x + 4 * _loc4_.x,
+		// 	this.pC.y + _loc5_.y + 4 * _loc4_.y
+		// );
+	}
 }

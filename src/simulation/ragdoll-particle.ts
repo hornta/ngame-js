@@ -1,4 +1,4 @@
-import type { Vector2 } from "./vector2";
+import { Vector2 } from "./vector2.js";
 
 export class RagdollParticle {
 	position: Vector2;
@@ -33,5 +33,17 @@ export class RagdollParticle {
 	public copyState(particle: RagdollParticle): void {
 		this.position.setFrom(particle.position);
 		this.velocity.setFrom(particle.velocity);
+	}
+
+	public setState(
+		posX: number,
+		posY: number,
+		velX: number,
+		velY: number
+	): void {
+		this.position.x = posX;
+		this.position.y = posY;
+		this.velocity.x = velX;
+		this.velocity.y = velY;
 	}
 }

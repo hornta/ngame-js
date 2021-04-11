@@ -1,3 +1,6 @@
+import { Level } from "./level";
+
 export const Options = {
-	coopMode = false,
+	coopMode: false,
+	selectedLevel: Level,
 };

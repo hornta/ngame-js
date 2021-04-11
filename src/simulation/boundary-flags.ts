@@ -1,4 +1,4 @@
-import { NUM_TILE_TYPES, TileType } from "src/tile-type";
+import { NUM_TILE_TYPES, TileType } from "../tile-type";
 
 const perpIndex = [2, 3, 5, 4, 6, 7, 1, 0];
 

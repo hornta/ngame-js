@@ -6,11 +6,11 @@ import type { Vector2 } from "../vector2";
 
 export abstract class EntityBase {
 	private id: number;
-	gridIndex: number;
+	private gridIndex: number;
 
 	constructor() {
-		id = -1;
-		gridIndex = -1;
+		this.id = -1;
+		this.gridIndex = -1;
 	}
 
 	setId(id: number): void {

@@ -1,5 +1,5 @@
-import type { TileEdgeArchetype } from "src/tiles/tile-edge-archetype";
-import { TileEdgeArchetypeLinear } from "src/tiles/tile-edge-archetype-linear";
+import type { TileEdgeArchetype } from "../tiles/tile-edge-archetype";
+import { TileEdgeArchetypeLinear } from "../tiles/tile-edge-archetype-linear";
 
 export const BoundaryDefinition = new Array<TileEdgeArchetype>(12);
 

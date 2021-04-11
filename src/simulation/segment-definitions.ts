@@ -1,7 +1,7 @@
-import { NUM_TILE_TYPES, TileType } from "src/tile-type";
-import { TileEdgeArchetype } from "src/tiles/tile-edge-archetype";
-import { TileEdgeArchetypeCircular } from "src/tiles/tile-edge-archetype-circular";
-import { TileEdgeArchetypeLinear } from "src/tiles/tile-edge-archetype-linear";
+import { NUM_TILE_TYPES, TileType } from "../tile-type";
+import { TileEdgeArchetype } from "../tiles/tile-edge-archetype";
+import { TileEdgeArchetypeCircular } from "../tiles/tile-edge-archetype-circular";
+import { TileEdgeArchetypeLinear } from "../tiles/tile-edge-archetype-linear";
 
 export const SegmentDefinition = new Array<TileEdgeArchetype>(NUM_TILE_TYPES);
 

@@ -1,11 +1,16 @@
-import { getSingleClosestPointSigned } from "src/fns";
-import type { CollisionResultLogical } from "./collision-result-logical";
-import type { CollisionResultPhysical } from "./collision-result-physical";
-import type { EntityBase } from "./entities/entity-base";
-import type { EntityThwomp } from "./entities/entity-thwomp";
+import { getSingleClosestPointSigned } from "../fns";
+import type { InputSourceBase } from "src/input-source-base";
 import { Ragdoll } from "./ragdoll";
-import { PlayerKillType, SimulationRate, Simulator } from "./simulator";
-import type { Vector2 } from "./vector2";
+import {
+	PlayerDeathType,
+	PlayerKillType,
+	PlayerKillTypeToDeathType,
+	SimulationRate,
+	Simulator,
+} from "./simulator";
+import { Vector2 } from "./vector2.js";
+import { CollisionResultLogical } from "./collision-result-logical.js";
+import { CollisionResultPhysical } from "./collision-result-physical.js";
 
 enum PlayerState {
 	STATE_STANDING = 0,
@@ -21,6 +26,7 @@ enum PlayerState {
 }
 
 export class Ninja {
+	inputSource: InputSourceBase;
 	position: Vector2;
 	velocity: Vector2;
 	oldPosition: Vector2;
@@ -62,7 +68,7 @@ export class Ninja {
 	crushVector: Vector2;
 	crushDistance: number;
 	crushFlag: boolean;
-	deathType: number;
+	deathType: PlayerDeathType;
 	deathPosition: Vector2;
 	deathForce: Vector2;
 	tmpNearPosition: Vector2;
@@ -75,9 +81,17 @@ export class Ninja {
 	publicVelocity: Vector2;
 	gfxColor: number;
 
-	constructor(playerId: number, x: number, y: number) {
+	constructor(
+		playerId: number,
+		inputSource: InputSourceBase,
+		x: number,
+		y: number,
+		color: number
+	) {
 		this.playerId = playerId;
+		this.inputSource = inputSource;
 		this.position = new Vector2(x, y);
+		this.gfxColor = color;
 		this.velocity = new Vector2(0, 0);
 		this.oldPosition = new Vector2(0, 0);
 		this.r = 10;
@@ -117,7 +131,7 @@ export class Ninja {
 		this.crushVector = new Vector2();
 		this.crushDistance = 0;
 		this.crushFlag = false;
-		this.deathType = PlayerKillType.TIME;
+		this.deathType = PlayerDeathType.TIME;
 		this.deathPosition = new Vector2();
 		this.deathForce = new Vector2();
 		this.tmpNearPosition = new Vector2();
@@ -165,7 +179,7 @@ export class Ninja {
 		) {
 			return;
 		}
-		this.deathType = type;
+		this.deathType = PlayerKillTypeToDeathType[type];
 		this.deathPosition.x = x;
 		this.deathPosition.y = y;
 		this.deathForce.x = forceX;
@@ -455,9 +469,9 @@ export class Ninja {
 	}
 
 	think(simulator: Simulator, frameNumber: number): void {
-		let _loc10_: Vector<vec2> = null;
-		let _loc11_: Vector<vec2> = null;
-		let _loc12_: * = false;
+		let _loc10_: Vector2[] = null;
+		let _loc11_: Vector2[] = null;
+		let _loc12_ = false;
 		let _loc13_ = NaN;
 		let _loc14_ = NaN;
 		let _loc15_ = NaN;
@@ -487,93 +501,90 @@ export class Ninja {
 		let _loc39_ = NaN;
 		let _loc40_ = NaN;
 		let _loc41_ = NaN;
-		this.inputsource.Tick(param2);
-		const _loc3_: boolean = this.inputsource.IsButtonDown_Right();
-		const _loc4_: boolean = this.inputsource.IsButtonDown_Left();
-		let _loc5_: boolean;
-		const _loc6_: boolean =
-			(_loc5_ = this.inputsource.IsButtonDown_Jump()) && !this.wasJdown;
-		this.wasJdown = _loc5_;
-		if (this.curState == PSTATE_DISABLED) {
+		this.inputSource.tick(frameNumber);
+		const _loc3_ = this.inputSource.isButtonDownRight();
+		const _loc4_ = this.inputSource.isButtonDownLeft();
+		const _loc5_ = this.inputSource.isButtonDownJumping();
+		const _loc6_: boolean = _loc5_ && !this.wasJumpHeld;
+		this.wasJumpHeld = _loc5_;
+		if (this.curState === PlayerState.STATE_DISABLED) {
 			return;
 		}
-		if (this.curState == PSTATE_DEAD) {
+		if (this.curState === PlayerState.STATE_DEAD) {
 			return;
 		}
-		if (this.curState == PSTATE_AWAITINGDEATH) {
+		if (this.curState === PlayerState.STATE_AWAITINGDEATH) {
 			_loc10_ = null;
 			_loc11_ = null;
-			if (this.ninja_gfx != null && this.ninja_gfx.hasValidPose) {
-				_loc10_ = new Array<Vector2>(6);
-				_loc11_ = new Array<Vector2>(6);
-				this.ninja_gfx.NINJA_GetCurrentPose(_loc10_, _loc11_);
-			}
-			this.raggy.ActivateRagdoll(
-				this.pos,
-				this.vel,
-				this.death_pos,
-				this.death_force,
+			// if (this.ninja_gfx !== null && this.ninja_gfx.hasValidPose) {
+			// 	_loc10_ = new Array<Vector2>(6);
+			// 	_loc11_ = new Array<Vector2>(6);
+			// 	this.ninja_gfx.NINJA_GetCurrentPose(_loc10_, _loc11_);
+			// }
+			this.raggy.activateRagdoll(
+				this.position,
+				this.velocity,
+				this.deathPosition,
+				this.deathForce,
 				_loc10_,
 				_loc11_
 			);
 			if (
-				this.death_type == sim_globals.DEATHTYPE_EXPLOSIVE ||
-				this.death_type == sim_globals.DEATHTYPE_SUICIDE
+				this.deathType === PlayerDeathType.EXPLOSIVE ||
+				this.deathType === PlayerDeathType.SUICIDE
 			) {
-				this.raggy.ExplodeRagdoll(param1);
+				this.raggy.explodeRagdoll(simulator);
 			}
-			param1
-				.HACKY_GetParticleManager()
-				.Spawn_BloodSpurt(
-					this.death_pos.x,
-					this.death_pos.y,
-					this.death_force.x,
-					this.death_force.y,
-					3 + Math.floor(Math.random() * 4)
-				);
+			// simulator
+			// 	.HACKY_GetParticleManager()
+			// 	.Spawn_BloodSpurt(
+			// 		this.death_pos.x,
+			// 		this.death_pos.y,
+			// 		this.death_force.x,
+			// 		this.death_force.y,
+			// 		3 + Math.floor(Math.random() * 4)
+			// 	);
 			_loc12_ = Math.random() < 0.5;
-			if (this.death_type == sim_globals.DEATHTYPE_EXPLOSIVE) {
+			if (this.death_type === PlayerDeathType.EXPLOSIVE) {
 				if (_loc12_) {
-					this.ninja_gfx.HACKY_PlayOneshotSound("explode1");
+					// this.ninja_gfx.HACKY_PlayOneshotSound("explode1");
 				} else {
-					this.ninja_gfx.HACKY_PlayOneshotSound("explode2");
+					// this.ninja_gfx.HACKY_PlayOneshotSound("explode2");
 				}
-			} else if (this.death_type == sim_globals.DEATHTYPE_FALL) {
-				this.ninja_gfx.HACKY_PlayOneshotSound("fall");
-			} else if (this.death_type == sim_globals.DEATHTYPE_LASER) {
-				this.ninja_gfx.HACKY_PlayOneshotSound("laser");
-			} else if (this.death_type == sim_globals.DEATHTYPE_ELECTRIC) {
+			} else if (this.deathType === PlayerDeathType.FALL) {
+				// this.ninja_gfx.HACKY_PlayOneshotSound("fall");
+			} else if (this.deathType === PlayerDeathType.LASER) {
+				// this.ninja_gfx.HACKY_PlayOneshotSound("laser");
+			} else if (this.death_type === PlayerDeathType.ELECTRIC) {
 				if (_loc12_) {
-					this.ninja_gfx.HACKY_PlayOneshotSound("zap1");
+					// this.ninja_gfx.HACKY_PlayOneshotSound("zap1");
 				} else {
-					this.ninja_gfx.HACKY_PlayOneshotSound("zap2");
+					// this.ninja_gfx.HACKY_PlayOneshotSound("zap2");
 				}
 			} else if (_loc12_) {
-				this.ninja_gfx.HACKY_PlayOneshotSound("shot1");
+				// this.ninja_gfx.HACKY_PlayOneshotSound("shot1");
 			} else {
-				this.ninja_gfx.HACKY_PlayOneshotSound("shot2");
+				// this.ninja_gfx.HACKY_PlayOneshotSound("shot2");
 			}
-			this.curState = PSTATE_DEAD;
+			this.currentState = PlayerState.STATE_DEAD;
 			return;
 		}
-		if (this.curState == PSTATE_CELEBRATING) {
-			if (this.IN_AIR) {
+
+		if (this.currentState === PlayerState.STATE_CELEBRATING) {
+			if (this.inAir) {
 				this.d = this.normDrag;
-				if (!this.WAS_IN_AIR) {
-				}
 			} else {
 				this.d = this.winDrag;
-				if (!this.WAS_IN_AIR) {
-				}
 			}
 			return;
 		}
+
 		this.tempV.x = 0;
 		this.tempV.y = 0;
 		this.tempP.x = 0;
 		this.tempP.y = 0;
-		let _loc7_: number = this.vel.x;
-		let _loc8_: number = this.vel.y;
+		let _loc7_ = this.velocity.x;
+		let _loc8_ = this.velocity.y;
 		let _loc9_ = 0;
 		if (_loc4_) {
 			_loc9_--;
@@ -581,33 +592,32 @@ export class Ninja {
 		if (_loc3_) {
 			_loc9_ += 1;
 		}
-		if (this.IN_AIR) {
-			this.tempV.Copy(this.vel);
+		if (this.inAir) {
+			this.tempV.setFrom(this.velocity);
 			_loc13_ = _loc7_ + _loc9_ * this.airAccel;
-			if (Math.abs(_loc13_) < this.maxspeedAir) {
+			if (Math.abs(_loc13_) < this.maxSpeedAir) {
 				_loc7_ = _loc13_;
 			}
-			this.vel.x = _loc7_;
-			if (this.curState < 3) {
-				this.ACTION_Fall();
+			this.velocity.x = _loc7_;
+			if (this.currentState < 3) {
+				this.fall();
 				return;
 			}
-			if (this.curState == PSTATE_JUMPING) {
-				++this.jumptimer;
-				if (!_loc5_ || this.jumptimer > this.max_jump_time) {
-					this.ACTION_Fall();
+			if (this.currentState === PlayerState.STATE_JUMPING) {
+				++this.jumpTimer;
+				if (!_loc5_ || this.jumpTimer > this.maxJumpTime) {
+					this.fall();
 					return;
 				}
 				return;
 			}
-			if (this.curState == PSTATE_FALLING) {
-			}
-			if (this.NEAR_WALL) {
+
+			if (this.nearWall) {
 				if (_loc6_) {
 					_loc14_ = 0;
 					_loc15_ = 0;
 					if (
-						this.curState == PSTATE_WALLSLIDING &&
+						this.currentState === PlayerState.STATE_WALLSLIDING &&
 						_loc9_ * this.wallN.x < 0
 					) {
 						_loc14_ = 1;
@@ -616,89 +626,89 @@ export class Ninja {
 						_loc14_ = 1.5;
 						_loc15_ = 0.7;
 					}
-					param1
-						.HACKY_GetParticleManager()
-						.Spawn_JumpDust(
-							this.pos.x - this.wallN.x * this.r,
-							this.pos.y - this.wallN.y * this.r,
-							this.wallN.x * 90
-						);
-					this.ACTION_Jump(this.wallN.x * _loc14_, this.wallN.y - _loc15_);
+					// param1
+					// 	.HACKY_GetParticleManager()
+					// 	.Spawn_JumpDust(
+					// 		this.pos.x - this.wallN.x * this.r,
+					// 		this.pos.y - this.wallN.y * this.r,
+					// 		this.wallN.x * 90
+					// 	);
+					this.jump(this.wallN.x * _loc14_, this.wallN.y - _loc15_);
 					return;
 				}
-				if (this.curState == PSTATE_WALLSLIDING) {
+				if (this.currentState === PlayerState.STATE_WALLSLIDING) {
 					if (0 < _loc9_ * this.wallN.x) {
-						this.ACTION_Fall();
+						this.fall();
 						return;
 					}
 					_loc16_ = Math.abs(_loc8_);
 					_loc17_ = -this.wallFriction * _loc16_;
-					this.tempV.Copy(this.vel);
-					this.vel.y *= this.wallFriction;
-					param1
-						.HACKY_GetParticleManager()
-						.Spawn_WallDust(this.pos, this.r, this.wallN, Math.min(4, _loc16_));
+					this.tempV.setFrom(this.velocity);
+					this.velocity.y *= this.wallFriction;
+					// param1
+					// 	.HACKY_GetParticleManager()
+					// 	.Spawn_WallDust(this.pos, this.r, this.wallN, Math.min(4, _loc16_));
 					return;
 				}
 				if (0 < _loc8_ && _loc9_ * this.wallN.x < 0) {
-					this.ACTION_Wallslide();
+					this.wallSlide();
 					return;
 				}
-			} else if (this.curState == PSTATE_WALLSLIDING) {
-				this.ACTION_Fall();
+			} else if (this.currentState === PlayerState.STATE_WALLSLIDING) {
+				this.fall();
 				return;
 			}
 		} else {
-			this.tempV.Copy(this.vel);
+			this.tempV.setFrom(this.velocity);
 			_loc18_ = _loc7_ + _loc9_ * this.groundAccel;
-			if (Math.abs(_loc18_) < this.maxspeedGround) {
+			if (Math.abs(_loc18_) < this.maxSpeedGround) {
 				_loc7_ = _loc18_;
 			}
-			this.vel.x = _loc7_;
-			if (2 < this.curState) {
-				param1
-					.HACKY_GetParticleManager()
-					.Spawn_LandDust(
-						this.pos.x - this.floorN.x * this.r,
-						this.pos.y - this.floorN.y * this.r,
-						90 + (Math.atan2(this.floorN.y, this.floorN.x) / Math.PI) * 180,
-						Math.abs(this.vel.x) + this.vel.y
-					);
-				this.ninja_gfx.HACKY_PlayOneshotSound("land");
+			this.velocity.x = _loc7_;
+			if (2 < this.currentState) {
+				// param1
+				// 	.HACKY_GetParticleManager()
+				// 	.Spawn_LandDust(
+				// 		this.pos.x - this.floorN.x * this.r,
+				// 		this.pos.y - this.floorN.y * this.r,
+				// 		90 + (Math.atan2(this.floorN.y, this.floorN.x) / Math.PI) * 180,
+				// 		Math.abs(this.vel.x) + this.vel.y
+				// 	);
+				// this.ninja_gfx.HACKY_PlayOneshotSound("land");
 				if (0 < _loc7_ * _loc9_) {
-					this.ACTION_Run(_loc9_);
+					this.run();
 					return;
 				}
-				this.ACTION_Skid();
+				this.skid();
 				return;
 			}
 			if (_loc6_) {
-				param1
-					.HACKY_GetParticleManager()
-					.Spawn_JumpDust(
-						this.pos.x - this.floorN.x * this.r,
-						this.pos.y - this.floorN.y * this.r,
-						90 + (Math.atan2(this.floorN.y, this.floorN.x) / Math.PI) * 180
-					);
+				// param1
+				// 	.HACKY_GetParticleManager()
+				// 	.Spawn_JumpDust(
+				// 		this.pos.x - this.floorN.x * this.r,
+				// 		this.pos.y - this.floorN.y * this.r,
+				// 		90 + (Math.atan2(this.floorN.y, this.floorN.x) / Math.PI) * 180
+				// 	);
 				if (_loc9_ * this.floorN.x < 0) {
-					this.ACTION_Jump(0, -0.7);
+					this.jump(0, -0.7);
 					return;
 				}
-				this.ACTION_Jump(this.floorN.x, this.floorN.y);
+				this.jump(this.floorN.x, this.floorN.y);
 				return;
 			}
-			if (this.curState != PSTATE_RUNNING) {
-				if (this.curState == PSTATE_SKIDDING) {
+			if (this.currentState !== PlayerState.STATE_RUNNING) {
+				if (this.currentState === PlayerState.STATE_SKIDDING) {
 					_loc29_ = this.floorN.x;
 					_loc30_ = this.floorN.y;
 					_loc31_ = Math.abs(_loc7_ * -_loc30_ + _loc8_ * _loc29_);
 					_loc32_ = _loc7_ * _loc31_;
 					if (0 < _loc32_ * _loc9_) {
-						this.ACTION_Run(_loc9_);
+						this.run();
 						return;
 					}
-					if (_loc31_ < 0.1 && this.floorN.x == 0) {
-						this.ACTION_Stand();
+					if (_loc31_ < 0.1 && this.floorN.x === 0) {
+						this.stand();
 						return;
 					}
 					_loc33_ = 1;
@@ -706,18 +716,18 @@ export class Ninja {
 						_loc33_ = -1;
 					}
 					_loc34_ = Math.atan2(this.floorN.x, -this.floorN.y) * (180 / Math.PI);
-					param1
-						.HACKY_GetParticleManager()
-						.Spawn_FloorDust(
-							this.pos,
-							this.r,
-							this.floorN,
-							_loc34_,
-							_loc33_,
-							_loc31_
-						);
-					this.tempV.Copy(this.vel);
-					if (_loc8_ < 0 && this.floorN.x != 0) {
+					// param1
+					// 	.HACKY_GetParticleManager()
+					// 	.Spawn_FloorDust(
+					// 		this.pos,
+					// 		this.r,
+					// 		this.floorN,
+					// 		_loc34_,
+					// 		_loc33_,
+					// 		_loc31_
+					// 	);
+					this.tempV.setFrom(this.velocity);
+					if (_loc8_ < 0 && this.floorN.x !== 0) {
 						_loc35_ = Math.abs(_loc7_ * this.skidFriction - _loc7_);
 						_loc36_ =
 							(_loc36_ = Math.abs(_loc35_ * this.floorN.y)) *
@@ -732,25 +742,25 @@ export class Ninja {
 					} else {
 						_loc7_ *= this.skidFriction;
 					}
-					this.vel.x = _loc7_;
-					this.vel.y = _loc8_;
+					this.velocity.x = _loc7_;
+					this.velocity.y = _loc8_;
 					return;
 				}
-				if (_loc9_ != 0) {
-					this.ACTION_Run(_loc9_);
+				if (_loc9_ !== 0) {
+					this.run(_loc9_);
 					return;
 				}
 				_loc39_ = this.floorN.x;
 				_loc40_ = this.floorN.y;
 				_loc41_ = Math.abs(_loc7_ * -_loc40_ + _loc8_ * _loc39_);
 				if (0.1 <= _loc41_) {
-					this.ACTION_Skid();
+					this.skid();
 					return;
 				}
-				this.tempV.Copy(this.vel);
+				this.tempV.setFrom(this.velocity);
 				_loc7_ *= this.standFriction;
-				this.vel.x = _loc7_;
-				this.vel.y = _loc8_;
+				this.velocity.x = _loc7_;
+				this.velocity.y = _loc8_;
 				return;
 			}
 			_loc19_ = this.floorN.x;
@@ -759,7 +769,7 @@ export class Ninja {
 			_loc22_ = Math.abs(_loc21_);
 			_loc23_ = _loc7_ * _loc22_;
 			if (_loc9_ * _loc23_ <= 0) {
-				this.ACTION_Skid();
+				this.skid();
 				return;
 			}
 			if (_loc9_ * _loc19_ < 0) {
@@ -773,14 +783,61 @@ export class Ninja {
 				_loc24_ *= 0.5 * _loc26_;
 				_loc27_ = _loc7_ + _loc25_ * this.groundAccel;
 				_loc28_ = _loc8_ + _loc24_ * this.groundAccel;
-				if (Math.abs(_loc18_) < this.maxspeedGround) {
+				if (Math.abs(_loc18_) < this.maxSpeedGround) {
 					_loc7_ = _loc27_;
 					_loc8_ = _loc28_;
 				}
-				this.tempV.Copy(this.vel);
-				this.vel.x = _loc7_;
-				this.vel.y = _loc8_;
+				this.tempV.setFrom(this.velocity);
+				this.velocity.x = _loc7_;
+				this.velocity.y = _loc8_;
 			}
 		}
+	}
+
+	private fall(): void {
+		this.exitCurrentState();
+		this.currentState = PlayerState.STATE_FALLING;
+	}
+
+	private wallSlide(): void {
+		this.exitCurrentState();
+		this.currentState = PlayerState.STATE_WALLSLIDING;
+	}
+
+	private run(): void {
+		this.exitCurrentState();
+		this.currentState = PlayerState.STATE_RUNNING;
+	}
+
+	private stand(): void {
+		this.exitCurrentState();
+		this.currentState = PlayerState.STATE_STANDING;
+	}
+
+	private skid(): void {
+		this.exitCurrentState();
+		this.currentState = PlayerState.STATE_SKIDDING;
+	}
+
+	private jump(param1: number, param2: number): void {
+		this.exitCurrentState();
+		this.currentState = PlayerState.STATE_JUMPING;
+		this.g = this.jumpGrav;
+		const _loc3_ = this.velocity.x;
+		const _loc4_ = this.velocity.y;
+		if (_loc3_ * param1 < 0) {
+			this.velocity.x = 0;
+		}
+		if (_loc4_ * param2 < 0) {
+			this.velocity.y = 0;
+		}
+		this.position.x += param1 * this.jumpAmount * this.impulseScale;
+		this.position.y +=
+			param2 * (this.jumpAmount + this.jumpYBias) * this.impulseScale;
+		this.velocity.x += param1 * this.jumpAmount * this.impulseScale;
+		this.velocity.y +=
+			param2 * (this.jumpAmount + this.jumpYBias) * this.impulseScale;
+		this.jumpTimer = 0;
+		// this.ninja_gfx.HACKY_PlayOneshotSound("jump");
 	}
 }

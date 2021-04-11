@@ -1,8 +1,8 @@
-import { overlapCircleVsCircle } from "src/fns";
+import { overlapCircleVsCircle } from "../../fns";
 import type { CollisionResultLogical } from "../collision-result-logical";
 import type { GridEntity } from "../grid-entity";
 import type { Simulator } from "../simulator";
-import type { Vector2 } from "../vector2";
+import { Vector2 } from "../vector2.js";
 import { EntityBase } from "./entity-base";
 
 export class EntityExitDoor extends EntityBase {

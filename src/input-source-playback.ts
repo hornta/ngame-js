@@ -1,9 +1,11 @@
+import type { ByteArray } from "./byte-array.js";
 import { InputBit, InputSourceBase } from "./input-source-base";
 
 export class InputSourcePlayback extends InputSourceBase {
 	isFinished: boolean;
 
-	constructor() {
+	constructor(input: ByteArray) {
+		super(input);
 		this.isFinished = false;
 	}
 

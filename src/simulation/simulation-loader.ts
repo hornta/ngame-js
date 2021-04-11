@@ -1,20 +1,20 @@
-import type { ByteArray } from "src/byte-array";
+import type { ByteArray } from "../byte-array";
 import {
 	EditorState,
 	EntityProp,
 	EntityProps,
 	NUM_COLS,
-} from "src/editor-state";
+} from "../editor-state";
 import {
 	Direction,
 	DirectionToVector,
 	EntityType,
 	QUANTIZE_STEP_SIZE,
-} from "src/enum-data";
+} from "../enum-data";
 import type { Input } from "src/input";
-import { InputSourcePlayback } from "src/input-source-playback";
-import { InputSourceRecorder } from "src/input-source-recorder";
-import { NUM_TILE_TYPES, TileType } from "src/tile-type";
+import { InputSourcePlayback } from "../input-source-playback";
+import { InputSourceRecorder } from "../input-source-recorder";
+import { NUM_TILE_TYPES, TileType } from "../tile-type";
 import { BoundaryDefinition } from "./boundary-definitions";
 import { BoundaryFlags } from "./boundary-flags";
 import type { EntityBase } from "./entities/entity-base";
@@ -36,15 +36,16 @@ import { EntityOneWayPlatform } from "./entities/entity-one-way-platform";
 import { EntityRocket } from "./entities/entity-rocket";
 import { EntityThwomp } from "./entities/entity-thwomp";
 import { EntityTurret } from "./entities/entity-turret";
-import type { GridEdges } from "./grid-edges";
 import { GridEntity } from "./grid-entity";
 import { GridSegment } from "./grid-segment";
 import { Ninja } from "./ninja";
 import type { Segment } from "./segment";
 import { SegmentDefinition } from "./segment-definitions";
 import { SegmentLinearDoubleSided } from "./segment-linear-double-sided";
-import type { Simulator } from "./simulator";
-import type { Vector2 } from "./vector2";
+
+import { Simulator } from "./simulator.js";
+import { GridEdges } from "./grid-edges.js";
+import { Vector2 } from "./vector2.js";
 
 const newDirectionEnumToOldDirectionEnum = (oldDirection: number): number => {
 	return Math.floor(oldDirection / 2);
@@ -68,7 +69,7 @@ const loadLevelEditorStateEntities = (
 		const type = entityProps[EntityProp.ENTITY_PROP_TYPE];
 		const x = entityProps[EntityProp.ENTITY_PROP_X] * QUANTIZE_STEP_SIZE;
 		const y = entityProps[EntityProp.ENTITY_PROP_Y] * QUANTIZE_STEP_SIZE;
-		let direction: Direction;
+		let direction: Direction = null;
 		let move;
 		if (entityProps.length > 3) {
 			direction = entityProps[EntityProp.ENTITY_PROP_DIRECTION];
@@ -207,12 +208,12 @@ const loadLevelEditorStateEntities = (
 			const exitDoor = new EntityExitDoor(x, y);
 			registerEntity(entityList, exitDoor);
 			const nextEntity = entities[i + 1];
-			const x = nextEntity[EntityProp.ENTITY_PROP_X] * QUANTIZE_STEP_SIZE;
-			const y = nextEntity[EntityProp.ENTITY_PROP_Y] * QUANTIZE_STEP_SIZE;
+			const xSwitch = nextEntity[EntityProp.ENTITY_PROP_X] * QUANTIZE_STEP_SIZE;
+			const ySwitch = nextEntity[EntityProp.ENTITY_PROP_Y] * QUANTIZE_STEP_SIZE;
 
 			registerEntity(
 				entityList,
-				new EntityExitSwitch(gridEntity, x, y, exitDoor)
+				new EntityExitSwitch(gridEntity, xSwitch, ySwitch, exitDoor)
 			);
 		} else if (type === EntityType.EXIT_SWITCH) {
 			if (i > 0) {
@@ -308,7 +309,7 @@ const loadLevelEditorStateEntities = (
 				new EntityThwomp(gridEntity, x, y, _loc52_, _loc53_)
 			);
 		} else if (type === EntityType.TURRET) {
-			registerEntity(entityList, new EntityTurret(gridEntity, x, y));
+			registerEntity(entityList, new EntityTurret(x, y));
 		} else if (type === EntityType.ZAP) {
 			registerEntity(
 				entityList,
@@ -317,7 +318,7 @@ const loadLevelEditorStateEntities = (
 					x,
 					y,
 					newDirectionEnumToOldDirectionEnum(direction),
-					move
+					move as number
 				)
 			);
 		}
@@ -341,7 +342,7 @@ const initTileIDGridWithBoundaryEdges = (
 		tileIds[_loc6_ + (numRows - 1) * numCols] = TileType.EDGE_TOP;
 		_loc6_++;
 	}
-	let _loc7_: int = 1;
+	let _loc7_ = 1;
 	while (_loc7_ < numRows - 1) {
 		tileIds[_loc7_ * numCols] = TileType.EDGE_RIGHT;
 		tileIds[numCols - 1 + _loc7_ * numCols] = TileType.EDGE_LEFT;
@@ -495,11 +496,13 @@ export const loadLevelFromEditorState = (
 	playerActions: string[],
 	playerColors: number[],
 	input: Input,
+	inputData: ByteArray,
 	numberOfPlayers: number,
-	input: ByteArray,
 	editorState: EditorState
 ): Simulator => {
-	const tileIds = new Array(Simulator.GRID_NUM_COLS * Simulator.GRID_NUM_ROWS);
+	const tileIds = new Array(
+		Simulator.GRID_NUM_COLUMNS * Simulator.GRID_NUM_ROWS
+	);
 	const gridSegment = new GridSegment(
 		Simulator.GRID_NUM_COLUMNS,
 		Simulator.GRID_NUM_ROWS,
@@ -522,7 +525,7 @@ export const loadLevelFromEditorState = (
 		tileIds,
 		gridSegment,
 		gridEdges,
-		Simulator.GRID_NUM_COLS,
+		Simulator.GRID_NUM_COLUMNS,
 		Simulator.GRID_NUM_ROWS,
 		Simulator.GRID_CELL_SIZE,
 		Simulator.GRID_CELL_HALFWIDTH
@@ -553,10 +556,10 @@ export const loadLevelFromEditorState = (
 		playerLocations[1].x += 4;
 	}
 
-	const players = [];
+	const players = [] as Ninja[];
 	playerLocations.forEach((location, index) => {
 		let inputSource;
-		if (input === null) {
+		if (inputData === null) {
 			inputSource = new InputSourceRecorder(
 				input,
 				playerActions[(index * 3) % playerActions.length],
@@ -564,17 +567,11 @@ export const loadLevelFromEditorState = (
 				playerActions[(index * 3 + 2) % playerActions.length]
 			);
 		} else {
-			inputSource = new InputSourcePlayback(input);
+			inputSource = new InputSourcePlayback(inputData);
 		}
 
 		players.push(
-			new Ninja(
-				_loc14_,
-				inputSource,
-				location.x,
-				location.y,
-				playerColors[index]
-			)
+			new Ninja(index, inputSource, location.x, location.y, playerColors[index])
 		);
 	});
 

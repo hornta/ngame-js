@@ -1,16 +1,20 @@
-import type { App } from "./app";
 import { Ticker } from "@pixi/ticker";
+import { Game } from "./game";
 
 export class Controller {
-	app: App;
+	game: Game;
 	ticker: Ticker;
 
 	constructor() {
-		app = new App();
-		ticker = new Ticker();
+		this.game = new Game();
+		this.ticker = new Ticker();
+		this.ticker.add(() => {
+			this.tick();
+		});
+		this.ticker.start();
 	}
 
-	tick() {
-		this.app.tick();
+	tick(): void {
+		this.game.tick();
 	}
 }

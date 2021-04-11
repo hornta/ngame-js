@@ -3,13 +3,12 @@ import { Inflate } from "pako";
 import React, { useEffect } from "react";
 import { Route, useParams } from "react-router";
 import { ByteArray } from "./byte-array";
-import { EditorState } from "./editor-state";
-import { prepareSessionFromBytes } from "./fns";
-import { PlayerKey, PlayerKeys, soloKeys } from "./player-keys";
-import { loadLevelFromEditorState } from "./simulation/simulation-loader";
+import { Controller } from "./controller";
 
 // const bucketUrl = 'http://bucket.thewayoftheninja.org';
 // const levelUrl = `${bucketUrl}/411787.txt`;
+
+const controller = new Controller();
 
 const Level = () => {
 	const { levelId } = useParams<{ levelId: string }>();
@@ -27,25 +26,21 @@ const Level = () => {
 				console.log(inflator.msg);
 			}
 			const buffer = Buffer.from(inflator.result);
-			const ba = new ByteArray(buffer);
-			const levelName = ba.readUTF();
-			const rest = ba.newFromAvailable();
-
-			const editorState = EditorState.loadFromBytes(rest);
-			const playerActions = soloKeys.getActions([
-				PlayerKey.JUMP,
-				PlayerKey.LEFT,
-				PlayerKey.RIGHT,
-			]);
-			loadLevelFromEditorState(playerActions, [0x000, 0x000], 1, editorState);
+			const levelData = new ByteArray(buffer);
+			controller.game.playSingleLevelFromBytes(levelData, Number(levelId));
 		};
 
 		void makeEditorState();
 	}, [levelId]);
 
-	return null;
+	return <canvas></canvas>;
 };
 
 export const App = (): JSX.Element => {
-	return <Route path="/level/:levelId" component={Level} />;
+	return (
+		<>
+			<Route path="/level/:levelId" component={Level} />
+			123
+		</>
+	);
 };

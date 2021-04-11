@@ -1,9 +1,10 @@
-import { wrapAngleShortest, wrapAnglePosition } from "src/fns";
+import { wrapAngleShortest, wrapAnglePosition } from "../../fns";
 import type { GridEdges } from "../grid-edges";
 import type { GridEntity } from "../grid-entity";
 import type { GridSegment } from "../grid-segment";
 import type { Simulator } from "../simulator";
 import type { Vector2 } from "../vector2";
+import { EntityBase } from "./entity-base.js";
 import {
 	EntityDroneDirectionToRadians,
 	EntityDroneDirectionToVector,

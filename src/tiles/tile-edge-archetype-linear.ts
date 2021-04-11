@@ -1,4 +1,6 @@
-import { SegmentLinear } from "src/simulation/segment-linear";
+import { SegmentLinear } from "../simulation/segment-linear";
+import type { Segment } from "../simulation/segment.js";
+import type { TileEdgeArchetype } from "./tile-edge-archetype.js";
 
 export class TileEdgeArchetypeLinear implements TileEdgeArchetype {
 	x0: number;

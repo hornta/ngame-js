@@ -1,4 +1,6 @@
-import { SegmentCircular } from "src/simulation/segment-circular";
+import { SegmentCircular } from "../simulation/segment-circular";
+import type { Segment } from "../simulation/segment.js";
+import type { TileEdgeArchetype } from "./tile-edge-archetype.js";
 
 export class TileEdgeArchetypeCircular implements TileEdgeArchetype {
 	x0: number;

@@ -43,15 +43,15 @@ export class EntityDroneChaser extends EntityDroneZap {
 
 	chooseNextDirAndGoal(edgeGrid: GridEdges, players: Ninja[]): boolean {
 		let _loc12_ = false;
-		let _loc13_: int = 0;
-		let _loc14_: int = 0;
-		let _loc15_: int = 0;
-		let _loc16_: int = 0;
-		let _loc17_: int = 0;
-		let _loc18_: int = 0;
-		let _loc19_: int = 0;
-		let _loc20_: int = 0;
-		let _loc21_: int = 0;
+		let _loc13_ = 0;
+		let _loc14_ = 0;
+		let _loc15_ = 0;
+		let _loc16_ = 0;
+		let _loc17_ = 0;
+		let _loc18_ = 0;
+		let _loc19_ = 0;
+		let _loc20_ = 0;
+		let _loc21_ = 0;
 		if (this.isChasing) {
 			if (
 				this.chooseNextDirectionAndGoalTestDir(

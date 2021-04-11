@@ -1,4 +1,4 @@
-import { tryToAcquireTarget } from "src/fns";
+import { tryToAcquireTarget } from "../../fns";
 import type { GridEntity } from "../grid-entity";
 import type { Simulator } from "../simulator";
 import type { Vector2 } from "../vector2";

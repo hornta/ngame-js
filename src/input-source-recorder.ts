@@ -1,3 +1,4 @@
+import { Buffer } from "buffer";
 import type { Input } from "./input";
 import { InputBit, InputSourceBase } from "./input-source-base";
 
@@ -13,6 +14,7 @@ export class InputSourceRecorder extends InputSourceBase {
 		keyLeft: string,
 		keyRight: string
 	) {
+		super(Buffer.alloc(4096));
 		this.input = input;
 		this.keyJump = keyJump;
 		this.keyLeft = keyLeft;

@@ -1,6 +1,6 @@
 import { GridBase } from "./grid-base";
 import type { Segment } from "./segment";
-import type { Vector2 } from "./vector2";
+import { Vector2 } from "./vector2.js";
 
 export class GridSegment extends GridBase {
 	cells: Segment[][];

@@ -1,4 +1,4 @@
-import { overlapCircleVsSegment, wrapAngleShortest } from "src/fns";
+import { overlapCircleVsSegment, wrapAngleShortest } from "../../fns";
 import type { GridEntity } from "../grid-entity";
 import { PlayerKillType, SimulationRate, Simulator } from "../simulator";
 import type { Vector2 } from "../vector2";

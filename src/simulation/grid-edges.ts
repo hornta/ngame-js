@@ -1,21 +1,21 @@
-import { getEdgeStateX, getEdgeStateY } from "src/edge-definitions";
-import { EdgeType } from "src/enum-data";
-import type { TileType } from "src/tile-type";
+import { getEdgeStateX, getEdgeStateY } from "../edge-definitions";
+import { EdgeType } from "../enum-data";
+import type { TileType } from "../tile-type";
 import { GridBase } from "./grid-base";
 
 export class GridEdges extends GridBase {
-	edgesTileX: int[];
-	edgesTileY: int[];
-	edgesDoorX: int[];
-	edgesDoorY: int[];
+	edgesTileX: number[];
+	edgesTileY: number[];
+	edgesDoorX: number[];
+	edgesDoorY: number[];
 
 	constructor(numCols: number, numRows: number, cellSize: number) {
 		super(numCols, numRows, cellSize);
 
-		this.edgesTileX = new Array(this.numCells).fill(0);
-		this.edgesTileY = new Array(this.numCells).fill(0);
-		this.edgesDoorX = new Array(this.numCells).fill(0);
-		this.edgesDoorY = new Array(this.numCells).fill(0);
+		this.edgesTileX = new Array<number>(this.numCells).fill(0);
+		this.edgesTileY = new Array<number>(this.numCells).fill(0);
+		this.edgesDoorX = new Array<number>(this.numCells).fill(0);
+		this.edgesDoorY = new Array<number>(this.numCells).fill(0);
 	}
 
 	clear(): void {

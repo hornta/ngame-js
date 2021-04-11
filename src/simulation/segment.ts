@@ -12,7 +12,7 @@ export interface Segment {
 		p5: Vector2
 	): number;
 	getClosestPointIsBackfacing(p1: Vector2, p2: Vector2): boolean;
-	DebugDraw(context: CanvasRenderingContext2D): void;
-	DebugDraw_NoStyle(context: CanvasRenderingContext2D): void;
-	DebugDraw_Simple(context: CanvasRenderingContext2D): void;
+	debugDraw(context: CanvasRenderingContext2D): void;
+	debugDrawNoStyle(context: CanvasRenderingContext2D): void;
+	debugDrawSimple(context: CanvasRenderingContext2D): void;
 }

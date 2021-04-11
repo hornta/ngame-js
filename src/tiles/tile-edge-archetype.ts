@@ -1,3 +1,5 @@
+import type { Segment } from "../simulation/segment.js";
+
 export interface TileEdgeArchetype {
 	generatePerpArchetype(): TileEdgeArchetype;
 	generateCollisionSegment(

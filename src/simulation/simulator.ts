@@ -22,14 +22,43 @@ export enum PlayerKillType {
 	MINE = 11,
 }
 
+export enum PlayerDeathType {
+	SUICIDE = 0,
+	FALL = 1,
+	CRUSH = 2,
+	TIME = 3,
+	EXPLOSIVE = 4,
+	LASER = 5,
+	ELECTRIC = 6,
+	BULLET = 7,
+}
+
+export const PlayerKillTypeToDeathType: Record<
+	PlayerKillType,
+	PlayerDeathType
+> = {
+	[PlayerKillType.SUICIDE]: PlayerDeathType.EXPLOSIVE,
+	[PlayerKillType.FALL]: PlayerDeathType.FALL,
+	[PlayerKillType.CRUSH]: PlayerDeathType.CRUSH,
+	[PlayerKillType.TIME]: PlayerDeathType.EXPLOSIVE,
+	[PlayerKillType.ROCKET]: PlayerDeathType.EXPLOSIVE,
+	[PlayerKillType.MINE]: PlayerDeathType.EXPLOSIVE,
+	[PlayerKillType.LASER]: PlayerDeathType.LASER,
+	[PlayerKillType.ZAP]: PlayerDeathType.ELECTRIC,
+	[PlayerKillType.FLOOR_GUARD]: PlayerDeathType.ELECTRIC,
+	[PlayerKillType.THWOMP]: PlayerDeathType.ELECTRIC,
+	[PlayerKillType.CHAINGUN]: PlayerDeathType.BULLET,
+	[PlayerKillType.TURRET]: PlayerDeathType.BULLET,
+};
+
 export class Simulator {
 	static GRID_NUM_COLUMNS = NUM_COLS + 2;
 	static GRID_NUM_ROWS = NUM_ROWS + 2;
 	static GRID_CELL_SIZE = 24;
-	static GRID_CELL_HALFWIDTH = this.GRID_CELL_SIZE / 2;
+	static GRID_CELL_HALFWIDTH = Simulator.GRID_CELL_SIZE / 2;
 
 	entityList: EntityBase[];
-	tileIDs: int[];
+	tileIDs: number[];
 	segGrid: GridSegment;
 	edgeGrid: GridEdges;
 	entityGrid: GridEntity;
@@ -39,7 +68,7 @@ export class Simulator {
 	stateFlagWon: boolean;
 
 	constructor(
-		tileIDs: int[],
+		tileIDs: number[],
 		gridSegment: GridSegment,
 		edgeGrid: GridEdges,
 		entityGrid: GridEntity,
@@ -95,7 +124,7 @@ export class Simulator {
 			player.think(this, this.frameNumber);
 		}
 
-		++frameNumber;
+		++this.frameNumber;
 	}
 
 	timeIsUp(): void {
@@ -116,7 +145,7 @@ export class Simulator {
 		forceX: number,
 		forceY: number
 	): void {
-		player.kill(x, y, forceX, forceY);
+		player.kill(killType, x, y, forceX, forceY);
 	}
 
 	private areAllPlayersDead(): boolean {

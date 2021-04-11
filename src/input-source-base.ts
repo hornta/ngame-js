@@ -33,7 +33,7 @@ export abstract class InputSourceBase {
 		return this.currentLeft;
 	}
 
-	iBbuttonDownRight(): boolean {
+	isButtonDownRight(): boolean {
 		return this.currentRight;
 	}
 }
