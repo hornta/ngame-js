@@ -22,4 +22,16 @@ export class RagdollParticle {
 		this.solverPosition.x = this.position.x + this.velocity.x;
 		this.solverPosition.y = this.position.y + this.velocity.y;
 	}
+
+	public postIntegrate(): void {
+		this.velocity.x = this.solverPosition.x - this.position.x;
+		this.velocity.y = this.solverPosition.y - this.position.y;
+		this.position.x = this.solverPosition.x;
+		this.position.y = this.solverPosition.y;
+	}
+
+	public copyState(particle: RagdollParticle): void {
+		this.position.setFrom(particle.position);
+		this.velocity.setFrom(particle.velocity);
+	}
 }

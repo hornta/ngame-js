@@ -310,3 +310,40 @@ const timeOfIntersectionCircleVsArcHelper = (
 	}
 	return Math.min(_loc15_, _loc16_);
 };
+
+export const getSingleClosestPointSigned = (
+	gridSegment: GridSegment,
+	param2: Vector2,
+	offset: number,
+	closestPointOut: Vector2
+): number => {
+	let _loc5_ = 0;
+	const smallestWidth = Number.POSITIVE_INFINITY;
+	const segments = gridSegment.gatherCellContentsFromWorldspaceRegion(
+		param2.x - offset,
+		param2.y - offset,
+		param2.x + offset,
+		param2.y + offset
+	);
+
+	for (const segment of segments) {
+		const closestPoint = new Vector2();
+		const _loc8_ = segment.getClosestPointIsBackfacing(param2, closestPoint);
+		const diffX = closestPoint.x - param2.x;
+		const diffY = closestPoint.y - param2.y;
+		const squaredLength = diffX * diffX + diffY * diffY;
+		if (!_loc8_) {
+			squaredLength -= 0.1;
+		}
+		if (squaredLength < smallestWidth) {
+			closestPointOut.setFrom(closestPoint);
+			smallestWidth = squaredLength;
+			if (_loc8_) {
+				_loc5_ = -1;
+			} else {
+				_loc5_ = 1;
+			}
+		}
+	}
+	return _loc5_;
+};

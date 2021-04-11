@@ -47,22 +47,21 @@ export class SegmentLinear implements Segment {
 		}
 	}
 
-	getClosestPointIsBackfacing(param1: Vector2, param2: Vector2): boolean {
-		let _loc9_ = NaN;
-		const _loc3_: number = this.p1.x - this.p0.x;
-		const _loc4_: number = this.p1.y - this.p0.y;
-		const _loc5_: number = param1.x - this.p0.x;
-		const _loc6_: number = param1.y - this.p0.y;
-		const _loc7_: number = _loc3_ * _loc5_ + _loc4_ * _loc6_;
-		const _loc8_: number = _loc3_ * _loc3_ + _loc4_ * _loc4_;
+	getClosestPointIsBackfacing(param1: Vector2, closestPoint: Vector2): boolean {
+		const _loc3_ = this.p1.x - this.p0.x;
+		const _loc4_ = this.p1.y - this.p0.y;
+		const _loc5_ = param1.x - this.p0.x;
+		const _loc6_ = param1.y - this.p0.y;
+		const _loc7_ = _loc3_ * _loc5_ + _loc4_ * _loc6_;
+		const _loc8_ = _loc3_ * _loc3_ + _loc4_ * _loc4_;
 		if (_loc7_ <= 0) {
-			param2.setFrom(this.p0);
+			closestPoint.setFrom(this.p0);
 		} else if (_loc7_ >= _loc8_) {
-			param2.setFrom(this.p1);
+			closestPoint.setFrom(this.p1);
 		} else {
-			_loc9_ = _loc7_ / _loc8_;
-			param2.x = this.p0.x + _loc9_ * _loc3_;
-			param2.y = this.p0.y + _loc9_ * _loc4_;
+			const _loc9_ = _loc7_ / _loc8_;
+			closestPoint.x = this.p0.x + _loc9_ * _loc3_;
+			closestPoint.y = this.p0.y + _loc9_ * _loc4_;
 		}
 		return _loc5_ * -_loc4_ + _loc6_ * _loc3_ < 0;
 	}

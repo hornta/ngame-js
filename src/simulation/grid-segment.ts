@@ -220,4 +220,31 @@ export class GridSegment extends GridBase {
 			cellSegments.splice(cellSegments.indexOf(segment), 1);
 		}
 	}
+
+	public gatherCellContentsFromWorldspaceRegion = (
+		param1: number,
+		param2: number,
+		param3: number,
+		param4: number
+	): Segment[] => {
+		const _loc6_ = this.worldspaceToGridspace(param1);
+		const _loc7_ = this.worldspaceToGridspace(param3);
+		const _loc8_ = this.worldspaceToGridspace(param2);
+		const _loc9_ = this.worldspaceToGridspace(param4);
+		const segments = [] as Segment[];
+
+		for (let y = _loc8_; y <= _loc9_; ++y) {
+			for (let x = _loc6_; x <= _loc7_; ++x) {
+				const cellIndex = this.getCellIndexFromGridspacePosition(x, y);
+				if (cellIndex < 0) {
+					throw new Error(
+						`gatherCellContentsFromWorldspaceRegion() was passed an invalid region: ${_loc6_},${_loc8_} .. ${_loc7_},${_loc9_}`
+					);
+				}
+				segments.push(...this.cells[cellIndex]);
+			}
+		}
+
+		return segments;
+	};
 }

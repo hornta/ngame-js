@@ -1,6 +1,11 @@
+import { getSingleClosestPointSigned } from "src/fns";
 import type { CollisionResultLogical } from "./collision-result-logical";
 import type { CollisionResultPhysical } from "./collision-result-physical";
 import type { EntityBase } from "./entities/entity-base";
+import { EntityDroneZap } from "./entities/entity-drone-zap";
+import { EntityFloorGuard } from "./entities/entity-floor-guard";
+import { EntityMine } from "./entities/entity-mine";
+import { EntityThwomp } from "./entities/entity-thwomp";
 import type { RagdollParticle } from "./ragdoll-particle";
 import type { RagdollStick } from "./ragdoll-stick";
 import type { Simulator } from "./simulator";
@@ -24,7 +29,6 @@ export class Ragdoll {
 	stickList: RagdollStick[][];
 	resultLogical: CollisionResultLogical;
 	resultPhysical: CollisionResultPhysical;
-	cp: Vector2;
 
 	constructor() {
 		this.currentState = RagdollState.UNEXPLODED;
@@ -129,7 +133,6 @@ export class Ragdoll {
 		};
 		this.resultLogical = new CollisionResultLogical();
 		this.resultPhysical = new CollisionResultPhysical();
-		this.cp = new Vector2();
 	}
 
 	integrate(gravity: number): void {
@@ -247,31 +250,23 @@ export class Ragdoll {
 	}
 
 	public collideVsTiles(simulator: Simulator): void {
-		let _loc4_: int = 0;
-		let _loc5_: int = 0;
-		let _loc6_: int = 0;
-		let _loc7_ = NaN;
-		let _loc8_ = NaN;
-		let _loc9_ = NaN;
-		let _loc10_ = NaN;
+		const maxIterations = 32;
 
 		for (const particle of this.particleList[this.currentState]) {
-			_loc4_ = 32;
-			_loc5_ = 0;
-			this.cp.x = 0;
-			this.cp.y = 0;
-			while (
-				(_loc6_ = colutils.GetSingleClosestPoint_Signed(
-					simulator.segGrid,
-					particle.solver_pos,
-					particle.r * 4,
-					this.cp
-				)) != 0
-			) {
-				_loc7_ = particle.solver_pos.x - this.cp.x;
-				_loc8_ = particle.solver_pos.y - this.cp.y;
-				_loc9_ = Math.sqrt(_loc7_ * _loc7_ + _loc8_ * _loc8_);
-				if ((_loc10_ = particle.r - _loc6_ * _loc9_) < 1e-7) {
+			let numIterations = 0;
+			const closestPoint = new Vector2(0, 0);
+			const _loc6_ = getSingleClosestPointSigned(
+				simulator.segGrid,
+				particle.solverPosition,
+				particle.r * 4,
+				closestPoint
+			);
+			while (_loc6_ !== 0) {
+				const _loc7_ = particle.solverPosition.x - closestPoint.x;
+				const _loc8_ = particle.solverPosition.y - closestPoint.y;
+				const _loc9_ = Math.sqrt(_loc7_ * _loc7_ + _loc8_ * _loc8_);
+				const _loc10_ = particle.r - _loc6_ * _loc9_;
+				if (_loc10_ < 1e-7) {
 					break;
 				}
 				if (_loc9_ === 0) {
@@ -286,8 +281,8 @@ export class Ragdoll {
 					_loc8_,
 					_loc6_ * _loc10_
 				);
-				_loc5_++;
-				if (_loc5_ >= _loc4_) {
+				numIterations++;
+				if (numIterations === maxIterations) {
 					throw new Error(
 						`WARNING! ragdoll collision loop hit max iterations: ${_loc10_} [${particle}]`
 					);
@@ -295,4 +290,108 @@ export class Ragdoll {
 			}
 		}
 	}
+
+	private initUnexplodedParticles(): void {
+		this.particleList[RagdollState.EXPLODED][0].copyState(
+			this.particleList[RagdollState.UNEXPLODED][0]
+		);
+		this.particleList[RagdollState.EXPLODED][1].copyState(
+			this.particleList[RagdollState.UNEXPLODED][1]
+		);
+		this.particleList[RagdollState.EXPLODED][2].copyState(
+			this.particleList[RagdollState.UNEXPLODED][2]
+		);
+		this.particleList[RagdollState.EXPLODED][3].copyState(
+			this.particleList[RagdollState.UNEXPLODED][3]
+		);
+		this.particleList[RagdollState.EXPLODED][4].copyState(
+			this.particleList[RagdollState.UNEXPLODED][4]
+		);
+		this.particleList[RagdollState.EXPLODED][5].copyState(
+			this.particleList[RagdollState.UNEXPLODED][5]
+		);
+		this.particleList[RagdollState.EXPLODED][6].copyState(
+			this.particleList[RagdollState.UNEXPLODED][0]
+		);
+		this.particleList[RagdollState.EXPLODED][7].copyState(
+			this.particleList[RagdollState.UNEXPLODED][0]
+		);
+		this.particleList[RagdollState.EXPLODED][8].copyState(
+			this.particleList[RagdollState.UNEXPLODED][1]
+		);
+		this.particleList[RagdollState.EXPLODED][9].copyState(
+			this.particleList[RagdollState.UNEXPLODED][1]
+		);
+		this.particleList[RagdollState.EXPLODED][6].velocity.x += 2;
+		this.particleList[RagdollState.EXPLODED][7].velocity.y += 4;
+		this.particleList[RagdollState.EXPLODED][8].velocity.y -= 6;
+		this.particleList[RagdollState.EXPLODED][9].velocity.x -= 8;
+	}
+
+	public explodeRagdoll(simulator: Simulator): void {
+		if (this.currentState !== RagdollState.EXPLODED) {
+			this.currentState = RagdollState.EXPLODED;
+			this.initUnexplodedParticles();
+			for (let i = 6; i < 10; ++i) {
+				// simulator
+				// 	.HACKY_GetParticleManager()
+				// 	.Spawn_BloodSpurt(
+				// 		this.particleList[RagdollState.EXPLODED][i].position.x,
+				// 		this.particleList[RagdollState.EXPLODED][i].position.y,
+				// 		Math.random() * 8 - 4,
+				// 		Math.random() * 8 - 4,
+				// 		3
+				// 	);
+			}
+		}
+	}
+
+	public postCollision = (simulator: Simulator): void => {
+		for (const particle of this.particleList[this.currentState]) {
+			particle.postIntegrate();
+		}
+
+		this.resultLogical.clear();
+
+		for (const particle of this.particleList[this.currentState]) {
+			const entities = simulator.entityGrid.gatherCellContentsInNeighbourhood(
+				particle.position
+			);
+			for (const entity of entities) {
+				if (
+					entity.collideVsCirclePhysical(
+						simulator,
+						null,
+						this.resultLogical,
+						particle.pos,
+						particle.vel,
+						particle.pos,
+						particle.r,
+						0.1
+					)
+				) {
+					particle.velocity.x += this.resultLogical.vectorX;
+					particle.velocity.y += this.resultLogical.vectorY;
+					if (entity instanceof EntityMine) {
+						if (this.currentState === RagdollState.UNEXPLODED) {
+							this.explosionAccumulator += Math.random() * 0.6;
+							if (Math.random() < this.explosionAccumulator) {
+								this.explodeRagdoll(simulator);
+							}
+						}
+					} else if (
+						entity instanceof EntityDroneZap ||
+						entity instanceof EntityFloorGuard ||
+						entity instanceof EntityThwomp
+					) {
+						if (Math.random() < 0.5) {
+							// simulator.HACKY_GetSoundManager().PlaySound_Ragdoll("zap1");
+						} else {
+							// simulator.HACKY_GetSoundManager().PlaySound_Ragdoll("zap2");
+						}
+					}
+				}
+			}
+		}
+	};
 }

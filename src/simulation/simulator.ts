@@ -87,42 +87,15 @@ export class Simulator {
 			}
 		}
 
-		// let _loc10_: int = 0;
-		// let _loc11_: int = 0;
-		// let _loc12_: int = 0;
-		// let _loc2_: int = 0;
-		// while (_loc2_ < this.num_gold_collected_during_tick.length) {
-		// 	this.num_gold_collected_during_tick[_loc2_] = 0;
-		// 	_loc2_++;
-		// }
-		// let _loc3_: int = 0;
-		// while (_loc3_ < this.objList.length) {
-		// 	this.objList[_loc3_].Move(this);
-		// 	_loc3_++;
-		// }
-		// let _loc4_: int = 0;
-		// while (_loc4_ < this.objList.length) {
-		// 	this.objList[_loc4_].Think(this);
-		// 	_loc4_++;
-		// }
-		// let _loc5_: int = 0;
-		// while (_loc5_ < this.playerList.length) {
-		// 	this.playerList[_loc5_].Integrate();
-		// 	this.playerList[_loc5_].PreCollision();
-		// 	_loc5_++;
-		// }
+		for (const player of this.playerList) {
+			player.postCollision(this);
+		}
 
-		let _loc8_: int = 0;
-		while (_loc8_ < this.playerList.length) {
-			this.playerList[_loc8_].PostCollision(this);
-			_loc8_++;
+		for (const player of this.playerList) {
+			player.think(this, this.frameNumber);
 		}
-		let _loc9_: int = 0;
-		while (_loc9_ < this.playerList.length) {
-			this.playerList[_loc9_].Think(this, this.frame_num);
-			_loc9_++;
-		}
-		++this.frame_num;
+
+		++frameNumber;
 	}
 
 	timeIsUp(): void {
