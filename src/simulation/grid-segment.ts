@@ -2,6 +2,8 @@ import { GridBase } from "./grid-base";
 import type { Segment } from "./segment";
 import { Vector2 } from "./vector2.js";
 
+const dummyVector = new Vector2();
+
 export class GridSegment extends GridBase {
 	cells: Segment[][];
 
@@ -147,6 +149,20 @@ export class GridSegment extends GridBase {
 		}
 		throw new Error(
 			"getRaycastDistance() was passed an invalid ray (start position overlaps seg geometry)"
+		);
+	}
+
+	raycastVsPlayer(
+		position: Vector2,
+		playerPosition: Vector2,
+		playerRadius: number
+	): boolean {
+		return this.raycastVsPlayer(
+			position,
+			playerPosition,
+			playerRadius,
+			dummyVector,
+			dummyVector
 		);
 	}
 

@@ -347,3 +347,36 @@ export const getSingleClosestPointSigned = (
 	}
 	return _loc5_;
 };
+
+export const penetrationSquareVsPoint = (
+	param1: Vector2,
+	param2: number,
+	param3: Vector2,
+	param4: Vector2
+): number => {
+	let _loc5_ = NaN;
+	let _loc8_ = NaN;
+	_loc5_ = param3.x - param1.x;
+	const _loc6_ = param3.y - param1.y;
+	const _loc7_ = param2 - Math.abs(_loc6_);
+	if (0 < _loc7_) {
+		_loc8_ = param2 - Math.abs(_loc5_);
+		if (0 < _loc8_) {
+			if (_loc7_ <= _loc8_) {
+				param4.x = 0;
+				param4.y = 1;
+				if (_loc6_ <= 0) {
+					param4.y = -1;
+				}
+				return _loc7_;
+			}
+			param4.y = 0;
+			param4.x = 1;
+			if (_loc5_ <= 0) {
+				param4.x = -1;
+			}
+			return _loc8_;
+		}
+	}
+	return 0;
+};

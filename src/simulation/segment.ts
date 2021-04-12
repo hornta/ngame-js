@@ -1,4 +1,4 @@
-import type { AABB } from "./AABB";
+import type { AABB } from "./aabb.js";
 import type { Vector2 } from "./vector2";
 
 export interface Segment {

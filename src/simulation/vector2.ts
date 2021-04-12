@@ -2,7 +2,7 @@ export class Vector2 {
 	x: number;
 	y: number;
 
-	constructor(x: number, y: number) {
+	constructor(x = 0, y = 0) {
 		this.x = x;
 		this.y = y;
 	}
@@ -28,8 +28,12 @@ export class Vector2 {
 		}
 	}
 
-	length(): number {
+	public length(): number {
 		return Math.sqrt(this.x * this.x + this.y * this.y);
+	}
+
+	public lengthSquared(): number {
+		return this.x * this.x + this.y * this.y;
 	}
 
 	dot(vector: Vector2): number {

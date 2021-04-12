@@ -37,7 +37,7 @@ export class EntityDroneBase extends EntityBase {
 		this.facingDirection = facingDirection;
 		this.moveType = moveType;
 		this.gfxOrientation = EntityDroneDirectionToRadians[this.facingDirection];
-		entityGrid.addEntity(this.pos);
+		entityGrid.addEntity(this.position);
 	}
 
 	move(simulator: Simulator): void {

@@ -2,10 +2,6 @@ import { SegmentLinear } from "./segment-linear";
 import type { Vector2 } from "./vector2";
 
 export class SegmentLinearDoubleSided extends SegmentLinear {
-	constructor() {
-		super();
-	}
-
 	getClosestPointIsBackfacing(param1: Vector2, param2: Vector2): boolean {
 		super.getClosestPointIsBackfacing(param1, param2);
 		return false;

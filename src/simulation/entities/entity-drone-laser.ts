@@ -15,7 +15,8 @@ export class EntityDroneLaser extends EntityDroneShooterBase {
 		entityGrid: GridEntity,
 		x: number,
 		y: number,
-		facingDirection: number
+		facingDirection: number,
+		moveType: number
 	) {
 		const speed = 12 * (1 / 14) * 0.5 * (40 / SimulationRate);
 		const preFireDelay = 30 * (SimulationRate / 40);

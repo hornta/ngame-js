@@ -69,7 +69,7 @@ const loadLevelEditorStateEntities = (
 		const type = entityProps[EntityProp.ENTITY_PROP_TYPE];
 		const x = entityProps[EntityProp.ENTITY_PROP_X] * QUANTIZE_STEP_SIZE;
 		const y = entityProps[EntityProp.ENTITY_PROP_Y] * QUANTIZE_STEP_SIZE;
-		let direction: Direction = null;
+		let direction: Direction | null = null;
 		let move;
 		if (entityProps.length > 3) {
 			direction = entityProps[EntityProp.ENTITY_PROP_DIRECTION];
@@ -87,8 +87,8 @@ const loadLevelEditorStateEntities = (
 					gridEntity,
 					x,
 					y,
-					newDirectionEnumToOldDirectionEnum(direction),
-					move
+					newDirectionEnumToOldDirectionEnum(direction as Direction),
+					move as number
 				)
 			);
 		} else if (type === EntityType.CHASER) {
@@ -98,8 +98,8 @@ const loadLevelEditorStateEntities = (
 					gridEntity,
 					x,
 					y,
-					newDirectionEnumToOldDirectionEnum(direction),
-					move
+					newDirectionEnumToOldDirectionEnum(direction as Direction),
+					move as number
 				)
 			);
 		} else if (
@@ -107,15 +107,15 @@ const loadLevelEditorStateEntities = (
 			type === EntityType.DOOR_REGULAR ||
 			type === EntityType.DOOR_TRAP
 		) {
-			const directionVector = DirectionToVector[direction];
-			_loc20_ = Math.floor((x - directionVector.x * 12) / 24);
-			_loc21_ = Math.floor((y - directionVector.y * 12) / 24);
+			const directionVector = DirectionToVector[direction as Direction];
+			const _loc20_ = Math.floor((x - directionVector.x * 12) / 24);
+			const _loc21_ = Math.floor((y - directionVector.y * 12) / 24);
 			const cellIndex = gridSegment.getCellIndexFromGridspacePosition(
 				_loc20_,
 				_loc21_
 			);
 			const isHorizontal = direction === 0;
-			const edgeIndicies = [new Array<Vector2>(2)];
+			const edgeIndicies = new Array<number>(2);
 			if (!isHorizontal) {
 				edgeIndicies.push(
 					gridEdges.getCellIndexFromGridspacePosition(
@@ -123,14 +123,14 @@ const loadLevelEditorStateEntities = (
 						_loc21_ * 2 + 1
 					)
 				);
-				edgeIndicies(
+				edgeIndicies.push(
 					gridEdges.getCellIndexFromGridspacePosition(
 						_loc20_ * 2 + 1,
 						_loc21_ * 2 + 1
 					)
 				);
 			} else {
-				edgeIndicies(
+				edgeIndicies.push(
 					gridEdges.getCellIndexFromGridspacePosition(
 						_loc20_ * 2 + 1,
 						_loc21_ * 2
@@ -148,7 +148,7 @@ const loadLevelEditorStateEntities = (
 			_loc27_.scale(12);
 			const _loc28_ = _loc26_.plus(_loc27_);
 			const _loc29_ = _loc26_.minus(_loc27_);
-			_loc30_ = new SegmentLinearDoubleSided(
+			const segment = new SegmentLinearDoubleSided(
 				_loc28_.x,
 				_loc28_.y,
 				_loc29_.x,
@@ -161,7 +161,7 @@ const loadLevelEditorStateEntities = (
 						gridEntity,
 						gridSegment,
 						cellIndex,
-						_loc30_,
+						segment,
 						gridEdges,
 						edgeIndicies,
 						isHorizontal,
@@ -179,7 +179,7 @@ const loadLevelEditorStateEntities = (
 							gridEntity,
 							gridSegment,
 							cellIndex,
-							_loc30_,
+							segment,
 							gridEdges,
 							edgeIndicies,
 							isHorizontal,
@@ -194,12 +194,12 @@ const loadLevelEditorStateEntities = (
 							gridEntity,
 							gridSegment,
 							cellIndex,
-							_loc30_,
+							segment,
 							gridEdges,
 							edgeIndicies,
 							isHorizontal,
-							_loc33_,
-							_loc34_
+							x,
+							y
 						)
 					);
 				}
@@ -237,12 +237,12 @@ const loadLevelEditorStateEntities = (
 					gridEntity,
 					x,
 					y,
-					newDirectionEnumToOldDirectionEnum(direction),
-					move
+					newDirectionEnumToOldDirectionEnum(direction as Direction),
+					move as number
 				)
 			);
 		} else if (type === EntityType.LAUNCHPAD) {
-			const directionVector = DirectionToVector[direction];
+			const directionVector = DirectionToVector[direction as Direction];
 			registerEntity(
 				entityList,
 				new EntityLaunchPad(
@@ -256,7 +256,7 @@ const loadLevelEditorStateEntities = (
 		} else if (type === EntityType.MINE) {
 			registerEntity(entityList, new EntityMine(gridEntity, x, y));
 		} else if (type === EntityType.ONEWAY) {
-			const directionVector = DirectionToVector[direction];
+			const directionVector = DirectionToVector[direction as Direction];
 			registerEntity(
 				entityList,
 				new EntityOneWayPlatform(
@@ -270,7 +270,7 @@ const loadLevelEditorStateEntities = (
 		} else if (type === EntityType.PLAYER) {
 			playerLocations.push(new Vector2(x, y));
 		} else if (type === EntityType.ROCKET) {
-			registerEntity(entityList, new EntityRocket(gridEntity, x, y));
+			registerEntity(entityList, new EntityRocket(x, y));
 		} else if (type === EntityType.SWITCH_LOCKED) {
 			if (i > 0) {
 				if (
@@ -295,18 +295,18 @@ const loadLevelEditorStateEntities = (
 				`loadLevelEditorStateEntities() found a locked switch without preceeding trap door!: ${i}`
 			);
 		} else if (type === EntityType.THWOMP) {
-			const directionVector = DirectionToVector[direction];
-			_loc52_ = 0;
-			_loc53_ = false;
+			const directionVector = DirectionToVector[direction as Direction];
+			let fallDirection = 0;
+			let isHorizontal = false;
 			if (directionVector.y === 0) {
-				_loc52_ = directionVector.x;
-				_loc53_ = true;
+				fallDirection = directionVector.x;
+				isHorizontal = true;
 			} else {
-				_loc52_ = directionVector.y;
+				fallDirection = directionVector.y;
 			}
 			registerEntity(
 				entityList,
-				new EntityThwomp(gridEntity, x, y, _loc52_, _loc53_)
+				new EntityThwomp(gridEntity, x, y, fallDirection, isHorizontal)
 			);
 		} else if (type === EntityType.TURRET) {
 			registerEntity(entityList, new EntityTurret(x, y));
@@ -317,7 +317,7 @@ const loadLevelEditorStateEntities = (
 					gridEntity,
 					x,
 					y,
-					newDirectionEnumToOldDirectionEnum(direction),
+					newDirectionEnumToOldDirectionEnum(direction as Direction),
 					move as number
 				)
 			);

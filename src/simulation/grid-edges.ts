@@ -162,6 +162,27 @@ export class GridEdges extends GridBase {
 		return true;
 	}
 
+	public scanHorizontal(
+		param1: number,
+		param2: number,
+		param3: number,
+		param4: number
+	): boolean {
+		let _loc6_ = 0;
+		let _loc5_;
+		if ((_loc5_ = param4 - param3) !== 0) {
+			_loc6_ = _loc5_ / Math.abs(_loc5_);
+			return this.scanHorizontalDirected(
+				param1,
+				param2,
+				param3,
+				param4,
+				_loc6_
+			);
+		}
+		return true;
+	}
+
 	scanHorizontalDirected(
 		param1: number,
 		param2: number,
@@ -276,5 +297,22 @@ export class GridEdges extends GridBase {
 			}
 		}
 		return _loc5_;
+	}
+	public isSolidIgnoreDoors(
+		param1: number,
+		param2: number,
+		param3: number,
+		param4: number
+	): boolean {
+		const _loc5_ = this.getIndexFromGridspaceAndOffset(
+			param1,
+			param2,
+			param3,
+			param4
+		);
+		if (param4 === 0) {
+			return this.edgesTileX[_loc5_] === EdgeType.SOLID;
+		}
+		return this.edgesTileY[_loc5_] === EdgeType.SOLID;
 	}
 }

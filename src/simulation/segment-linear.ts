@@ -2,9 +2,9 @@ import {
 	timeOfIntersectionCircleVsCircle,
 	timeOfIntersectionPointVsLineSegment,
 } from "../fns";
-import type { AABB } from "./AABB";
+import { AABB } from "./aabb.js";
 import type { Segment } from "./segment";
-import type { Vector2 } from "./vector2";
+import { Vector2 } from "./vector2.js";
 
 export class SegmentLinear implements Segment {
 	p0: Vector2;
@@ -12,8 +12,6 @@ export class SegmentLinear implements Segment {
 	aabb: AABB;
 
 	constructor(x1: number, y1: number, x2: number, y2: number) {
-		this.cp = new Vector2();
-		this.rayPoint = new Vector2();
 		this.p0 = new Vector2(x1, y1);
 		this.p1 = new Vector2(x2, y2);
 		this.aabb = new AABB(
@@ -137,27 +135,27 @@ export class SegmentLinear implements Segment {
 		return _loc9_;
 	}
 
-	debugDraw(param1: SimpleRenderer): void {
-		param1.SetStyle(0, 0, 100);
-		this.DebugDraw_NoStyle(param1);
+	debugDraw(context: CanvasRenderingContext2D): void {
+		// param1.SetStyle(0, 0, 100);
+		// this.DebugDraw_NoStyle(param1);
 	}
 
-	debugDrawSimple(param1: SimpleRenderer): void {
-		param1.DrawLine(this.p0.x, this.p0.y, this.p1.x, this.p1.y);
+	debugDrawSimple(context: CanvasRenderingContext2D): void {
+		// param1.DrawLine(this.p0.x, this.p0.y, this.p1.x, this.p1.y);
 	}
 
-	debugDrawNoStyle(param1: SimpleRenderer): void {
-		param1.DrawLine(this.p0.x, this.p0.y, this.p1.x, this.p1.y);
-		param1.DrawSquare(this.p0.x, this.p0.y, 2);
-		param1.DrawSquare(this.p1.x, this.p1.y, 2);
-		const _loc2_: vec2 = this.p0.To(this.p1);
-		const _loc3_: vec2 = _loc2_.Perp();
-		_loc3_.Normalize();
-		param1.DrawLine(
-			this.p0.x + 0.5 * _loc2_.x,
-			this.p0.y + 0.5 * _loc2_.y,
-			this.p0.x + 0.5 * _loc2_.x + 4 * _loc3_.x,
-			this.p0.y + 0.5 * _loc2_.y + 4 * _loc3_.y
-		);
+	debugDrawNoStyle(context: CanvasRenderingContext2D): void {
+		// param1.DrawLine(this.p0.x, this.p0.y, this.p1.x, this.p1.y);
+		// param1.DrawSquare(this.p0.x, this.p0.y, 2);
+		// param1.DrawSquare(this.p1.x, this.p1.y, 2);
+		// const _loc2_: vec2 = this.p0.To(this.p1);
+		// const _loc3_: vec2 = _loc2_.Perp();
+		// _loc3_.Normalize();
+		// param1.DrawLine(
+		// 	this.p0.x + 0.5 * _loc2_.x,
+		// 	this.p0.y + 0.5 * _loc2_.y,
+		// 	this.p0.x + 0.5 * _loc2_.x + 4 * _loc3_.x,
+		// 	this.p0.y + 0.5 * _loc2_.y + 4 * _loc3_.y
+		// );
 	}
 }

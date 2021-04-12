@@ -198,4 +198,16 @@ export class Simulator {
 			0
 		);
 	}
+
+	public launchPlayer(ninja: Ninja, param2: number, param3: number): void {
+		ninja.launch(param2, param3);
+	}
+
+	public goldHitPlayer(ninja: Ninja): boolean {
+		if (!this.stateFlagWon) {
+			++this.numGoldCollectedDuringTick[ninja.getIndex()];
+			return true;
+		}
+		return false;
+	}
 }

@@ -1,6 +1,6 @@
-import { tryToAcquireTarget } from "../../fns.js";
+import { overlapCircleVsSegment, tryToAcquireTarget } from "../../fns.js";
 import type { GridEntity } from "../grid-entity.js";
-import { SimulationRate, Simulator } from "../simulator.js";
+import { PlayerKillType, SimulationRate, Simulator } from "../simulator.js";
 import { Vector2 } from "../vector2.js";
 import { EntityBase } from "./entity-base";
 
@@ -29,10 +29,8 @@ export class EntityTurret extends EntityBase {
 	private timerFiretime: number;
 	private prefireDelay: number;
 	private postfireDelay: number;
-	private tmpHitPosition: Vector2;
-	private tmpHitNormal: Vector2;
 
-	constructor(gridEntity: GridEntity, x: number, y: number) {
+	constructor(x: number, y: number) {
 		super();
 		this.timerFiretime = 60 * (SimulationRate / 40);
 		this.prefireDelay = 10 * (SimulationRate / 40);
@@ -60,44 +58,7 @@ export class EntityTurret extends EntityBase {
 		this.tmpHitNormal = new Vector2();
 	}
 
-	collideVsCirclePhysical(
-		collision: CollisionResultPhysical,
-		param2: vec2,
-		param3: vec2,
-		param4: vec2,
-		param5: number
-	): boolean {
-		return false;
-	}
-
-	collideVsCircleLogical(
-		simulator: Simulator,
-		ninja: Ninja,
-		collision: CollisionResultLogical,
-		param4: vec2,
-		param5: vec2,
-		param6: vec2,
-		param7: number,
-		param8: number
-	): boolean {
-		return false;
-	}
-
 	think(simulator: Simulator): void {
-		let _loc3_ = NaN;
-		let _loc4_ = NaN;
-		let _loc5_ = NaN;
-		let _loc6_ = NaN;
-		let _loc7_: int = 0;
-		let _loc8_: vec2 = null;
-		let _loc9_ = NaN;
-		let _loc10_ = NaN;
-		let _loc11_ = NaN;
-		let _loc12_ = NaN;
-		this.tmpHitPosition.x = 0;
-		this.tmpHitPosition.y = 0;
-		this.tmpHitNormal.x = 0;
-		this.tmpHitNormal.y = 0;
 		if (this.currentState === TurretState.IDLE) {
 			const playerIndex = tryToAcquireTarget(
 				this.position,
@@ -115,101 +76,86 @@ export class EntityTurret extends EntityBase {
 				);
 			}
 			if (this.currentState === TurretState.TARGETING) {
-				if (
-					!this.IsCurrentTargetVisible(
-						param1,
-						this.TEMP_hit_pos,
-						this.TEMP_hit_n
-					)
-				) {
-					this.Event_StartIdling();
+				if (!this.isCurrentTargetVisible(simulator)) {
+					this.startIdling();
 				} else {
-					this.UpdateAim(
-						param1.playerList[this.targetIndex].GetPos(),
-						param1.playerList[this.targetIndex].GetVel()
+					this.updateAim(
+						simulator.playerList[this.targetIndex].getPosition(),
+						simulator.playerList[this.targetIndex].getVelocity()
 					);
-					if (this.timer_firetime < this.shot_timer) {
-						this.Event_StartFiring();
+					if (this.timerFiretime < this.shotTimer) {
+						this.startFiring();
 					}
 				}
-			} else if (this.CUR_STATE == STATE_PREFIRE) {
-				++this.shot_timer;
-				if (this.prefire_delay <= this.shot_timer) {
-					if (!param1.playerList[this.targetIndex].IsDead()) {
-						_loc3_ = this.aim_pos.x - this.pos.x;
-						_loc4_ = this.aim_pos.y - this.pos.y;
-						_loc5_ = Math.sqrt(_loc3_ * _loc3_ + _loc4_ * _loc4_);
+			} else if (this.currentState === TurretState.PREFIRE) {
+				++this.shotTimer;
+				if (this.prefireDelay <= this.shotTimer) {
+					if (!simulator.playerList[this.targetIndex].isDead()) {
+						let _loc3_ = this.aimPosition.x - this.position.x;
+						let _loc4_ = this.aimPosition.y - this.position.y;
+						const _loc5_ = Math.sqrt(_loc3_ * _loc3_ + _loc4_ * _loc4_);
 						_loc3_ /= _loc5_;
 						_loc4_ /= _loc5_;
-						_loc6_ = param1.segGrid.GetRaycastDistance(
-							this.pos.x,
-							this.pos.y,
+						const _loc6_ = simulator.segGrid.getRaycastDistance(
+							this.position.x,
+							this.position.y,
 							_loc3_,
 							_loc4_,
-							this.HACKY_hit_pos,
-							this.HACKY_hit_n
+							this.hitPosition,
+							this.hitNormal
 						);
-						_loc7_ = 0;
-						while (_loc7_ < param1.playerList.length) {
-							if (!param1.playerList[_loc7_].IsDead()) {
-								_loc8_ = param1.playerList[_loc7_].GetPos();
-								_loc9_ = param1.playerList[_loc7_].GetRadius();
+						for (const player of simulator.playerList) {
+							if (!player.isDead()) {
+								const playerPosition = player.getPosition();
+								const playerRadius = player.getRadius();
 								if (
-									colutils.Overlap_Circle_Vs_Segment(
-										_loc8_,
-										_loc9_,
-										this.pos,
-										this.HACKY_hit_pos,
+									overlapCircleVsSegment(
+										playerPosition,
+										playerRadius,
+										this.position,
+										this.hitPosition,
 										_loc6_
 									)
 								) {
-									_loc10_ = _loc8_.x - this.pos.x;
-									_loc11_ = _loc8_.y - this.pos.y;
-									_loc12_ = _loc3_ * _loc10_ + _loc4_ * _loc11_;
-									this.HACKY_hit_pos.x = this.pos.x + _loc12_ * _loc3_;
-									this.HACKY_hit_pos.y = this.pos.y + _loc12_ * _loc4_;
-									this.HACKY_hit_n.x = 0;
-									this.HACKY_hit_n.y = 0;
-									param1.Event_PlayerWasKilled(
-										param1.playerList[_loc7_],
-										sim_globals.ENEMYTYPE_TURRET,
-										this.HACKY_hit_pos.x,
-										this.HACKY_hit_pos.y,
+									const _loc10_ = playerPosition.x - this.position.x;
+									const _loc11_ = playerPosition.y - this.position.y;
+									const _loc12_ = _loc3_ * _loc10_ + _loc4_ * _loc11_;
+									this.hitPosition.x = this.position.x + _loc12_ * _loc3_;
+									this.hitPosition.y = this.position.y + _loc12_ * _loc4_;
+									this.hitNormal.x = 0;
+									this.hitNormal.y = 0;
+									simulator.killPlayer(
+										player,
+										PlayerKillType.TURRET,
+										this.hitPosition.x,
+										this.hitPosition.y,
 										_loc3_ * 8,
 										_loc4_ * 8
 									);
 								}
-								this.HACKY_drawtimer = 10;
+								this.drawTimer = 10;
 							}
-							_loc7_++;
 						}
-						param1
-							.HACKY_GetParticleManager()
-							.Spawn_TurretBullet(this.pos, this.HACKY_hit_pos);
-						this.gfx_triggerEvent = true;
+
+						// simulator
+						// 	.HACKY_GetParticleManager()
+						// 	.Spawn_TurretBullet(this.position, this.hitPosition);
+						this.gfxTriggerEvent = true;
 					}
-					this.Event_StopFiring();
+					this.stopFiring();
 				}
-			} else if (this.CUR_STATE == STATE_POSTFIRE) {
+			} else if (this.currentState === TurretState.POSTFIRE) {
 				++this.shot_timer;
-				if (this.postfire_delay <= this.shot_timer) {
-					if (
-						this.IsCurrentTargetVisible(
-							param1,
-							this.TEMP_hit_pos,
-							this.TEMP_hit_n
-						)
-					) {
-						this.Event_ResumeTargetting();
+				if (this.postfireDelay <= this.shotTimer) {
+					if (this.isCurrentTargetVisible(simulator)) {
+						this.resumeTargetting();
 					} else {
-						this.Event_StartIdling();
+						this.startIdling();
 					}
 				}
 			}
 		}
 	}
-
-	move(simulator: Simulator): void {}
 
 	generateGraphicComponent(): EntityGraphics {
 		return null;
@@ -222,5 +168,61 @@ export class EntityTurret extends EntityBase {
 		this.shotTimer = 0;
 		this.currentState = TurretState.TARGETING;
 		this.targetIndex = playerIndex;
+	}
+
+	private startIdling(): void {
+		this.currentState = TurretState.IDLE;
+		this.targetIndex = -1;
+	}
+
+	private startFiring(): void {
+		this.shotTimer = 0;
+		this.currentState = TurretState.PREFIRE;
+	}
+
+	private stopFiring(): void {
+		this.shotTimer = 0;
+		this.currentState = TurretState.POSTFIRE;
+	}
+
+	private resumeTargetting(): void {
+		this.shotTimer = 0;
+		this.currentState = TurretState.TARGETING;
+	}
+
+	private isCurrentTargetVisible(simulator: Simulator): boolean {
+		const player = simulator.playerList[this.targetIndex];
+		let isVisible = false;
+		if (!player.isDead()) {
+			isVisible = simulator.segGrid.raycastVsPlayer(
+				this.pos,
+				player.getPosition(),
+				player.getRadius()
+			);
+		}
+		return isVisible;
+	}
+
+	private updateAim(position: Vector2, velocity: Vector2): void {
+		const _loc3_ = velocity.x * this.predictionScale;
+		const _loc4_ = velocity.y * this.predictionScale;
+		const _loc5_ = position.x + _loc3_;
+		const _loc6_ = position.y + _loc4_;
+		const _loc7_ = _loc5_ - this.aimPosition.x;
+		const _loc8_ = _loc6_ - this.aimPosition.y;
+		const _loc9_ = _loc7_ * _loc7_ + _loc8_ * _loc8_;
+		this.aimRegion = 0;
+		let _loc10_ = 0;
+		while (_loc10_ < this.threshold2.length) {
+			if (_loc9_ > this.threshold2[_loc10_]) {
+				break;
+			}
+			++this.aimRegion;
+			_loc10_++;
+		}
+		this.shotTimer += this.timerStep[this.aimRegion];
+		const _loc11_ = this.aimSpeed[this.aimRegion];
+		this.aimPosition.x += _loc11_ * _loc7_;
+		this.aimPosition.y += _loc11_ * _loc8_;
 	}
 }

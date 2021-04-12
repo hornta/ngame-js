@@ -166,6 +166,10 @@ export class Ninja {
 		return this.r;
 	}
 
+	public getIndex(): number {
+		return this.playerId;
+	}
+
 	kill(
 		type: PlayerKillType,
 		x: number,
@@ -839,5 +843,19 @@ export class Ninja {
 			param2 * (this.jumpAmount + this.jumpYBias) * this.impulseScale;
 		this.jumpTimer = 0;
 		// this.ninja_gfx.HACKY_PlayOneshotSound("jump");
+	}
+
+	public launch(param1: number, param2: number): void {
+		if (this.currentState === PlayerState.STATE_AWAITINGDEATH) {
+			return;
+		}
+		this.position.x += param1 * this.impulse_scale;
+		this.position.y += param2 * this.impulse_scale;
+		this.velocity.x = param1 * this.impulse_scale;
+		this.velocity.y = param2 * this.impulse_scale;
+		this.fCount = 0;
+		if (this.currentState !== PlayerState.STATE_CELEBRATING) {
+			this.fall();
+		}
 	}
 }
