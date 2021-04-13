@@ -27,7 +27,7 @@ export class GridBase {
 	getCellIndexFromGridspacePosition(x: number, y: number): number {
 		if (x < 0 || x >= this.numCols || y < 0 || y >= this.numRows) {
 			x = Math.max(0, Math.min(this.numCols - 1, x));
-			y = Math.max(0, Math.min(this.numCols - 1, y));
+			y = Math.max(0, Math.min(this.numRows - 1, y));
 		}
 		return y * this.numCols + x;
 	}
