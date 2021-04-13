@@ -1,6 +1,8 @@
+import type { EntityGraphics } from "../../entity-graphics.js";
 import { overlapCircleVsCircle } from "../../fns";
 import type { CollisionResultLogical } from "../collision-result-logical";
 import type { GridEntity } from "../grid-entity";
+import type { Ninja } from "../ninja.js";
 import type { Simulator } from "../simulator";
 import { Vector2 } from "../vector2.js";
 import { EntityBase } from "./entity-base";
@@ -8,7 +10,7 @@ import { EntityBase } from "./entity-base";
 export class EntityExitDoor extends EntityBase {
 	position: Vector2;
 	radius: number;
-	isOpen: false;
+	isOpen: boolean;
 
 	constructor(x: number, y: number) {
 		super();
@@ -51,36 +53,28 @@ export class EntityExitDoor extends EntityBase {
 		return this.isOpen;
 	}
 
-	// override public function GenerateGraphicComponent() : EntityGraphics
-	// {
-	//    return new EntityGraphics_ExitDoor(this,this.pos.x,this.pos.y);
+	public generateGraphicComponent(): EntityGraphics | null {
+		// return new EntityGraphics_ExitDoor(this, this.pos.x, this.pos.y);
+		return null;
+	}
+
+	// public GFX_UpdateState(param1: EntityGraphics_ExitDoor): void {
+	// 	if (this.isOpen) {
+	// 		param1.anim = EntityGraphics_ExitDoor.ANIM_OPEN;
+	// 	} else {
+	// 		param1.anim = EntityGraphics_ExitDoor.ANIM_CLOSED;
+	// 	}
 	// }
 
-	// public function GFX_UpdateState(param1:EntityGraphics_ExitDoor) : void
-	// {
-	//    if(this.isOpen)
-	//    {
-	//       param1.anim = EntityGraphics_ExitDoor.ANIM_OPEN;
-	//    }
-	//    else
-	//    {
-	//       param1.anim = EntityGraphics_ExitDoor.ANIM_CLOSED;
-	//    }
-	// }
-
-	// override public function Debug_Draw(param1:SimpleRenderer) : void
-	// {
-	//    if(this.isOpen)
-	//    {
-	//       param1.SetStyle(0,0,100);
-	//       param1.DrawSquare(this.pos.x,this.pos.y,this.r);
-	//       param1.DrawSquare(this.pos.x,this.pos.y,this.r - 2);
-	//    }
-	//    else
-	//    {
-	//       param1.SetStyle(0,0,30);
-	//       param1.DrawCross(this.pos.x,this.pos.y,this.r);
-	//       param1.DrawSquare(this.pos.x,this.pos.y,this.r);
-	//    }
-	// }
+	public debugDraw(context: CanvasRenderingContext2D): void {
+		// if (this.isOpen) {
+		// 	param1.SetStyle(0, 0, 100);
+		// 	param1.DrawSquare(this.pos.x, this.pos.y, this.r);
+		// 	param1.DrawSquare(this.pos.x, this.pos.y, this.r - 2);
+		// } else {
+		// 	param1.SetStyle(0, 0, 30);
+		// 	param1.DrawCross(this.pos.x, this.pos.y, this.r);
+		// 	param1.DrawSquare(this.pos.x, this.pos.y, this.r);
+		// }
+	}
 }

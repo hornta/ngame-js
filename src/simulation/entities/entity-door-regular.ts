@@ -1,3 +1,8 @@
+import type { EntityGraphics } from "../../entity-graphics.js";
+import type { GridEdges } from "../grid-edges.js";
+import type { GridEntity } from "../grid-entity.js";
+import type { GridSegment } from "../grid-segment.js";
+import type { Segment } from "../segment.js";
 import type { Simulator } from "../simulator";
 import { EntityDoorBase } from "./entity-door-base";
 
@@ -17,7 +22,6 @@ export class EntityDoorRegular extends EntityDoorBase {
 		x: number,
 		y: number
 	) {
-		this.closeTimer = 0;
 		const triggerRadius = 12 * (5 / 6);
 		super(
 			entityGrid,
@@ -32,6 +36,7 @@ export class EntityDoorRegular extends EntityDoorBase {
 			triggerRadius,
 			false
 		);
+		this.closeTimer = 0;
 	}
 
 	onCollision(simulator: Simulator): void {
@@ -50,7 +55,7 @@ export class EntityDoorRegular extends EntityDoorBase {
 		}
 	}
 
-	generateGraphicComponent(): EntityGraphics {
+	generateGraphicComponent(): EntityGraphics | null {
 		// const _loc1_: vec2 = GetDoorPos();
 		// return new EntityGraphics_Door_Regular(
 		// 	this,
@@ -58,17 +63,18 @@ export class EntityDoorRegular extends EntityDoorBase {
 		// 	_loc1_.y,
 		// 	GetDoorOrn()
 		// );
+		return null;
 	}
 
-	GFX_UpdateState(param1: EntityGraphics_Door_Regular): void {
-		// if (IsDoorOpen()) {
-		// 	param1.anim = EntityGraphics_Door_Regular.ANIM_OPEN;
-		// } else {
-		// 	param1.anim = EntityGraphics_Door_Regular.ANIM_CLOSE;
-		// }
-	}
+	// GFX_UpdateState(param1: EntityGraphics_Door_Regular): void {
+	// if (IsDoorOpen()) {
+	// 	param1.anim = EntityGraphics_Door_Regular.ANIM_OPEN;
+	// } else {
+	// 	param1.anim = EntityGraphics_Door_Regular.ANIM_CLOSE;
+	// }
+	// }
 
-	Debug_Draw(param1: SimpleRenderer): void {
+	debugDraw(context: CanvasRenderingContext2D): void {
 		// Debug_Draw_Base(param1, true);
 		// param1.SetStyle(4, 2263074, 10);
 		// seg.DebugDraw_NoStyle(param1);

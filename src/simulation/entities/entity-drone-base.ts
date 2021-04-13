@@ -3,7 +3,7 @@ import type { GridEdges } from "../grid-edges";
 import type { GridEntity } from "../grid-entity";
 import type { GridSegment } from "../grid-segment";
 import type { Simulator } from "../simulator";
-import type { Vector2 } from "../vector2";
+import { Vector2 } from "../vector2.js";
 import { EntityBase } from "./entity-base.js";
 import {
 	EntityDroneDirectionToRadians,
@@ -29,6 +29,7 @@ export class EntityDroneBase extends EntityBase {
 		facingDirection: number,
 		moveType: number
 	) {
+		super();
 		this.position = new Vector2(x, y);
 		this.radius = 12 * (3 / 4);
 		this.speed = speed;
@@ -37,18 +38,17 @@ export class EntityDroneBase extends EntityBase {
 		this.facingDirection = facingDirection;
 		this.moveType = moveType;
 		this.gfxOrientation = EntityDroneDirectionToRadians[this.facingDirection];
-		entityGrid.addEntity(this.position);
+		entityGrid.addEntity(this.position, this);
 	}
 
 	move(simulator: Simulator): void {
 		this.moveForward(
 			simulator.edgeGrid,
 			simulator.segGrid,
-			simulator.entityGrid,
-			simulator.playerList
+			simulator.entityGrid
 		);
 		const radians = EntityDroneDirectionToRadians[this.facingDirection];
-		const shortestAngle = wrapAngleShortest(radians - this.gfxorn);
+		const shortestAngle = wrapAngleShortest(radians - this.gfxOrientation);
 		this.gfxOrientation = wrapAnglePosition(
 			this.gfxOrientation + 0.3 * shortestAngle
 		);
@@ -57,8 +57,7 @@ export class EntityDroneBase extends EntityBase {
 	moveForward(
 		edgeGrid: GridEdges,
 		segmentGrid: GridSegment,
-		entityGrid: GridEntity,
-		ninjas: Ninja[]
+		entityGrid: GridEntity
 	): void {
 		const directionVec = EntityDroneDirectionToVector[this.facingDirection];
 		const _loc6_ = directionVec.x * this.speed;
@@ -73,7 +72,7 @@ export class EntityDroneBase extends EntityBase {
 		const _loc15_ = diffX * _loc12_ + diffY * _loc13_;
 		if (distanceSquared < 0.000001 || _loc15_ < 0) {
 			this.position.setFrom(this.nextGoal);
-			if (this.chooseNextDirectionAndGoal(edgeGrid, ninjas)) {
+			if (this.chooseNextDirectionAndGoal(edgeGrid)) {
 				const _loc16_ = Math.max(0, this.speed - distanceSquared);
 				const _loc17_ = EntityDroneDirectionToVector[this.facingDirection];
 				this.position.x += _loc17_.x * _loc16_;

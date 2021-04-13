@@ -3,7 +3,8 @@ export class CollisionResultLogical {
 	vectorY: number;
 
 	constructor() {
-		this.clear();
+		this.vectorX = 0;
+		this.vectorY = 0;
 	}
 
 	clear(): void {

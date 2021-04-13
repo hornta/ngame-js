@@ -1,7 +1,10 @@
+import type { EntityGraphics } from "../../entity-graphics.js";
 import type { CollisionResultLogical } from "../collision-result-logical.js";
 import type { CollisionResultPhysical } from "../collision-result-physical.js";
 import type { GridEntity } from "../grid-entity.js";
-import type { Vector2 } from "../vector2";
+import type { Ninja } from "../ninja.js";
+import type { Simulator } from "../simulator.js";
+import { Vector2 } from "../vector2.js";
 import { EntityBase } from "./entity-base";
 
 export class EntityOneWayPlatform extends EntityBase {
@@ -18,7 +21,7 @@ export class EntityOneWayPlatform extends EntityBase {
 	) {
 		super();
 		this.position = new Vector2(x, y);
-		this.n = new Vector2(normalX, normalY);
+		this.normal = new Vector2(normalX, normalY);
 		this.r = 12;
 		entityGrid.addEntity(this.position, this);
 	}
@@ -73,7 +76,7 @@ export class EntityOneWayPlatform extends EntityBase {
 		return false;
 	}
 
-	generateGraphicComponent(): EntityGraphics {
+	generateGraphicComponent(): EntityGraphics | null {
 		// return new EntityGraphics_OnewayPlatform(
 		// 	this.pos.x,
 		// 	this.pos.y,

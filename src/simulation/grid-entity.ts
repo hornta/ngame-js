@@ -63,7 +63,7 @@ export class GridEntity extends GridBase {
 
 	removeEntityFromCell(gridIndex: number, entity: EntityBase): void {
 		const cell = this.cells[gridIndex];
-		if (!cell.includes(entity_)) {
+		if (!cell.includes(entity)) {
 			throw new Error(
 				`WARNING! RemoveEntityFromCell() found an out-of-sync cell index: ${gridIndex}`
 			);

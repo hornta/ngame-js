@@ -9,10 +9,10 @@ export enum PlayerKey {
 }
 
 export class PlayerKeys {
-	playerBindings: number[];
+	playerBindings: string[];
 
 	constructor() {
-		this.playerBindings = new Array<number[]>(
+		this.playerBindings = new Array<string>(
 			NUMBER_OF_PLAYER_KEYS * MAX_NUMBER_OF_PLAYERS
 		);
 	}
@@ -25,12 +25,12 @@ export class PlayerKeys {
 		this.playerBindings[playerId * NUMBER_OF_PLAYER_KEYS + playerKey] = key;
 	}
 
-	getActionKeyForPlayer(key: number, playerId: number): number {
+	getActionKeyForPlayer(key: number, playerId: number): string {
 		return this.playerBindings[playerId * NUMBER_OF_PLAYER_KEYS + key];
 	}
 
-	getActions(keys: number[]): number[] {
-		const actionKeys: number[] = [];
+	getActions(keys: number[]): string[] {
+		const actionKeys: string[] = [];
 		for (let playerId = 0; playerId < MAX_NUMBER_OF_PLAYERS; ++playerId) {
 			for (let i = 0; i < keys.length; ++i) {
 				actionKeys.push(this.getActionKeyForPlayer(keys[i], playerId));

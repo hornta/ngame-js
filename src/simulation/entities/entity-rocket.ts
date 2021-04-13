@@ -1,7 +1,9 @@
+import type { EntityGraphics } from "../../entity-graphics.js";
 import { overlapCircleVsCircle, tryToAcquireTarget } from "../../fns.js";
 import type { CollisionResultLogical } from "../collision-result-logical.js";
+import type { Ninja } from "../ninja.js";
 import { PlayerKillType, SimulationRate, Simulator } from "../simulator.js";
-import type { Vector2 } from "../vector2.js";
+import { Vector2 } from "../vector2.js";
 import { EntityBase } from "./entity-base";
 
 enum RocketState {
@@ -47,7 +49,6 @@ export class EntityRocket extends EntityBase {
 		this.currentState = RocketState.IDLE;
 		this.targetIndex = -1;
 		this.gfxPrevState = this.currentState;
-		this.nearSegments = [];
 		this.oldPosition = new Vector2();
 		this.rocketVelocity = new Vector2();
 		this.hitPosition = new Vector2();
@@ -95,9 +96,6 @@ export class EntityRocket extends EntityBase {
 		let _loc4_ = NaN;
 		let _loc5_ = NaN;
 		let _loc6_ = NaN;
-		const _loc7_: int = 0;
-		const _loc8_: Segment = null;
-		const _loc9_ = NaN;
 		let _loc10_ = NaN;
 		let _loc11_ = NaN;
 		let _loc12_ = NaN;
@@ -113,15 +111,15 @@ export class EntityRocket extends EntityBase {
 		let _loc22_ = NaN;
 		let _loc23_ = NaN;
 		let _loc24_ = NaN;
-		this.gfx_PREV_STATE = this.currentState;
+		this.gfxPrevState = this.currentState;
 		if (this.currentState === RocketState.IDLE) {
 			const _loc2_ = tryToAcquireTarget(
-				this.pos,
+				this.position,
 				simulator.playerList,
 				simulator.segGrid
 			);
 			if (0 <= _loc2_) {
-				this.shot_timer = 0;
+				this.shotTimer = 0;
 				this.currentState = RocketState.PREFIRE;
 				this.targetIndex = _loc2_;
 			}
@@ -164,8 +162,8 @@ export class EntityRocket extends EntityBase {
 				this.rocketSpeed = this.maxSpeed;
 			}
 			this.oldPosition.setFrom(this.rocketPos);
-			this.rocketVelocity.x = this.rocket_speed * this.rocketDir.x;
-			this.rocketVelocity.y = this.rocket_speed * this.rocketDir.y;
+			this.rocketVelocity.x = this.rocketSpeed * this.rocketDir.x;
+			this.rocketVelocity.y = this.rocketSpeed * this.rocketDir.y;
 			this.rocketPos.x += this.rocketVelocity.x;
 			this.rocketPos.y += this.rocketVelocity.y;
 			simulator.entityGrid.moveEntity(this.rocketPos, this);
@@ -244,7 +242,7 @@ export class EntityRocket extends EntityBase {
 		}
 	}
 
-	generateGraphicComponent(): EntityGraphics {
+	generateGraphicComponent(): EntityGraphics | null {
 		// return new EntityGraphics_Rocket(this, this.pos.x, this.pos.y);
 		return null;
 	}

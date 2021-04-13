@@ -8,12 +8,14 @@ import { EntityThwomp } from "./entities/entity-thwomp";
 import { RagdollParticle } from "./ragdoll-particle.js";
 import { RagdollStick } from "./ragdoll-stick.js";
 import type { Simulator } from "./simulator";
-import type { Vector2 } from "./vector2";
+import { Vector2 } from "./vector2.js";
 
 enum RagdollState {
 	UNEXPLODED = 0,
 	EXPLODED = 1,
 }
+
+const closestPoint = new Vector2(0, 0);
 
 const particleRadius = [2.49, 2.49, 1.99, 1.99, 2.99, 2.99];
 const particleDrag = [0.99, 0.995, 0.995, 0.99, 0.99, 0.995];
@@ -24,8 +26,8 @@ const stickMaxLength = [6, 8, 8, 12, 12];
 export class Ragdoll {
 	currentState: RagdollState;
 	explosionAccumulator: number;
-	particleList: RagdollParticle[][];
-	stickList: RagdollStick[][];
+	particleList: Record<RagdollState, RagdollParticle[]>;
+	stickList: Record<RagdollState, RagdollStick[]>;
 	resultLogical: CollisionResultLogical;
 	resultPhysical: CollisionResultPhysical;
 
@@ -159,7 +161,7 @@ export class Ragdoll {
 						particle.solverPosition,
 						particle.velocity,
 						particle.position,
-						particle.r
+						particle.radius
 					)
 				) {
 					this.respondToCollision(
@@ -253,18 +255,17 @@ export class Ragdoll {
 
 		for (const particle of this.particleList[this.currentState]) {
 			let numIterations = 0;
-			const closestPoint = new Vector2(0, 0);
 			const _loc6_ = getSingleClosestPointSigned(
 				simulator.segGrid,
 				particle.solverPosition,
-				particle.r * 4,
+				particle.radius * 4,
 				closestPoint
 			);
 			while (_loc6_ !== 0) {
-				const _loc7_ = particle.solverPosition.x - closestPoint.x;
-				const _loc8_ = particle.solverPosition.y - closestPoint.y;
+				let _loc7_ = particle.solverPosition.x - closestPoint.x;
+				let _loc8_ = particle.solverPosition.y - closestPoint.y;
 				const _loc9_ = Math.sqrt(_loc7_ * _loc7_ + _loc8_ * _loc8_);
-				const _loc10_ = particle.r - _loc6_ * _loc9_;
+				const _loc10_ = particle.radius - _loc6_ * _loc9_;
 				if (_loc10_ < 1e-7) {
 					break;
 				}
@@ -358,14 +359,14 @@ export class Ragdoll {
 			);
 			for (const entity of entities) {
 				if (
-					entity.collideVsCirclePhysical(
+					entity.collideVsCircleLogical(
 						simulator,
 						null,
 						this.resultLogical,
-						particle.pos,
-						particle.vel,
-						particle.pos,
-						particle.r,
+						particle.position,
+						particle.velocity,
+						particle.position,
+						particle.radius,
 						0.1
 					)
 				) {
@@ -399,11 +400,11 @@ export class Ragdoll {
 		param2: Vector2,
 		param3: Vector2,
 		param4: Vector2,
-		param5: Vector2[],
-		param6: Vector2[]
+		param5: Vector2[] | null,
+		param6: Vector2[] | null
 	): void {
-		let _loc7_: Vector2[] = null;
-		let _loc8_: Vector2[] = null;
+		let _loc7_: Vector2[];
+		let _loc8_: Vector2[];
 		this.currentState = RagdollState.UNEXPLODED;
 		this.explosionAccumulator = 0;
 		if (param5 !== null && param6 !== null) {

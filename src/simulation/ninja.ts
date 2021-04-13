@@ -11,6 +11,7 @@ import {
 import { Vector2 } from "./vector2.js";
 import { CollisionResultLogical } from "./collision-result-logical.js";
 import { CollisionResultPhysical } from "./collision-result-physical.js";
+import { EntityThwomp } from "./entities/entity-thwomp.js";
 
 enum PlayerState {
 	STATE_STANDING = 0,
@@ -30,7 +31,7 @@ export class Ninja {
 	position: Vector2;
 	velocity: Vector2;
 	oldPosition: Vector2;
-	r: number;
+	radius: number;
 	g: number;
 	d: number;
 	maxSpeedAir: number;
@@ -94,10 +95,10 @@ export class Ninja {
 		this.gfxColor = color;
 		this.velocity = new Vector2(0, 0);
 		this.oldPosition = new Vector2(0, 0);
-		this.r = 10;
+		this.radius = 10;
 		this.impulseScale = 40 / SimulationRate;
-		this.maxSpeedAir = this.r * 0.5 * (40 / SimulationRate);
-		this.maxSpeedGround = this.r * 0.5 * (40 / SimulationRate);
+		this.maxSpeedAir = this.radius * 0.5 * (40 / SimulationRate);
+		this.maxSpeedGround = this.radius * 0.5 * (40 / SimulationRate);
 		this.groundAccel = 0.15 * (40 / SimulationRate) * (40 / SimulationRate);
 		this.airAccel = 0.1 * (40 / SimulationRate) * (40 / SimulationRate);
 		this.normGrav = 0.15 * (40 / SimulationRate) * (40 / SimulationRate);
@@ -114,7 +115,7 @@ export class Ninja {
 		this.jumpAmount = 1;
 		this.jumpYBias = 2;
 		this.maxJumpTime = 30 * (SimulationRate / 40);
-		this.terminalVelocity = this.r * 0.9 * (40 / SimulationRate);
+		this.terminalVelocity = this.radius * 0.9 * (40 / SimulationRate);
 		this.jumpTimer = 0;
 		this.wasJumpHeld = false;
 		this.wasInAir = false;
@@ -135,7 +136,6 @@ export class Ninja {
 		this.deathPosition = new Vector2();
 		this.deathForce = new Vector2();
 		this.tmpNearPosition = new Vector2();
-		this.entityList = [];
 		this.resultLogical = new CollisionResultLogical();
 		this.resultPhysical = new CollisionResultPhysical();
 		this.closestPoint = new Vector2();
@@ -163,7 +163,7 @@ export class Ninja {
 	}
 
 	getRadius(): number {
-		return this.r;
+		return this.radius;
 	}
 
 	public getIndex(): number {
@@ -199,11 +199,10 @@ export class Ninja {
 			this.currentState === PlayerState.STATE_AWAITINGDEATH ||
 			this.currentState === PlayerState.STATE_DEAD
 		) {
-			return false;
+			return;
 		}
 		this.exitCurrentState();
 		this.currentState = PlayerState.STATE_CELEBRATING;
-		return true;
 	}
 
 	enable(): void {
@@ -262,14 +261,14 @@ export class Ninja {
 		param2: number,
 		param3: number,
 		param4: boolean,
-		param5: boolean
+		isCrushed: boolean
 	): void {
 		this.position.x += param3 * param1;
 		this.position.y += param3 * param2;
-		if (param5) {
-			this.crush_flag = true;
+		if (isCrushed) {
+			this.crushFlag = true;
 		}
-		if (param4 || param5) {
+		if (param4 || isCrushed) {
 			this.crushVector.x += param3 * param1;
 			this.crushVector.y += param3 * param2;
 			this.crushDistance += Math.abs(param3);
@@ -285,7 +284,7 @@ export class Ninja {
 			this.velocity.y += param3 * param2;
 		}
 		if (param2 < 0) {
-			++this.fcount;
+			++this.fCount;
 			this.fVector.x += param1;
 			this.fVector.y += param2;
 		}
@@ -306,7 +305,7 @@ export class Ninja {
 						this.position,
 						this.velocity,
 						this.oldPosition,
-						this.r
+						this.radius
 					)
 				) {
 					this.respondToCollision(
@@ -314,7 +313,7 @@ export class Ninja {
 						this.resultPhysical.ny,
 						this.resultPhysical.pen,
 						this.resultPhysical.isHardCollision,
-						entity
+						entity instanceof EntityThwomp
 					);
 				}
 			}
@@ -331,14 +330,14 @@ export class Ninja {
 			const _loc4_ = getSingleClosestPointSigned(
 				simulator.segGrid,
 				this.position,
-				this.r,
+				this.radius,
 				closestPoint
 			);
 			while (_loc4_ !== 0) {
-				const _loc5_ = this.position.x - closestPoint.x;
-				const _loc6_ = this.position.y - closestPoint.y;
+				let _loc5_ = this.position.x - closestPoint.x;
+				let _loc6_ = this.position.y - closestPoint.y;
 				const _loc7_ = Math.sqrt(_loc5_ * _loc5_ + _loc6_ * _loc6_);
-				const _loc8_ = this.r - _loc4_ * _loc7_;
+				const _loc8_ = this.radius - _loc4_ * _loc7_;
 				if (_loc8_ < 1e-7) {
 					break;
 				}
@@ -360,8 +359,8 @@ export class Ninja {
 
 	postCollision(simulator: Simulator): void {
 		let _loc2_ = NaN;
-		if (this.currentState !== PSTATE_DISABLED) {
-			if (this.currentState === PSTATE_DEAD) {
+		if (this.currentState !== PlayerState.STATE_DISABLED) {
+			if (this.currentState === PlayerState.STATE_DEAD) {
 				this.raggy.postCollision(simulator);
 			} else {
 				this.oldPosition.setFrom(this.position);
@@ -381,7 +380,7 @@ export class Ninja {
 							this.position,
 							this.velocity,
 							this.oldPosition,
-							this.r,
+							this.radius,
 							_loc2_
 						)
 					) {
@@ -392,7 +391,7 @@ export class Ninja {
 					}
 				}
 
-				const offset = this.r + _loc2_;
+				const offset = this.radius + _loc2_;
 				const segments = simulator.segGrid.gatherCellContentsFromWorldspaceRegion(
 					this.position.x - offset,
 					this.position.y - offset,
@@ -402,8 +401,8 @@ export class Ninja {
 				for (const segment of segments) {
 					const segmentClosestPoint = new Vector2();
 					segment.getClosestPoint(this.position, segmentClosestPoint);
-					const _loc7_ = this.position.x - segmentClosestPoint.x;
-					const _loc8_ = this.position.y - segmentClosestPoint.y;
+					let _loc7_ = this.position.x - segmentClosestPoint.x;
+					let _loc8_ = this.position.y - segmentClosestPoint.y;
 					const _loc9_ = Math.sqrt(_loc7_ * _loc7_ + _loc8_ * _loc8_);
 					if (_loc8_ === 0 && _loc9_ <= offset && _loc9_ !== 0) {
 						_loc7_ *= 1 / _loc9_;
@@ -473,8 +472,6 @@ export class Ninja {
 	}
 
 	think(simulator: Simulator, frameNumber: number): void {
-		let _loc10_: Vector2[] = null;
-		let _loc11_: Vector2[] = null;
 		let _loc12_ = false;
 		let _loc13_ = NaN;
 		let _loc14_ = NaN;
@@ -511,15 +508,15 @@ export class Ninja {
 		const _loc5_ = this.inputSource.isButtonDownJumping();
 		const _loc6_: boolean = _loc5_ && !this.wasJumpHeld;
 		this.wasJumpHeld = _loc5_;
-		if (this.curState === PlayerState.STATE_DISABLED) {
+		if (this.currentState === PlayerState.STATE_DISABLED) {
 			return;
 		}
-		if (this.curState === PlayerState.STATE_DEAD) {
+		if (this.currentState === PlayerState.STATE_DEAD) {
 			return;
 		}
-		if (this.curState === PlayerState.STATE_AWAITINGDEATH) {
-			_loc10_ = null;
-			_loc11_ = null;
+		if (this.currentState === PlayerState.STATE_AWAITINGDEATH) {
+			const _loc10_: Vector2[] | null = null;
+			const _loc11_: Vector2[] | null = null;
 			// if (this.ninja_gfx !== null && this.ninja_gfx.hasValidPose) {
 			// 	_loc10_ = new Array<Vector2>(6);
 			// 	_loc11_ = new Array<Vector2>(6);
@@ -549,7 +546,7 @@ export class Ninja {
 			// 		3 + Math.floor(Math.random() * 4)
 			// 	);
 			_loc12_ = Math.random() < 0.5;
-			if (this.death_type === PlayerDeathType.EXPLOSIVE) {
+			if (this.deathType === PlayerDeathType.EXPLOSIVE) {
 				if (_loc12_) {
 					// this.ninja_gfx.HACKY_PlayOneshotSound("explode1");
 				} else {
@@ -559,7 +556,7 @@ export class Ninja {
 				// this.ninja_gfx.HACKY_PlayOneshotSound("fall");
 			} else if (this.deathType === PlayerDeathType.LASER) {
 				// this.ninja_gfx.HACKY_PlayOneshotSound("laser");
-			} else if (this.death_type === PlayerDeathType.ELECTRIC) {
+			} else if (this.deathType === PlayerDeathType.ELECTRIC) {
 				if (_loc12_) {
 					// this.ninja_gfx.HACKY_PlayOneshotSound("zap1");
 				} else {
@@ -751,7 +748,7 @@ export class Ninja {
 					return;
 				}
 				if (_loc9_ !== 0) {
-					this.run(_loc9_);
+					this.run();
 					return;
 				}
 				_loc39_ = this.floorN.x;
@@ -849,10 +846,10 @@ export class Ninja {
 		if (this.currentState === PlayerState.STATE_AWAITINGDEATH) {
 			return;
 		}
-		this.position.x += param1 * this.impulse_scale;
-		this.position.y += param2 * this.impulse_scale;
-		this.velocity.x = param1 * this.impulse_scale;
-		this.velocity.y = param2 * this.impulse_scale;
+		this.position.x += param1 * this.impulseScale;
+		this.position.y += param2 * this.impulseScale;
+		this.velocity.x = param1 * this.impulseScale;
+		this.velocity.y = param2 * this.impulseScale;
 		this.fCount = 0;
 		if (this.currentState !== PlayerState.STATE_CELEBRATING) {
 			this.fall();

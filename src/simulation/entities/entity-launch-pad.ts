@@ -1,3 +1,4 @@
+import type { EntityGraphics } from "../../entity-graphics.js";
 import { overlapCircleVsCircle } from "../../fns.js";
 import type { CollisionResultLogical } from "../collision-result-logical.js";
 import type { GridEntity } from "../grid-entity.js";
@@ -11,7 +12,6 @@ export class EntityLaunchPad extends EntityBase {
 	private normal: Vector2;
 	private r: number;
 	private strength: number;
-	private pow: number;
 	private gfxTriggerEvent: boolean;
 
 	constructor(
@@ -52,9 +52,9 @@ export class EntityLaunchPad extends EntityBase {
 					_loc11_ += Math.abs(this.normal.y);
 				}
 				if (ninja === null) {
-					collision.vec_x = this.normal.x * 12;
-					collision.vec_y = this.normal.y * 12;
-					this.gfx_triggerEvent = true;
+					collision.vectorX = this.normal.x * 12;
+					collision.vectorY = this.normal.y * 12;
+					this.gfxTriggerEvent = true;
 					return true;
 				}
 				simulator.launchPlayer(
@@ -68,7 +68,7 @@ export class EntityLaunchPad extends EntityBase {
 		return false;
 	}
 
-	generateGraphicComponent(): EntityGraphics {
+	generateGraphicComponent(): EntityGraphics | null {
 		// return new EntityGraphics_Launchpad(this,this.pos.x,this.pos.y,Math.atan2(this.n.y,this.n.x));
 		return null;
 	}

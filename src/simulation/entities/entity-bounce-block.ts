@@ -1,10 +1,11 @@
+import type { EntityGraphics } from "../../entity-graphics.js";
 import { penetrationSquareVsPoint } from "../../fns.js";
 import type { CollisionResultLogical } from "../collision-result-logical.js";
 import type { CollisionResultPhysical } from "../collision-result-physical.js";
 import type { GridEntity } from "../grid-entity.js";
 import type { Ninja } from "../ninja.js";
 import { SimulationRate, Simulator } from "../simulator.js";
-import type { Vector2 } from "../vector2";
+import { Vector2 } from "../vector2.js";
 import { EntityBase } from "./entity-base";
 
 export class EntityBounceBlock extends EntityBase {
@@ -31,7 +32,7 @@ export class EntityBounceBlock extends EntityBase {
 		}
 		this.mass = 0.2;
 		this.isSleeping = true;
-		entityGrid.addEntity(this.pos, this);
+		entityGrid.addEntity(this.position, this);
 		this.normal = new Vector2();
 	}
 
@@ -76,18 +77,18 @@ export class EntityBounceBlock extends EntityBase {
 		param7: number,
 		param8: number
 	): boolean {
-		if (param2 !== null) {
+		if (ninja !== null) {
 			this.normal.x = 0;
 			this.normal.y = 0;
 			const _loc9_ = penetrationSquareVsPoint(
-				this.pos,
+				this.position,
 				param8 + this.radius + param7,
 				param4,
 				this.normal
 			);
 			if (_loc9_ !== 0) {
-				collision.vec_x = this.normal.x;
-				collision.vec_y = this.normal.y;
+				collision.vectorX = this.normal.x;
+				collision.vectorY = this.normal.y;
 				return true;
 			}
 		}
@@ -126,7 +127,7 @@ export class EntityBounceBlock extends EntityBase {
 		simulator.entityGrid.moveEntity(this.position, this);
 	}
 
-	generateGraphicComponent(): EntityGraphics {
+	generateGraphicComponent(): EntityGraphics | null {
 		// return new EntityGraphics_BounceBlock(this);
 		return null;
 	}

@@ -1,4 +1,5 @@
 import { Buffer } from "buffer";
+import { ByteArray } from "./byte-array.js";
 import type { Input } from "./input";
 import { InputBit, InputSourceBase } from "./input-source-base";
 
@@ -14,7 +15,7 @@ export class InputSourceRecorder extends InputSourceBase {
 		keyLeft: string,
 		keyRight: string
 	) {
-		super(Buffer.alloc(4096));
+		super(new ByteArray(Buffer.alloc(4096)));
 		this.input = input;
 		this.keyJump = keyJump;
 		this.keyLeft = keyLeft;
@@ -26,7 +27,7 @@ export class InputSourceRecorder extends InputSourceBase {
 		this.currentLeft = this.input.isKeyDown(this.keyLeft);
 		this.currentRight = this.input.isKeyDown(this.keyRight);
 		if (frame >= this.frames.length) {
-			this.frames.length = frame * 2;
+			this.frames.buffer = Buffer.alloc(frame * 2, this.frames.buffer);
 		}
 		let frameInput = 0;
 		if (this.currentJump) {

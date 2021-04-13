@@ -3,8 +3,10 @@ import type { CollisionResultLogical } from "../collision-result-logical";
 import type { GridEdges } from "../grid-edges";
 import type { GridEntity } from "../grid-entity";
 import type { GridSegment } from "../grid-segment";
+import type { Ninja } from "../ninja.js";
 import type { Segment } from "../segment";
-import type { Vector2 } from "../vector2";
+import type { Simulator } from "../simulator.js";
+import { Vector2 } from "../vector2.js";
 import { EntityBase } from "./entity-base";
 
 export abstract class EntityDoorBase extends EntityBase {
@@ -31,6 +33,7 @@ export abstract class EntityDoorBase extends EntityBase {
 		triggerRadius: number,
 		isOpen: boolean
 	) {
+		super();
 		this.triggerPosition = new Vector2(x, y);
 		this.triggerRadius = triggerRadius;
 		this.segmentGrid = segmentGrid;
@@ -39,6 +42,7 @@ export abstract class EntityDoorBase extends EntityBase {
 		this.edgeGrid = edgeGrid;
 		this.isHorizontal = isHorizontal;
 		this.isOpen = isOpen;
+		this.edgeIndicies = [];
 		for (const edgeIndex of edgeIndicies) {
 			this.edgeIndicies.push(edgeIndex);
 		}
@@ -60,7 +64,7 @@ export abstract class EntityDoorBase extends EntityBase {
 		radius: number,
 		param8: number
 	): boolean {
-		if (ninja != null) {
+		if (ninja !== null) {
 			if (
 				overlapCircleVsCircle(
 					this.triggerPosition,
@@ -69,7 +73,7 @@ export abstract class EntityDoorBase extends EntityBase {
 					radius
 				)
 			) {
-				this.onCollision(param1);
+				this.onCollision(simulator);
 			}
 		}
 		return false;
@@ -96,14 +100,14 @@ export abstract class EntityDoorBase extends EntityBase {
 	}
 
 	removeDoorFromWorld(): void {
-		this.segmentGrid.removeDoorSegment(this.seg_index, this.seg);
+		this.segmentGrid.removeDoorSegment(this.segmentIndex, this.segment);
 		for (const edgeIndex of this.edgeIndicies) {
 			this.edgeGrid.decrementDoorEdge(edgeIndex, this.isHorizontal);
 		}
 	}
 
 	addDoorToWorld(): void {
-		this.segmentGrid.addDoorSegment(this.seg_index, this.seg);
+		this.segmentGrid.addDoorSegment(this.segmentIndex, this.segment);
 		for (const edgeIndex of this.edgeIndicies) {
 			this.edgeGrid.incrementDoorEdge(edgeIndex, this.isHorizontal);
 		}

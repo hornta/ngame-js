@@ -83,6 +83,13 @@ export class GridEdges extends GridBase {
 		return this.worldspaceToGridspace(param1);
 	}
 
+	public getWorldspaceCoordinateFromGridEdge1D(
+		param1: number,
+		param2: number
+	): number {
+		return (param1 + Math.max(0, param2)) * this.cellSize;
+	}
+
 	getIndexFromGridspaceAndOffset(
 		param1: number,
 		param2: number,
@@ -241,7 +248,7 @@ export class GridEdges extends GridBase {
 	}
 
 	decrementDoorEdge(edgeIndex: number, isHorizontal: boolean): void {
-		if (edgeIndex < 0 || edgeIndex >= numcells) {
+		if (edgeIndex < 0 || edgeIndex >= this.numCells) {
 			throw new Error(
 				`decrementDoorEdge() was called with an invalid index: ${edgeIndex}`
 			);

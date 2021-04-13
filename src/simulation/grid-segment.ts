@@ -3,6 +3,8 @@ import type { Segment } from "./segment";
 import { Vector2 } from "./vector2.js";
 
 const dummyVector = new Vector2();
+const tmpPosition = new Vector2(0, 0);
+const tmpNormal = new Vector2(0, 0);
 
 export class GridSegment extends GridBase {
 	cells: Segment[][];
@@ -14,11 +16,6 @@ export class GridSegment extends GridBase {
 		for (let i = 0; i < this.numCells; ++i) {
 			this.cells.push([]);
 		}
-
-		this.tmpRayPosition = new Vector2();
-		this.tmpRayVector = new Vector2();
-		this.tmpP = new Vector2();
-		this.tmpN = new Vector2();
 	}
 
 	clear(): void {
@@ -47,8 +44,6 @@ export class GridSegment extends GridBase {
 		param6: Vector2
 	): number {
 		let _loc7_ = 2;
-		const tmpPosition = new Vector2(0, 0);
-		const tmpNormal = new Vector2(0, 0);
 		const cellIndex = this.getCellIndexFromGridspacePosition(gridX, gridY);
 		for (const segment of this.cells[cellIndex]) {
 			const _loc12_ = segment.intersectWithRay(
@@ -79,9 +74,8 @@ export class GridSegment extends GridBase {
 		param5: Vector2,
 		param6: Vector2
 	): number {
-		let _loc17_ = NaN;
-		const gridX = this.worldspaceToGridspace(x);
-		const gridY = this.worldspaceToGridspace(y);
+		let gridX = this.worldspaceToGridspace(x);
+		let gridY = this.worldspaceToGridspace(y);
 		let _loc9_ = 0;
 		let _loc10_ = 0;
 		let _loc11_ = 999999;
@@ -113,34 +107,33 @@ export class GridSegment extends GridBase {
 			return -1;
 		}
 		const _loc15_ = 2000;
-		const tmpRayPosition = new Vector2(x, y);
-		const tmpRayVector = new Vector2(_loc15_ * param3, _loc15_ * param4);
 		let _loc16_ = 2;
 
-		while (
-			(_loc17_ = this.intersectRayVsCellContents(
-				gridX,
-				gridY,
-				tmpRayPosition,
-				tmpRayVector,
-				param5,
-				param6
-			)) !== -1
-		) {
+		const _loc17_ = this.intersectRayVsCellContents(
+			gridX,
+			gridY,
+			new Vector2(x, y),
+			new Vector2(_loc15_ * param3, _loc15_ * param4),
+			param5,
+			param6
+		);
+		while (_loc17_ !== -1) {
 			if (_loc17_ !== 2) {
 				_loc16_ = _loc17_;
 				return _loc16_ * _loc15_;
 			}
 			if (_loc11_ < _loc12_) {
 				_loc11_ += _loc13_;
-				if ((gridX += _loc9_) < 0 || gridX >= this.numCols) {
+				gridX += _loc9_;
+				if (gridX < 0 || gridX >= this.numCols) {
 					throw new Error(
 						"getRaycastDistance() has a ray that missed everything in U"
 					);
 				}
 			} else {
 				_loc12_ += _loc14_;
-				if ((gridY += _loc10_) < 0 || gridY >= this.numRows) {
+				gridY += _loc10_;
+				if (gridY < 0 || gridY >= this.numRows) {
 					throw new Error(
 						"getRaycastDistance() has a ray that missed everything in V"
 					);
@@ -155,33 +148,19 @@ export class GridSegment extends GridBase {
 	raycastVsPlayer(
 		position: Vector2,
 		playerPosition: Vector2,
-		playerRadius: number
-	): boolean {
-		return this.raycastVsPlayer(
-			position,
-			playerPosition,
-			playerRadius,
-			dummyVector,
-			dummyVector
-		);
-	}
-
-	raycastVsPlayer(
-		position: Vector2,
-		playerPosition: Vector2,
 		playerRadius: number,
-		hitPosition: Vector2,
-		hitNormal: Vector2
+		hitPosition: Vector2 = dummyVector,
+		hitNormal: Vector2 = dummyVector
 	): boolean {
 		let _loc6_ = playerPosition.x - position.x;
 		let _loc7_ = playerPosition.y - position.y;
 		let _loc8_ = Math.sqrt(_loc6_ * _loc6_ + _loc7_ * _loc7_);
-		if (_loc8_ < param3) {
+		if (_loc8_ < playerRadius) {
 			return true;
 		}
 		_loc6_ /= _loc8_;
 		_loc7_ /= _loc8_;
-		_loc8_ -= param3;
+		_loc8_ -= playerRadius;
 		const distance = this.getRaycastDistance(
 			position.x,
 			position.y,
@@ -210,9 +189,9 @@ export class GridSegment extends GridBase {
 			);
 		}
 
-		const cellSegments: Segment[] = this.cells[segmentIndex];
+		const cellSegments = this.cells[segmentIndex];
 
-		if (cellSegments.includes(cellSegments)) {
+		if (cellSegments.includes(segment)) {
 			throw new Error(
 				`addDoorSegment() was passed an already-in-grid seg: ${segmentIndex}`
 			);
@@ -222,13 +201,13 @@ export class GridSegment extends GridBase {
 	}
 
 	removeDoorSegment(segmentIndex: number, segment: Segment): void {
-		if (segmentIndex < 0 || segmentIndex >= numcells) {
+		if (segmentIndex < 0 || segmentIndex >= this.numCells) {
 			throw new Error(
 				`removeDoorSegment() was called with an invalid index: ${segmentIndex}`
 			);
 		}
 		const cellSegments: Segment[] = this.cells[segmentIndex];
-		if (!cellSegments.includes(param2)) {
+		if (!cellSegments.includes(segment)) {
 			throw new Error(
 				`removeDoorSegment() couldn't find a seg: ${segmentIndex}`
 			);

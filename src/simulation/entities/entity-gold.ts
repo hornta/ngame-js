@@ -1,7 +1,10 @@
+import type { EntityGraphics } from "../../entity-graphics.js";
 import { overlapCircleVsCircle } from "../../fns.js";
+import type { CollisionResultLogical } from "../collision-result-logical.js";
 import type { GridEntity } from "../grid-entity.js";
+import type { Ninja } from "../ninja.js";
 import type { Simulator } from "../simulator.js";
-import type { Vector2 } from "../vector2.js";
+import { Vector2 } from "../vector2.js";
 import { EntityBase } from "./entity-base";
 
 export class EntityGold extends EntityBase {
@@ -14,7 +17,7 @@ export class EntityGold extends EntityBase {
 		this.position = new Vector2(x, y);
 		this.radius = 12 * 0.5;
 		this.isCollected = false;
-		entityGrid.addEntity(this);
+		entityGrid.addEntity(this.position, this);
 	}
 
 	collideVsCircleLogical(
@@ -28,7 +31,7 @@ export class EntityGold extends EntityBase {
 		param8: number
 	): boolean {
 		if (ninja !== null) {
-			if (overlapCircleVsCircle(this.pos, this.r, param4, param7)) {
+			if (overlapCircleVsCircle(this.position, this.radius, param4, param7)) {
 				if (simulator.goldHitPlayer(ninja)) {
 					this.isCollected = true;
 					simulator.entityGrid.removeEntity(this);
@@ -39,7 +42,7 @@ export class EntityGold extends EntityBase {
 		return false;
 	}
 
-	generateGraphicComponent(): EntityGraphics {
+	generateGraphicComponent(): EntityGraphics | null {
 		// return new EntityGraphics_Gold(this,this.pos.x,this.pos.y);
 		return null;
 	}

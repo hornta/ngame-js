@@ -5,7 +5,10 @@ export class CollisionResultPhysical {
 	isHardCollision: boolean;
 
 	constructor() {
-		this.clear();
+		this.pen = 0;
+		this.nx = 0;
+		this.ny = 0;
+		this.isHardCollision = false;
 	}
 
 	clear(): void {

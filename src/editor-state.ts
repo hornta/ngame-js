@@ -41,7 +41,7 @@ export class EditorState {
 		const numTiles = NUM_COLS * NUM_ROWS;
 		if (byteArray.bytesAvailable < numTiles) {
 			throw new Error(
-				"WARNING! Someone passed Load_From_Bytes() a bunch of bullshit; we didn't load it."
+				"WARNING! Someone passed loadFromBytes() a bunch of bullshit; we didn't load it."
 			);
 		}
 
@@ -56,24 +56,24 @@ export class EditorState {
 		) {
 			if (byteArray.bytesAvailable < 2) {
 				throw new Error(
-					"WARNING! Someone passed Load_From_Bytes() a bunch of bullshit; we didn't load it."
+					"WARNING! Someone passed loadFromBytes() a bunch of bullshit; we didn't load it."
 				);
 			}
 			const num = byteArray.readShort();
 			const prevPosition = byteArray.position;
 
 			for (let k = 0; k < num; ++k) {
-				const entity: EntityProps = [];
+				const entity: EntityProps = ([] as unknown) as EntityProps;
 				editorState.entities.push(entity);
 				entity.push(StructureToEntity[structureId]);
-				const extraEntity: number[] = [];
+				const extraEntity: EntityProps = ([] as unknown) as EntityProps;
 				switch (structureId) {
 					case StructureType.EXIT:
 						editorState.entities.push(extraEntity);
 						extraEntity.push(EntityType.EXIT_SWITCH);
 						if (byteArray.bytesAvailable < 4) {
 							throw new Error(
-								"WARNING! Someone passed Load_From_Bytes() a bunch of bullshit; we didn't load it."
+								"WARNING! Someone passed loadFromBytes() a bunch of bullshit; we didn't load it."
 							);
 						}
 						entity.push(byteArray.readUnsignedByte());
@@ -86,7 +86,7 @@ export class EditorState {
 						extraEntity.push(EntityType.SWITCH_LOCKED);
 						if (byteArray.bytesAvailable < 5) {
 							throw new Error(
-								"WARNING! Someone passed Load_From_Bytes() a bunch of bullshit; we didn't load it."
+								"WARNING! Someone passed loadFromBytes() a bunch of bullshit; we didn't load it."
 							);
 						}
 						entity.push(byteArray.readUnsignedByte());
@@ -100,7 +100,7 @@ export class EditorState {
 						extraEntity.push(EntityType.SWITCH_TRAP);
 						if (byteArray.bytesAvailable < 5) {
 							throw new Error(
-								"WARNING! Someone passed Load_From_Bytes() a bunch of bullshit; we didn't load it."
+								"WARNING! Someone passed loadFromBytes() a bunch of bullshit; we didn't load it."
 							);
 						}
 						entity.push(byteArray.readUnsignedByte());
@@ -112,7 +112,7 @@ export class EditorState {
 					default:
 						if (byteArray.bytesAvailable < StructureSize[structureId]) {
 							throw new Error(
-								"WARNING! Someone passed Load_From_Bytes() a bunch of bullshit; we didn't load it."
+								"WARNING! Someone passed loadFromBytes() a bunch of bullshit; we didn't load it."
 							);
 						}
 						for (let l = 0; l < StructureSize[structureId]; ++l) {
@@ -125,7 +125,7 @@ export class EditorState {
 			const b = num * StructureSize[structureId];
 			if (a !== b) {
 				throw new Error(
-					`WARNING! Editor_State.Load_From_Bytes() read the wrong number of bytes: ${a} , ${b}`
+					`WARNING! Editor_State.loadFromBytes() read the wrong number of bytes: ${a} , ${b}`
 				);
 			}
 		}

@@ -137,7 +137,7 @@ export class EntityDroneChaser extends EntityDroneZap {
 								this.chooseNextDirectionAndGoalTestDir(
 									edgeGrid,
 									_loc8_,
-									next_goal
+									this.nextGoal
 								)
 							) {
 								this.startChasing(_loc8_);
@@ -149,7 +149,7 @@ export class EntityDroneChaser extends EntityDroneZap {
 			}
 		}
 
-		return this.chooseNextDirectionAndGoal(edgeGrid, players);
+		return this.chooseNextDirectionAndGoal(edgeGrid);
 	}
 
 	// override public function GenerateGraphicComponent() : EntityGraphics

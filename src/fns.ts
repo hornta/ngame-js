@@ -1,7 +1,7 @@
 import type { ByteArray } from "./byte-array";
 import type { GridSegment } from "./simulation/grid-segment";
 import type { Ninja } from "./simulation/ninja";
-import type { Vector2 } from "./simulation/vector2";
+import { Vector2 } from "./simulation/vector2.js";
 
 export const prepareSessionFromBytes = (byteArray: ByteArray): void => {};
 
@@ -318,7 +318,7 @@ export const getSingleClosestPointSigned = (
 	closestPointOut: Vector2
 ): number => {
 	let _loc5_ = 0;
-	const smallestWidth = Number.POSITIVE_INFINITY;
+	let smallestWidth = Number.POSITIVE_INFINITY;
 	const segments = gridSegment.gatherCellContentsFromWorldspaceRegion(
 		param2.x - offset,
 		param2.y - offset,
@@ -331,7 +331,7 @@ export const getSingleClosestPointSigned = (
 		const _loc8_ = segment.getClosestPointIsBackfacing(param2, closestPoint);
 		const diffX = closestPoint.x - param2.x;
 		const diffY = closestPoint.y - param2.y;
-		const squaredLength = diffX * diffX + diffY * diffY;
+		let squaredLength = diffX * diffX + diffY * diffY;
 		if (!_loc8_) {
 			squaredLength -= 0.1;
 		}

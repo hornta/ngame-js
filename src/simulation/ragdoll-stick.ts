@@ -43,9 +43,9 @@ export class RagdollStick {
 			_loc6_ = _loc1_ / squaredLength;
 			_loc7_ = _loc2_ / squaredLength;
 		}
-		this.particle0.solverPosition.x -= this.w0 * -_loc5_ * _loc6_;
-		this.particle0.solverPosition.y -= this.w0 * -_loc5_ * _loc7_;
-		this.particle1.solverPosition.x += this.w1 * -_loc5_ * _loc6_;
-		this.particle1.solverPosition.y += this.w1 * -_loc5_ * _loc7_;
+		this.particle0.solverPosition.x -= this.weight0 * -_loc5_ * _loc6_;
+		this.particle0.solverPosition.y -= this.weight0 * -_loc5_ * _loc7_;
+		this.particle1.solverPosition.x += this.weight1 * -_loc5_ * _loc6_;
+		this.particle1.solverPosition.y += this.weight1 * -_loc5_ * _loc7_;
 	}
 }

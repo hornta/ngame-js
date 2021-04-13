@@ -18,33 +18,28 @@ const SLOW_THRESHOLD = 0.15;
 const POSTGAME_DELAY = 30;
 
 export class Game {
-	input: Input;
+	input = new Input();
 	simulator: Simulator;
-	gameState: GameState;
-	menuState: MenuState;
-	gameOverCooldown: number;
-	startingTicks: number;
-	currentTicks: number;
-	ticksElapsed: number;
-	lastTick: number;
-	thisTick: number;
+	gameState = GameState.UNLOADED;
+	menuState = MenuState.MAIN_MENU;
+	gameOverCooldown = 0;
+	startingTicks = 0;
+	currentTicks = 0;
+	ticksElapsed = 0;
+	lastTick = 0;
+	thisTick = 0;
 	levelData: ByteArray;
-	levelName: string;
-	levelId: number;
-	goldCollected: number;
-	goldCountdown: number;
-	isReplay: boolean;
-	replayChosenByPlayer: boolean;
-	playingLevelSet: boolean;
+	levelName = "";
+	levelId = 0;
+	goldCollected = 0;
+	goldCountdown = 0;
+	isReplay = false;
+	replayChosenByPlayer = false;
+	playingLevelSet = false;
 	playerKeys: PlayerKeys;
-	start: number;
-	pausedTime: number;
-	gameTooSlow: boolean;
-
-	constructor() {
-		this.input = new Input();
-		this.replayChosenByPlayer = false;
-	}
+	start = 0;
+	pausedTime = 0;
+	gameTooSlow = false;
 
 	initialize(): void {
 		this.startingTicks = DEFAULT_STARTING_TICKS;
@@ -123,16 +118,16 @@ export class Game {
 		} else if (this.playerWantsToExit()) {
 			this.exit();
 		}
-		if (this._goldCollected > 0 && this.simulator.didPlayerWin()) {
+		if (this.goldCollected > 0 && this.simulator.didPlayerWin()) {
 			this.tickGoldTransferToTimebar();
 		}
 	}
 
 	private tickPausedGame(): void {
 		const playerKeys = this.playerKeys.getActions([
-			PlayerKeys.JUMP,
-			PlayerKeys.LEFT,
-			PlayerKeys.RIGHT,
+			PlayerKey.JUMP,
+			PlayerKey.LEFT,
+			PlayerKey.RIGHT,
 		]);
 		playerKeys[playerKeys.length] = "KeyP";
 		if (this.input.isKeyPressed("Escape")) {
@@ -193,7 +188,7 @@ export class Game {
 			} else {
 				this.currentTicks +=
 					this.simulator.getNumGoldCollectedDuringTick(0) * TICKS_PER_GOLD;
-				if (Options.coopMode && !this._isReplay) {
+				if (Options.coopMode && !this.isReplay) {
 					this.currentTicks +=
 						this.simulator.getNumGoldCollectedDuringTick(1) * TICKS_PER_GOLD;
 				}
@@ -221,7 +216,7 @@ export class Game {
 
 	private prepareSessionFromBytes(
 		levelData: ByteArray,
-		replayInput: ByteArray
+		replayInput: ByteArray | null
 	): void {
 		this.clearGame();
 		const inputData = replayInput ? replayInput.newFromAvailable() : null;
@@ -255,9 +250,7 @@ export class Game {
 		}
 	}
 
-	clearGame(): void {
-		this.simulator = null;
-	}
+	clearGame(): void {}
 
 	private exit(): void {
 		this.clearGame();
@@ -293,7 +286,7 @@ export class Game {
 	}
 
 	private checkForSuicides(): void {
-		for (let i = 0; i < Options.coopMode ? 2 : 1; ++i) {
+		for (let i = 0; i < (Options.coopMode ? 2 : 1); ++i) {
 			this.checkForPlayerSuicide(i);
 		}
 	}
@@ -325,7 +318,7 @@ export class Game {
 		this.gameState = GameState.POST_GAME;
 		this.gameOverCooldown = POSTGAME_DELAY;
 		// this._hud.prompt.visible = true;
-		if (this.playingLevelset) {
+		if (this.playingLevelSet) {
 			if (this.simulator.didPlayerWin()) {
 				// this._hud.prompt.gotoAndPlay("win");
 			} else {
@@ -371,7 +364,7 @@ export class Game {
 	}
 
 	private tickGoldTransferToTimebar(): void {
-		--this._goldCountdown;
+		--this.goldCountdown;
 		if (this.goldCountdown <= 0) {
 			this.transferOneUnitOfGoldToTimebar();
 		}

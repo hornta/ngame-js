@@ -31,13 +31,4 @@ export class GridBase {
 		}
 		return y * this.numCols + x;
 	}
-
-	getWorldspaceCellCenterPositionFromIndex(cellIndex: number): Vector2 {
-		if (cellIndex !== -1) {
-			const x = cellIndex % this.numCols;
-			const y = Math.floor(cellIndex / this.numCols);
-			return new Vector2((x + 0.5) * this.cellSize, (y + 0.5) * this.cellSize);
-		}
-		return null;
-	}
 }

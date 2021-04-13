@@ -1,3 +1,4 @@
+import type { EntityGraphics } from "../../entity-graphics.js";
 import { overlapCircleVsCircle } from "../../fns";
 import type { CollisionResultLogical } from "../collision-result-logical";
 import type { GridEntity } from "../grid-entity";
@@ -53,7 +54,7 @@ export class EntityExitSwitch extends EntityBase {
 
 	move(simulator: Simulator): void {}
 
-	generateGraphicComponent(): EntityGraphics {
+	generateGraphicComponent(): EntityGraphics | null {
 		return null;
 	}
 

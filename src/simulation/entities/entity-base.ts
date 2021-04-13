@@ -1,3 +1,4 @@
+import type { EntityGraphics } from "../../entity-graphics.js";
 import type { CollisionResultLogical } from "../collision-result-logical";
 import type { CollisionResultPhysical } from "../collision-result-physical";
 import type { Ninja } from "../ninja";
@@ -29,27 +30,33 @@ export abstract class EntityBase {
 		this.gridIndex = index;
 	}
 
-	abstract collideVsCirclePhysical(
+	collideVsCirclePhysical(
 		collision: CollisionResultPhysical,
 		param2: Vector2,
 		param3: Vector2,
 		param4: Vector2,
 		param5: number
-	): boolean;
+	): boolean {
+		return false;
+	}
 
-	abstract collideVsCircleLogical(
+	collideVsCircleLogical(
 		simulator: Simulator,
-		ninja: Ninja,
+		ninja: Ninja | null,
 		collision: CollisionResultLogical,
 		param4: Vector2,
 		param5: Vector2,
 		param6: Vector2,
 		param7: number,
 		param8: number
-	): boolean;
+	): boolean {
+		return false;
+	}
 
-	abstract think(simulator: Simulator): void;
-	abstract move(simulator: Simulator): void;
-	abstract generateGraphicComponent(): EntityGraphics;
+	think(simulator: Simulator): void {}
+	move(simulator: Simulator): void {}
+	generateGraphicComponent(): EntityGraphics | null {
+		return null;
+	}
 	abstract debugDraw(context: CanvasRenderingContext2D): void;
 }

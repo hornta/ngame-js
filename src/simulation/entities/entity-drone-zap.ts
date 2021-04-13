@@ -1,3 +1,4 @@
+import type { EntityGraphics } from "../../entity-graphics.js";
 import { overlapCircleVsCircle } from "../../fns";
 import type { CollisionResultLogical } from "../collision-result-logical";
 import type { GridEntity } from "../grid-entity";
@@ -28,8 +29,8 @@ export class EntityDroneZap extends EntityDroneBase {
 		radius: number
 	): boolean {
 		if (overlapCircleVsCircle(this.position, this.radius, position, radius)) {
-			const _loc9_ = position.x - this.position.x;
-			const _loc10_ = position.y - this.position.y;
+			let _loc9_ = position.x - this.position.x;
+			let _loc10_ = position.y - this.position.y;
 			const _loc11_ = Math.sqrt(_loc9_ * _loc9_ + _loc10_ * _loc10_);
 			_loc9_ /= _loc11_;
 			_loc10_ /= _loc11_;
@@ -57,9 +58,10 @@ export class EntityDroneZap extends EntityDroneBase {
 		return false;
 	}
 
-	// generateGraphicComponent(): EntityGraphics {
-	// 	return new EntityGraphics_Drone_Zap(this);
-	// }
+	generateGraphicComponent(): EntityGraphics | null {
+		// return new EntityGraphics_Drone_Zap(this);
+		return null;
+	}
 
 	// GFX_UpdateState(param1: EntityGraphics): void {
 	// 	const _loc2_: EntityGraphics_Drone_Zap = param1;
@@ -68,9 +70,9 @@ export class EntityDroneZap extends EntityDroneBase {
 	// 	_loc2_.orn = gfxorn;
 	// }
 
-	// Debug_Draw(param1: SimpleRenderer): void {
-	// 	super.Debug_Draw(param1);
-	// 	param1.SetStyle(4, 8947967, 50);
-	// 	param1.DrawCircle(pos.x, pos.y, r / 2);
-	// }
+	debugDraw(context: CanvasRenderingContext2D): void {
+		// super.Debug_Draw(param1);
+		// param1.SetStyle(4, 8947967, 50);
+		// param1.DrawCircle(pos.x, pos.y, r / 2);
+	}
 }

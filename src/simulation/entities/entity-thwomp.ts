@@ -1,7 +1,9 @@
+import type { EntityGraphics } from "../../entity-graphics.js";
 import { penetrationSquareVsPoint } from "../../fns.js";
 import type { CollisionResultLogical } from "../collision-result-logical.js";
 import type { CollisionResultPhysical } from "../collision-result-physical.js";
 import type { GridEntity } from "../grid-entity.js";
+import type { Ninja } from "../ninja.js";
 import { PlayerKillType, SimulationRate, Simulator } from "../simulator.js";
 import { Vector2 } from "../vector2.js";
 import { EntityBase } from "./entity-base";
@@ -129,7 +131,7 @@ export class EntityThwomp extends EntityBase {
 					if (this.isHorizontal) {
 						if (Math.abs(_loc8_) < _loc9_) {
 							const _loc10_ = simulator.edgeGrid.getGridCoordinateFromWorldspace1D(
-								this.position.x - this.falldir * this.radius
+								this.position.x - this.fallDirection * this.radius
 							);
 							const _loc11_ = simulator.edgeGrid.getGridCoordinateFromWorldspace1D(
 								this.position.y - this.radius
@@ -158,7 +160,7 @@ export class EntityThwomp extends EntityBase {
 						}
 					} else if (Math.abs(_loc7_) < _loc9_) {
 						const _loc15_ = simulator.edgeGrid.getGridCoordinateFromWorldspace1D(
-							this.position.y - this.falldir * this.radius
+							this.position.y - this.fallDirection * this.radius
 						);
 						const _loc16_ = simulator.edgeGrid.getGridCoordinateFromWorldspace1D(
 							this.position.x - this.radius
@@ -195,14 +197,14 @@ export class EntityThwomp extends EntityBase {
 		if (this.currentState === 0) {
 			return;
 		}
-		const _loc3_: int = this.fallDirection * this.currentState;
-		const _loc4_: number = _loc3_ * this.radius;
-		let _loc5_: number = this.fallSpeed;
+		const _loc3_ = this.fallDirection * this.currentState;
+		const _loc4_ = _loc3_ * this.radius;
+		let _loc5_ = this.fallSpeed;
 		if (this.currentState === -1) {
 			_loc5_ = this.raiseSpeed;
 		}
 		if (this.isHorizontal) {
-			const _loc6_ = this.position.x + _loc3_ * _loc5_;
+			let _loc6_ = this.position.x + _loc3_ * _loc5_;
 			if (this.currentState === -1) {
 				if ((this.position.x - this.anchor.x) * (_loc6_ - this.anchor.x) <= 0) {
 					_loc6_ = this.anchor.x;
@@ -236,7 +238,7 @@ export class EntityThwomp extends EntityBase {
 				this.currentState = 0;
 			}
 		} else {
-			const _loc11_ = this.position.y + _loc3_ * _loc5_;
+			let _loc11_ = this.position.y + _loc3_ * _loc5_;
 			if (this.currentState === -1) {
 				if (
 					(this.position.y - this.anchor.y) * (_loc11_ - this.anchor.y) <=
@@ -273,7 +275,7 @@ export class EntityThwomp extends EntityBase {
 		}
 	}
 
-	generateGraphicComponent(): EntityGraphics {
+	generateGraphicComponent(): EntityGraphics | null {
 		// let _loc1_ = 0;
 		// if (this.isHorizontal) {
 		// 	if (this.falldir < 0) {

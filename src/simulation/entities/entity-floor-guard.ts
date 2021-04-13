@@ -1,9 +1,10 @@
+import type { EntityGraphics } from "../../entity-graphics.js";
 import { overlapCircleVsCircle } from "../../fns.js";
 import type { CollisionResultLogical } from "../collision-result-logical.js";
 import type { GridEntity } from "../grid-entity.js";
 import type { Ninja } from "../ninja.js";
 import { PlayerKillType, SimulationRate, Simulator } from "../simulator.js";
-import type { Vector2 } from "../vector2.js";
+import { Vector2 } from "../vector2.js";
 import { EntityBase } from "./entity-base";
 
 export class EntityFloorGuard extends EntityBase {
@@ -135,7 +136,7 @@ export class EntityFloorGuard extends EntityBase {
 				!simulator.edgeGrid.isSolidIgnoreDoors(_loc7_, _loc8_, 0, 1)
 			) {
 				_loc4_ =
-					simulator.edgeGrid.getWorldspaceCellCenterPositionFromIndex(
+					simulator.edgeGrid.getWorldspaceCoordinateFromGridEdge1D(
 						_loc6_,
 						this.currentState
 					) -
@@ -147,7 +148,7 @@ export class EntityFloorGuard extends EntityBase {
 		simulator.entityGrid.moveEntity(this.position, this);
 	}
 
-	generateGraphicComponent(): EntityGraphics {
+	generateGraphicComponent(): EntityGraphics | null {
 		// return new EntityGraphics_FloorGuard(this);
 		return null;
 	}

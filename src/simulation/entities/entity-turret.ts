@@ -1,3 +1,4 @@
+import type { EntityGraphics } from "../../entity-graphics.js";
 import { overlapCircleVsSegment, tryToAcquireTarget } from "../../fns.js";
 import type { GridEntity } from "../grid-entity.js";
 import { PlayerKillType, SimulationRate, Simulator } from "../simulator.js";
@@ -54,8 +55,6 @@ export class EntityTurret extends EntityBase {
 		this.drawTimer = 0;
 		this.hitPosition = new Vector2();
 		this.hitNormal = new Vector2();
-		this.tmpHitPosition = new Vector2();
-		this.tmpHitNormal = new Vector2();
 	}
 
 	think(simulator: Simulator): void {
@@ -145,7 +144,7 @@ export class EntityTurret extends EntityBase {
 					this.stopFiring();
 				}
 			} else if (this.currentState === TurretState.POSTFIRE) {
-				++this.shot_timer;
+				++this.shotTimer;
 				if (this.postfireDelay <= this.shotTimer) {
 					if (this.isCurrentTargetVisible(simulator)) {
 						this.resumeTargetting();
@@ -157,7 +156,7 @@ export class EntityTurret extends EntityBase {
 		}
 	}
 
-	generateGraphicComponent(): EntityGraphics {
+	generateGraphicComponent(): EntityGraphics | null {
 		return null;
 	}
 
@@ -195,7 +194,7 @@ export class EntityTurret extends EntityBase {
 		let isVisible = false;
 		if (!player.isDead()) {
 			isVisible = simulator.segGrid.raycastVsPlayer(
-				this.pos,
+				this.position,
 				player.getPosition(),
 				player.getRadius()
 			);

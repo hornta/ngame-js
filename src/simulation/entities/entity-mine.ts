@@ -1,21 +1,23 @@
+import type { EntityGraphics } from "../../entity-graphics.js";
 import { overlapCircleVsCircle } from "../../fns.js";
 import type { CollisionResultLogical } from "../collision-result-logical.js";
 import type { GridEntity } from "../grid-entity.js";
+import type { Ninja } from "../ninja.js";
 import { PlayerKillType, Simulator } from "../simulator.js";
-import type { Vector2 } from "../vector2";
+import { Vector2 } from "../vector2.js";
 import { EntityBase } from "./entity-base";
 
 export class EntityMine extends EntityBase {
 	private position: Vector2;
-	private r: number;
+	private radius: number;
 	private isExploded: boolean;
 
 	constructor(entityGrid: GridEntity, x: number, y: number) {
 		super();
 		this.position = new Vector2(x, y);
-		this.r = 12 * (1 / 3);
+		this.radius = 12 * (1 / 3);
 		this.isExploded = false;
-		entityGrid.addEntity(this.pos, this);
+		entityGrid.addEntity(this.position, this);
 	}
 
 	collideVsCircleLogical(
@@ -31,7 +33,7 @@ export class EntityMine extends EntityBase {
 		let _loc9_ = NaN;
 		let _loc10_ = NaN;
 		let _loc11_ = NaN;
-		if (overlapCircleVsCircle(this.position, this.r, param4, param7)) {
+		if (overlapCircleVsCircle(this.position, this.radius, param4, param7)) {
 			// param1.HACKY_GetParticleManager().Spawn_Explosion(this.position);
 			this.isExploded = true;
 			simulator.entityGrid.removeEntity(this);
@@ -57,7 +59,7 @@ export class EntityMine extends EntityBase {
 		return false;
 	}
 
-	generateGraphicComponent(): EntityGraphics {
+	generateGraphicComponent(): EntityGraphics | null {
 		// return new EntityGraphics_Mine(this,this.pos.x,this.pos.y);
 		return null;
 	}

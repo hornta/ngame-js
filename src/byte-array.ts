@@ -33,6 +33,10 @@ export class ByteArray {
 		return this.offset;
 	}
 
+	set position(value: number) {
+		this.updatePosition(value);
+	}
+
 	get length(): number {
 		return this.buffer.length;
 	}

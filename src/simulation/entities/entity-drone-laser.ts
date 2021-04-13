@@ -1,7 +1,8 @@
+import type { EntityGraphics } from "../../entity-graphics.js";
 import { overlapCircleVsSegment } from "../../fns";
 import type { GridEntity } from "../grid-entity";
 import { PlayerKillType, SimulationRate, Simulator } from "../simulator";
-import type { Vector2 } from "../vector2";
+import { Vector2 } from "../vector2.js";
 import { EntityDroneShooterBase } from "./entity-drone-shooter-base";
 
 export class EntityDroneLaser extends EntityDroneShooterBase {
@@ -116,10 +117,10 @@ export class EntityDroneLaser extends EntityDroneShooterBase {
 
 	startPostfiring(simulator: Simulator): void {}
 
-	// override public function GenerateGraphicComponent() : EntityGraphics
-	// {
-	// 	 return new EntityGraphics_Drone_Laser(this);
-	// }
+	public generateGraphicComponent(): EntityGraphics | null {
+		// return new EntityGraphics_Drone_Laser(this);
+		return null;
+	}
 
 	// public function GFX_UpdateState(param1:EntityGraphics_Drone_Laser) : void
 	// {
@@ -148,23 +149,29 @@ export class EntityDroneLaser extends EntityDroneShooterBase {
 	// 	 }
 	// }
 
-	// Debug_Draw(param1:SimpleRenderer) : void
-	// {
-	// 	 super.Debug_Draw(param1);
-	// 	 param1.SetStyle(4,8921634,50);
-	// 	 param1.DrawCircle(pos.x,pos.y,r / 2);
-	// 	 var _loc2_:int = GetFiringState();
-	// 	 if(_loc2_ == FIRING_STATE_PREFIRING)
-	// 	 {
-	// 			param1.SetStyle(0,8921634,20);
-	// 			param1.DrawLine(pos.x,pos.y,this.laser_hit_pos.x,this.laser_hit_pos.y);
-	// 			param1.DrawLine(this.laser_hit_pos.x,this.laser_hit_pos.y,this.laser_hit_pos.x + this.laser_hit_n.x * 4,this.laser_hit_pos.y + this.laser_hit_n.y * 4);
-	// 	 }
-	// 	 else if(_loc2_ == FIRING_STATE_FIRING)
-	// 	 {
-	// 			param1.SetStyle(2,8921634,80);
-	// 			param1.DrawLine(pos.x,pos.y,this.laser_hit_pos.x,this.laser_hit_pos.y);
-	// 			param1.DrawLine(this.laser_hit_pos.x,this.laser_hit_pos.y,this.laser_hit_pos.x + this.laser_hit_n.x * 4,this.laser_hit_pos.y + this.laser_hit_n.y * 4);
-	// 	 }
-	// }
+	debugDraw(context: CanvasRenderingContext2D): void {
+		// super.Debug_Draw(param1);
+		// param1.SetStyle(4, 8921634, 50);
+		// param1.DrawCircle(pos.x, pos.y, r / 2);
+		// const _loc2_: int = GetFiringState();
+		// if (_loc2_ == FIRING_STATE_PREFIRING) {
+		// 	param1.SetStyle(0, 8921634, 20);
+		// 	param1.DrawLine(pos.x, pos.y, this.laser_hit_pos.x, this.laser_hit_pos.y);
+		// 	param1.DrawLine(
+		// 		this.laser_hit_pos.x,
+		// 		this.laser_hit_pos.y,
+		// 		this.laser_hit_pos.x + this.laser_hit_n.x * 4,
+		// 		this.laser_hit_pos.y + this.laser_hit_n.y * 4
+		// 	);
+		// } else if (_loc2_ == FIRING_STATE_FIRING) {
+		// 	param1.SetStyle(2, 8921634, 80);
+		// 	param1.DrawLine(pos.x, pos.y, this.laser_hit_pos.x, this.laser_hit_pos.y);
+		// 	param1.DrawLine(
+		// 		this.laser_hit_pos.x,
+		// 		this.laser_hit_pos.y,
+		// 		this.laser_hit_pos.x + this.laser_hit_n.x * 4,
+		// 		this.laser_hit_pos.y + this.laser_hit_n.y * 4
+		// 	);
+		// }
+	}
 }

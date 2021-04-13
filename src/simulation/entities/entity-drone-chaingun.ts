@@ -1,7 +1,8 @@
+import type { EntityGraphics } from "../../entity-graphics.js";
 import { overlapCircleVsSegment, wrapAngleShortest } from "../../fns";
 import type { GridEntity } from "../grid-entity";
 import { PlayerKillType, SimulationRate, Simulator } from "../simulator";
-import type { Vector2 } from "../vector2";
+import { Vector2 } from "../vector2.js";
 import { EntityDroneShooterBase } from "./entity-drone-shooter-base";
 
 const CHAINGUN_MAX_BULLETS = 6;
@@ -37,7 +38,7 @@ export class EntityDroneChaingun extends EntityDroneShooterBase {
 			prefireDelay,
 			postfireDelay
 		);
-		this.chaingun_rate = 6 * (SimulationRate / 40);
+		this.chaingunRate = 6 * (SimulationRate / 40);
 		this.chaingunCount = 0;
 		this.chaingunTimer = 0;
 		this.chaingunDirection = new Vector2();
@@ -134,7 +135,7 @@ export class EntityDroneChaingun extends EntityDroneShooterBase {
 						overlapCircleVsSegment(
 							player.getPosition(),
 							player.getRadius(),
-							pos,
+							this.position,
 							this.chaingunHitPosition,
 							rayDistance
 						)
@@ -155,7 +156,7 @@ export class EntityDroneChaingun extends EntityDroneShooterBase {
 					}
 				}
 			}
-			this.chaingun_HACKY_hitmode = 1;
+			this.chaingunHitMode = 1;
 		}
 		return false;
 	}
@@ -166,10 +167,10 @@ export class EntityDroneChaingun extends EntityDroneShooterBase {
 		}
 	}
 
-	// override public function GenerateGraphicComponent() : EntityGraphics
-	// {
-	// 	 return new EntityGraphics_Drone_Chaingun(this);
-	// }
+	public generateGraphicComponent(): EntityGraphics | null {
+		// return new EntityGraphics_Drone_Chaingun(this);
+		return null;
+	}
 
 	// public function GFX_UpdateState(param1:EntityGraphics_Drone_Chaingun) : void
 	// {
@@ -195,16 +196,28 @@ export class EntityDroneChaingun extends EntityDroneShooterBase {
 	// 	 }
 	// }
 
-	// override public function Debug_Draw(param1:SimpleRenderer) : void
-	// {
-	// 	 super.Debug_Draw(param1);
-	// 	 param1.SetStyle(4,8947848,50);
-	// 	 param1.DrawCircle(pos.x,pos.y,r / 2);
-	// 	 if(this.chaingun_HACKY_hitmode == 1)
-	// 	 {
-	// 			param1.SetStyle(0,8947848,100 * (1 - Number(this.chaingun_timer) / Number(this.chaingun_rate)));
-	// 			param1.DrawLine(pos.x,pos.y,this.chaingun_hit_pos.x,this.chaingun_hit_pos.y);
-	// 			param1.DrawLine(this.chaingun_hit_pos.x,this.chaingun_hit_pos.y,this.chaingun_hit_pos.x + 4 * this.chaingun_hit_n.x,this.chaingun_hit_pos.y + 4 * this.chaingun_hit_n.y);
-	// 	 }
-	// }
+	public debugDraw(context: CanvasRenderingContext2D): void {
+		// super.Debug_Draw(param1);
+		// param1.SetStyle(4, 8947848, 50);
+		// param1.DrawCircle(pos.x, pos.y, r / 2);
+		// if (this.chaingun_HACKY_hitmode == 1) {
+		// 	param1.SetStyle(
+		// 		0,
+		// 		8947848,
+		// 		100 * (1 - Number(this.chaingun_timer) / Number(this.chaingun_rate))
+		// 	);
+		// 	param1.DrawLine(
+		// 		pos.x,
+		// 		pos.y,
+		// 		this.chaingun_hit_pos.x,
+		// 		this.chaingun_hit_pos.y
+		// 	);
+		// 	param1.DrawLine(
+		// 		this.chaingun_hit_pos.x,
+		// 		this.chaingun_hit_pos.y,
+		// 		this.chaingun_hit_pos.x + 4 * this.chaingun_hit_n.x,
+		// 		this.chaingun_hit_pos.y + 4 * this.chaingun_hit_n.y
+		// 	);
+		// }
+	}
 }

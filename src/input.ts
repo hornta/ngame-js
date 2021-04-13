@@ -26,7 +26,7 @@ export class Input {
 	tick(): void {
 		this.keyTriggers = {};
 
-		for (const code of Object.values(this.keys)) {
+		for (const code of Object.keys(this.keys)) {
 			if (this.isKeyDown(code)) {
 				if (!this.oldKeys[code]) {
 					this.keyTriggers[code] = 1;
@@ -36,13 +36,13 @@ export class Input {
 			}
 		}
 
-		for (let i = 0; i < this.keys.length; ++i) {
-			if (this.isKeyDown(i)) {
-				if (!this.oldKeys[i]) {
-					this.keyTriggers[i] = 1;
+		for (const code of Object.keys(this.keys)) {
+			if (this.isKeyDown(code)) {
+				if (!this.oldKeys[code]) {
+					this.keyTriggers[code] = 1;
 				}
-			} else if (this.oldKeys[i]) {
-				this.keyTriggers[i] = -1;
+			} else if (this.oldKeys[code]) {
+				this.keyTriggers[code] = -1;
 			}
 		}
 

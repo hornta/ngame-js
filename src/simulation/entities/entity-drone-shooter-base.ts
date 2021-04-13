@@ -11,7 +11,7 @@ enum FiringState {
 	POSTFIRING = 3,
 }
 
-export class EntityDroneShooterBase extends EntityDroneBase {
+export abstract class EntityDroneShooterBase extends EntityDroneBase {
 	preFireDelay: number;
 	postFireDelay: number;
 	firingTimer: number;
@@ -102,9 +102,7 @@ export class EntityDroneShooterBase extends EntityDroneBase {
 								simulator.segGrid.raycastVsPlayer(
 									this.position,
 									player.getPosition(),
-									player.getRadius(),
-									zero_vec,
-									zero_vec
+									player.getRadius()
 								)
 							) {
 								this.internalStartPrefiring(
@@ -144,7 +142,7 @@ export class EntityDroneShooterBase extends EntityDroneBase {
 	}
 
 	internalStartPostfiring(simulator: Simulator): void {
-		this.firing_timer = 0;
+		this.firingTimer = 0;
 		this.currentFiringState = FiringState.POSTFIRING;
 		this.startPostfiring(simulator);
 	}
@@ -154,31 +152,25 @@ export class EntityDroneShooterBase extends EntityDroneBase {
 		this.targetIndex = -1;
 	}
 
-	abstract startPrefiring(simulator: Simulator, param2: Vector2): void;
+	startPrefiring(simulator: Simulator, param2: Vector2): void {}
+	updatePrefiring(simulator: Simulator, param2: Vector2): void {}
+	startFiring(simulator: Simulator, param2: Vector2, param3: Vector2): void {}
+	updateFiring(simulator: Simulator): boolean {
+		return false;
+	}
+	startPostfiring(simulator: Simulator): void {}
 
-	abstract updatePrefiring(simulator: Simulator, param2: Vector2): void;
-
-	abstract startFiring(
-		simulator: Simulator,
-		param2: Vector2,
-		param3: Vector2
-	): void;
-
-	abstract updateFiring(simulator: Simulator): boolean;
-
-	abstract startPostfiring(simulator: Simulator): void;
-
-	// Debug_Draw(param1: SimpleRenderer): void {
-	// 	let _loc2_ = NaN;
-	// 	let _loc3_ = NaN;
-	// 	super.Debug_Draw(param1);
-	// 	param1.SetStyle(0, 0, 100);
-	// 	if (this.CUR_FIRING_STATE == FIRING_STATE_PREFIRING) {
-	// 		_loc2_ = Number(this.firing_timer) / Number(this.prefire_delay);
-	// 		param1.DrawSquare(pos.x, pos.y, r * _loc2_);
-	// 	} else if (this.CUR_FIRING_STATE == FIRING_STATE_POSTFIRING) {
-	// 		_loc3_ = 1 - Number(this.firing_timer) / Number(this.postfire_delay);
-	// 		param1.DrawSquare(pos.x, pos.y, r * _loc3_);
-	// 	}
-	// }
+	debugDraw(context: CanvasRenderingContext2D): void {
+		// let _loc2_ = NaN;
+		// let _loc3_ = NaN;
+		// super.Debug_Draw(param1);
+		// param1.SetStyle(0, 0, 100);
+		// if (this.CUR_FIRING_STATE == FIRING_STATE_PREFIRING) {
+		// 	_loc2_ = Number(this.firing_timer) / Number(this.prefire_delay);
+		// 	param1.DrawSquare(pos.x, pos.y, r * _loc2_);
+		// } else if (this.CUR_FIRING_STATE == FIRING_STATE_POSTFIRING) {
+		// 	_loc3_ = 1 - Number(this.firing_timer) / Number(this.postfire_delay);
+		// 	param1.DrawSquare(pos.x, pos.y, r * _loc3_);
+		// }
+	}
 }

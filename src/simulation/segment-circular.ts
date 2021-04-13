@@ -2,9 +2,9 @@ import {
 	timeOfIntersectionCircleVsArc,
 	timeOfIntersectionCircleVsCircle,
 } from "../fns";
-import type { AABB } from "./AABB";
+import { AABB } from "./aabb.js";
 import type { Segment } from "./segment";
-import type { Vector2 } from "./vector2";
+import { Vector2 } from "./vector2.js";
 
 export class SegmentCircular implements Segment {
 	p0: Vector2;
@@ -168,11 +168,12 @@ export class SegmentCircular implements Segment {
 			param3
 		);
 		let _loc8_ = 2;
+		const cp = new Vector2();
 		this.getClosestPoint(param1, cp);
 		const _loc9_ = param1.x - cp.x;
 		const _loc10_ = param1.y - cp.y;
-		let _loc11_: number;
-		if ((_loc11_ = Math.sqrt(_loc9_ * _loc9_ + _loc10_ * _loc10_)) <= param3) {
+		const _loc11_ = Math.sqrt(_loc9_ * _loc9_ + _loc10_ * _loc10_);
+		if (_loc11_ <= param3) {
 			_loc8_ = -1;
 		} else {
 			_loc8_ = timeOfIntersectionCircleVsArc(
@@ -185,7 +186,6 @@ export class SegmentCircular implements Segment {
 			);
 		}
 		const ray_point = new Vector2();
-		const cp = new Vector2();
 		let _loc12_: number;
 		if ((_loc12_ = Math.min(_loc6_, _loc7_, _loc8_)) <= 1 && _loc12_ >= 0) {
 			ray_point.x = param1.x + _loc12_ * param2.x;

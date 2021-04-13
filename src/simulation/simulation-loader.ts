@@ -496,7 +496,7 @@ export const loadLevelFromEditorState = (
 	playerActions: string[],
 	playerColors: number[],
 	input: Input,
-	inputData: ByteArray,
+	inputData: ByteArray | null,
 	numberOfPlayers: number,
 	editorState: EditorState
 ): Simulator => {
