@@ -8,8 +8,8 @@ import { Vector2 } from "../vector2.js";
 import { EntityBase } from "./entity-base";
 
 export class EntityMine extends EntityBase {
-	private position: Vector2;
-	private radius: number;
+	public position: Vector2;
+	public radius: number;
 	private isExploded: boolean;
 
 	constructor(entityGrid: GridEntity, x: number, y: number) {

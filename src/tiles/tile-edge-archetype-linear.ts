@@ -19,16 +19,12 @@ export class TileEdgeArchetypeLinear implements TileEdgeArchetype {
 		return new TileEdgeArchetypeLinear(-this.y0, this.x0, -this.y1, this.x1);
 	}
 
-	generateCollisionSegment(
-		param1: number,
-		param2: number,
-		param3: number
-	): Segment {
+	generateCollisionSegment(x: number, y: number, param3: number): Segment {
 		return new SegmentLinear(
-			param1 + this.x0 * param3,
-			param2 + this.y0 * param3,
-			param1 + this.x1 * param3,
-			param2 + this.y1 * param3
+			x + this.x0 * param3,
+			y + this.y0 * param3,
+			x + this.x1 * param3,
+			y + this.y1 * param3
 		);
 	}
 }

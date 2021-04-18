@@ -135,16 +135,21 @@ export class SegmentLinear implements Segment {
 		return _loc9_;
 	}
 
-	debugDraw(context: CanvasRenderingContext2D): void {
-		// param1.SetStyle(0, 0, 100);
-		// this.DebugDraw_NoStyle(param1);
+	debugDraw(ctx: CanvasRenderingContext2D): void {
+		this.debugDrawNoStyle(ctx);
 	}
 
 	debugDrawSimple(context: CanvasRenderingContext2D): void {
 		// param1.DrawLine(this.p0.x, this.p0.y, this.p1.x, this.p1.y);
 	}
 
-	debugDrawNoStyle(context: CanvasRenderingContext2D): void {
+	debugDrawNoStyle(ctx: CanvasRenderingContext2D): void {
+		ctx.beginPath();
+		ctx.lineWidth = 2;
+		ctx.strokeStyle = "black";
+		ctx.moveTo(this.p0.x, this.p0.x);
+		ctx.lineTo(this.p1.x, this.p1.y);
+		ctx.stroke();
 		// param1.DrawLine(this.p0.x, this.p0.y, this.p1.x, this.p1.y);
 		// param1.DrawSquare(this.p0.x, this.p0.y, 2);
 		// param1.DrawSquare(this.p1.x, this.p1.y, 2);

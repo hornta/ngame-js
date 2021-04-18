@@ -34,7 +34,7 @@ export class ByteArray {
 	}
 
 	set position(value: number) {
-		this.updatePosition(value);
+		this.offset = value;
 	}
 
 	get length(): number {

@@ -2,9 +2,10 @@ import { NUM_TILE_TYPES, TileType } from "../tile-type";
 
 const perpIndex = [2, 3, 5, 4, 6, 7, 1, 0];
 
-export const BoundaryFlags = new Array<boolean[]>(NUM_TILE_TYPES).fill(
-	new Array<boolean>(8).fill(false)
-);
+export const BoundaryFlags = [];
+for (let i = 0; i < NUM_TILE_TYPES; ++i) {
+	BoundaryFlags.push(new Array<boolean>(8).fill(false));
+}
 
 const setBoundaryFlagsPerp = (param1: number, param2: number): void => {
 	for (let i = 0; i < 8; ++i) {

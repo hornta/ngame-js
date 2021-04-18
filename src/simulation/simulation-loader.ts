@@ -326,32 +326,32 @@ const loadLevelEditorStateEntities = (
 };
 
 const initTileIDGridWithBoundaryEdges = (
-	tileIds: TileType[],
+	tileIDs: TileType[],
 	numCols: number,
 	numRows: number
 ): void => {
 	const _loc4_ = numCols * numRows;
 	let _loc5_ = 0;
 	while (_loc5_ < _loc4_) {
-		tileIds[_loc5_] = TileType.EMPTY;
+		tileIDs[_loc5_] = TileType.EMPTY;
 		_loc5_++;
 	}
 	let _loc6_ = 1;
 	while (_loc6_ < numCols - 1) {
-		tileIds[_loc6_] = TileType.EDGE_BOTTOM;
-		tileIds[_loc6_ + (numRows - 1) * numCols] = TileType.EDGE_TOP;
+		tileIDs[_loc6_] = TileType.EDGE_BOTTOM;
+		tileIDs[_loc6_ + (numRows - 1) * numCols] = TileType.EDGE_TOP;
 		_loc6_++;
 	}
 	let _loc7_ = 1;
 	while (_loc7_ < numRows - 1) {
-		tileIds[_loc7_ * numCols] = TileType.EDGE_RIGHT;
-		tileIds[numCols - 1 + _loc7_ * numCols] = TileType.EDGE_LEFT;
+		tileIDs[_loc7_ * numCols] = TileType.EDGE_RIGHT;
+		tileIDs[numCols - 1 + _loc7_ * numCols] = TileType.EDGE_LEFT;
 		_loc7_++;
 	}
-	tileIds[0] = TileType.EDGE_CORNER_UL;
-	tileIds[numCols - 1] = TileType.EDGE_CORNER_UR;
-	tileIds[(numRows - 1) * numCols] = TileType.EDGE_CORNER_DL;
-	tileIds[numRows * numCols - 1] = TileType.EDGE_CORNER_DR;
+	tileIDs[0] = TileType.EDGE_CORNER_UL;
+	tileIDs[numCols - 1] = TileType.EDGE_CORNER_UR;
+	tileIDs[(numRows - 1) * numCols] = TileType.EDGE_CORNER_DL;
+	tileIDs[numRows * numCols - 1] = TileType.EDGE_CORNER_DR;
 };
 
 const generateTileSegmentsFiltered = (
@@ -414,30 +414,30 @@ const generateTileSegmentsFiltered = (
 	return segments;
 };
 
-const buildTileSegs = (
+const buildTileSegments = (
 	segmentGrid: GridSegment,
 	cellSize: number,
 	halfCellSize: number,
-	param4: number,
-	param5: number,
+	x: number,
+	y: number,
 	tileType: TileType,
 	param7: number[]
 ): void => {
 	const segments = generateTileSegmentsFiltered(
 		tileType,
 		param7,
-		param4 * cellSize + halfCellSize,
-		param5 * cellSize + halfCellSize,
+		x * cellSize + halfCellSize,
+		y * cellSize + halfCellSize,
 		halfCellSize
 	);
 	for (const segment of segments) {
-		segmentGrid.addSegToCell(param4, param5, segment);
+		segmentGrid.addSegToCell(x, y, segment);
 	}
 };
 
 const loadLevelEditorStateTiles = (
 	editorTileIds: number[],
-	tileIds: TileType[],
+	tileIDs: TileType[],
 	segmentGrid: GridSegment,
 	edgeGrid: GridEdges,
 	numCols: number,
@@ -447,48 +447,48 @@ const loadLevelEditorStateTiles = (
 ): void => {
 	segmentGrid.clear();
 	edgeGrid.clear();
-	initTileIDGridWithBoundaryEdges(tileIds, numCols, numRows);
+	initTileIDGridWithBoundaryEdges(tileIDs, numCols, numRows);
 
 	for (let i = 0; i < editorTileIds.length; ++i) {
 		const x = 1 + (i % NUM_COLS);
 		const y = 1 + Math.floor(i / NUM_COLS);
-		tileIds[x + y * numCols] = editorTileIds[i];
+		tileIDs[x + y * numCols] = editorTileIds[i];
 	}
 
 	const _loc10_ = new Array<number>(4);
-	for (let i = 0; i < tileIds.length; ++i) {
+	for (let i = 0; i < tileIDs.length; ++i) {
 		const x = i % numCols;
 		const y = Math.floor(i / numCols);
 		if (x === 0) {
 			_loc10_[0] = TileType.EMPTY;
 		} else {
-			_loc10_[0] = tileIds[x - 1 + y * numCols];
+			_loc10_[0] = tileIDs[x - 1 + y * numCols];
 		}
 		if (x === numCols - 1) {
 			_loc10_[2] = TileType.EMPTY;
 		} else {
-			_loc10_[2] = tileIds[x + 1 + y * numCols];
+			_loc10_[2] = tileIDs[x + 1 + y * numCols];
 		}
 		if (y === 0) {
 			_loc10_[3] = TileType.EMPTY;
 		} else {
-			_loc10_[3] = tileIds[x + (y - 1) * numCols];
+			_loc10_[3] = tileIDs[x + (y - 1) * numCols];
 		}
 		if (y === numRows - 1) {
 			_loc10_[1] = TileType.EMPTY;
 		} else {
-			_loc10_[1] = tileIds[x + (y + 1) * numCols];
+			_loc10_[1] = tileIDs[x + (y + 1) * numCols];
 		}
-		buildTileSegs(
+		buildTileSegments(
 			segmentGrid,
 			cellSize,
 			halfCellSize,
 			x,
 			y,
-			tileIds[i],
+			tileIDs[i],
 			_loc10_
 		);
-		edgeGrid.loadTileEdges(x, y, tileIds[i]);
+		edgeGrid.loadTileEdges(x, y, tileIDs[i]);
 	}
 };
 
@@ -500,7 +500,7 @@ export const loadLevelFromEditorState = (
 	numberOfPlayers: number,
 	editorState: EditorState
 ): Simulator => {
-	const tileIds = new Array(
+	const tileIDs = new Array<TileType>(
 		Simulator.GRID_NUM_COLUMNS * Simulator.GRID_NUM_ROWS
 	);
 	const gridSegment = new GridSegment(
@@ -522,7 +522,7 @@ export const loadLevelFromEditorState = (
 	const playerLocations: Vector2[] = [];
 	loadLevelEditorStateTiles(
 		editorState.tileIDs,
-		tileIds,
+		tileIDs,
 		gridSegment,
 		gridEdges,
 		Simulator.GRID_NUM_COLUMNS,
@@ -576,7 +576,7 @@ export const loadLevelFromEditorState = (
 	});
 
 	return new Simulator(
-		tileIds,
+		tileIDs,
 		gridSegment,
 		gridEdges,
 		gridEntity,

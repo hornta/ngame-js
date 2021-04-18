@@ -1,4 +1,5 @@
 import { NUM_COLS, NUM_ROWS } from "../editor-state";
+import type { TileType } from "../tile-type.js";
 import type { EntityBase } from "./entities/entity-base";
 import type { GridEdges } from "./grid-edges";
 import type { GridEntity } from "./grid-entity";
@@ -58,7 +59,7 @@ export class Simulator {
 	static GRID_CELL_HALFWIDTH = Simulator.GRID_CELL_SIZE / 2;
 
 	entityList: EntityBase[];
-	tileIDs: number[];
+	tileIDs: TileType[];
 	segGrid: GridSegment;
 	edgeGrid: GridEdges;
 	entityGrid: GridEntity;

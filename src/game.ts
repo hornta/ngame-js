@@ -1,6 +1,8 @@
+import { Ticker } from "@pixi/ticker";
 import type { ByteArray } from "./byte-array";
 import { EditorState } from "./editor-state";
 import { GameState } from "./game-state.js";
+import { GraphicsManager } from "./graphics-manager.js";
 import { Input } from "./input";
 import { MenuState } from "./menu-state.js";
 import { Options } from "./options";
@@ -40,6 +42,55 @@ export class Game {
 	start = 0;
 	pausedTime = 0;
 	gameTooSlow = false;
+	ticker: Ticker;
+	private canvas: HTMLCanvasElement;
+	private gfx: GraphicsManager;
+	private renderId: number;
+	private boundRender: () => void;
+
+	constructor() {
+		this.ticker = new Ticker();
+		this.ticker.add(() => {
+			this.tick();
+		});
+		this.ticker.start();
+
+		this.gfx = new GraphicsManager();
+
+		this.boundRender = this.render.bind(this);
+	}
+
+	private startRender(): void {
+		this.renderId = requestAnimationFrame(this.boundRender);
+	}
+
+	private stopRender(): void {
+		cancelAnimationFrame(this.renderId);
+	}
+
+	private render(): void {
+		this.gfx.render();
+		if (this.simulator) {
+			this.simulator.segGrid.debugDraw(this.gfx.getContext());
+		}
+		this.renderId = requestAnimationFrame(this.boundRender);
+	}
+
+	public setCanvas(element: HTMLCanvasElement): void {
+		this.canvas = element;
+		this.gfx.setContext(
+			this.canvas.getContext("2d", {
+				alpha: false,
+			})
+		);
+		this.gfx.setWidthAndHeight(element.width, element.height);
+	}
+
+	public setCanvasSize(width: number, height: number): void {
+		this.canvas.width = width;
+		this.canvas.height = height;
+		this.gfx.setWidthAndHeight(width, height);
+	}
 
 	initialize(): void {
 		this.startingTicks = DEFAULT_STARTING_TICKS;
@@ -144,7 +195,7 @@ export class Game {
 		}
 	}
 
-	tickReplay(): void {
+	private tickReplay(): void {
 		switch (this.gameState) {
 			case GameState.GAME:
 				this.tickReplayInProgress();
@@ -248,9 +299,20 @@ export class Game {
 		if (Options.coopMode && !this.replayChosenByPlayer) {
 			this.simulator.enablePlayer(1);
 		}
+
+		this.gfx.setData(
+			this.simulator.entityList,
+			this.simulator.playerList,
+			this.simulator.tileIDs,
+			Simulator.GRID_NUM_ROWS,
+			Simulator.GRID_NUM_COLUMNS
+		);
+		this.startRender();
 	}
 
-	clearGame(): void {}
+	clearGame(): void {
+		this.stopRender();
+	}
 
 	private exit(): void {
 		this.clearGame();

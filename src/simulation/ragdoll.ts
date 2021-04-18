@@ -411,9 +411,9 @@ export class Ragdoll {
 			_loc7_ = param5;
 			_loc8_ = param6;
 		} else {
-			throw new Error(
-				"WARNING! ragdoll wasn't passed in a pose.. this should never happen."
-			);
+			// throw new Error(
+			// 	"WARNING! ragdoll wasn't passed in a pose.. this should never happen."
+			// );
 		}
 		this.particleList[RagdollState.UNEXPLODED][0].setState(
 			param1.x + _loc7_[0].x,

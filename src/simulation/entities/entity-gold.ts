@@ -8,7 +8,7 @@ import { Vector2 } from "../vector2.js";
 import { EntityBase } from "./entity-base";
 
 export class EntityGold extends EntityBase {
-	private position: Vector2;
+	public position: Vector2;
 	private radius: number;
 	private isCollected: boolean;
 

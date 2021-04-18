@@ -242,4 +242,12 @@ export class GridSegment extends GridBase {
 
 		return segments;
 	};
+
+	public debugDraw(ctx: CanvasRenderingContext2D): void {
+		for (const rowOfCells of this.cells) {
+			for (const cell of rowOfCells) {
+				cell.debugDraw(ctx);
+			}
+		}
+	}
 }
