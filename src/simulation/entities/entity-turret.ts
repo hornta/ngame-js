@@ -1,9 +1,10 @@
-import type { EntityGraphics } from "../../entity-graphics.js";
+import type { EntityGraphics } from "../../graphics/entity-graphics.js";
 import { overlapCircleVsSegment, tryToAcquireTarget } from "../../fns.js";
 import type { GridEntity } from "../grid-entity.js";
 import { PlayerKillType, SimulationRate, Simulator } from "../simulator.js";
 import { Vector2 } from "../vector2.js";
 import { EntityBase } from "./entity-base";
+import type { GraphicsManager } from "../../graphics-manager.js";
 
 enum TurretState {
 	IDLE = 0,
@@ -160,7 +161,7 @@ export class EntityTurret extends EntityBase {
 		return null;
 	}
 
-	debugDraw(context: CanvasRenderingContext2D): void {}
+	debugDraw(gfx: GraphicsManager): void {}
 
 	private startTargeting(playerIndex: number): void {
 		this.aimPosition.setFrom(this.position);

@@ -188,6 +188,9 @@ export class Ninja {
 		this.deathPosition.y = y;
 		this.deathForce.x = forceX;
 		this.deathForce.y = forceY;
+		console.log(
+			`Player killed at ${this.deathPosition} by ${this.deathType} with force ${this.deathForce}`
+		);
 		this.exitCurrentState();
 		this.currentState = PlayerState.STATE_AWAITINGDEATH;
 	}
@@ -300,7 +303,7 @@ export class Ninja {
 			);
 			for (const entity of entityList) {
 				if (
-					entity.collideVsCirclePhysical(
+					entity.collideVsNinjaPhysical(
 						this.resultPhysical,
 						this.position,
 						this.velocity,
@@ -326,31 +329,36 @@ export class Ninja {
 		} else {
 			const maxIterations = 32;
 			let currentIteration = 0;
-			const closestPoint = new Vector2(0, 0);
-			const _loc4_ = getSingleClosestPointSigned(
-				simulator.segGrid,
-				this.position,
-				this.radius,
-				closestPoint
-			);
-			while (_loc4_ !== 0) {
-				let _loc5_ = this.position.x - closestPoint.x;
-				let _loc6_ = this.position.y - closestPoint.y;
-				const _loc7_ = Math.sqrt(_loc5_ * _loc5_ + _loc6_ * _loc6_);
-				const _loc8_ = this.radius - _loc4_ * _loc7_;
+			const closestPoint = new Vector2();
+
+			// eslint-disable-next-line no-constant-condition
+			while (true) {
+				const sign = getSingleClosestPointSigned(
+					simulator.segGrid,
+					this.position,
+					this.radius,
+					closestPoint
+				);
+				if (sign === 0) {
+					break;
+				}
+				let dx = this.position.x - closestPoint.x;
+				let dy = this.position.y - closestPoint.y;
+				const distSquared = Math.sqrt(dx * dx + dy * dy);
+				const _loc8_ = this.radius - sign * distSquared;
 				if (_loc8_ < 1e-7) {
 					break;
 				}
-				if (_loc7_ === 0) {
+				if (distSquared === 0) {
 					return;
 				}
-				_loc5_ /= _loc7_;
-				_loc6_ /= _loc7_;
-				this.respondToCollision(_loc5_, _loc6_, _loc4_ * _loc8_, true, false);
+				dx /= distSquared;
+				dy /= distSquared;
+				this.respondToCollision(dx, dy, sign * _loc8_, true, false);
 				currentIteration++;
 				if (currentIteration === maxIterations) {
 					throw new Error(
-						`WARNING! collision loop hit max iterations: ${_loc8_}`
+						`WARNING! collision loop hit max iterations: ${_loc8_} ${distSquared}`
 					);
 				}
 			}
@@ -373,7 +381,7 @@ export class Ninja {
 				);
 				for (const entity of entities) {
 					if (
-						entity.collideVsCircleLogical(
+						entity.collideVsNinjaLogical(
 							simulator,
 							this,
 							this.resultLogical,
@@ -515,8 +523,8 @@ export class Ninja {
 			return;
 		}
 		if (this.currentState === PlayerState.STATE_AWAITINGDEATH) {
-			const _loc10_: Vector2[] | null = null;
-			const _loc11_: Vector2[] | null = null;
+			const posePositions: Vector2[] | null = null;
+			const poseVelocities: Vector2[] | null = null;
 			// if (this.ninja_gfx !== null && this.ninja_gfx.hasValidPose) {
 			// 	_loc10_ = new Array<Vector2>(6);
 			// 	_loc11_ = new Array<Vector2>(6);
@@ -527,8 +535,8 @@ export class Ninja {
 				this.velocity,
 				this.deathPosition,
 				this.deathForce,
-				_loc10_,
-				_loc11_
+				posePositions,
+				poseVelocities
 			);
 			if (
 				this.deathType === PlayerDeathType.EXPLOSIVE ||

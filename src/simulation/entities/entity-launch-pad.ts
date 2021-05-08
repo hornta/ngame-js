@@ -1,4 +1,4 @@
-import type { EntityGraphics } from "../../entity-graphics.js";
+import type { EntityGraphics } from "../../graphics/entity-graphics.js";
 import { overlapCircleVsCircle } from "../../fns.js";
 import type { CollisionResultLogical } from "../collision-result-logical.js";
 import type { GridEntity } from "../grid-entity.js";
@@ -6,11 +6,12 @@ import type { Ninja } from "../ninja.js";
 import type { Simulator } from "../simulator.js";
 import { Vector2 } from "../vector2.js";
 import { EntityBase } from "./entity-base";
+import type { GraphicsManager } from "../../graphics-manager.js";
 
 export class EntityLaunchPad extends EntityBase {
-	private position: Vector2;
-	private normal: Vector2;
-	private r: number;
+	public position: Vector2;
+	public normal: Vector2;
+	public radius: number;
 	private strength: number;
 	private gfxTriggerEvent: boolean;
 
@@ -24,28 +25,37 @@ export class EntityLaunchPad extends EntityBase {
 		super();
 		this.position = new Vector2(x, y);
 		this.normal = new Vector2(normalX, normalY);
-		this.r = 12 * 0.5;
+		this.radius = 12 * 0.5;
 		this.strength = 12 * (3 / 7);
 		entityGrid.addEntity(this.position, this);
 		this.gfxTriggerEvent = false;
 	}
 
-	collideVsCircleLogical(
+	collideVsNinjaLogical(
 		simulator: Simulator,
 		ninja: Ninja,
 		collision: CollisionResultLogical,
-		param4: Vector2,
-		param5: Vector2,
+		playerPosition: Vector2,
+		playerVelocity: Vector2,
 		param6: Vector2,
-		param7: number,
+		playerRadius: number,
 		param8: number
 	): boolean {
 		let _loc9_ = NaN;
 		let _loc10_ = NaN;
 		let _loc11_ = NaN;
-		if (overlapCircleVsCircle(this.position, this.r, param4, param7)) {
-			_loc9_ = this.position.x - (param4.x - this.normal.x * param7);
-			_loc10_ = this.position.y - (param4.y - this.normal.y * param7);
+		if (
+			overlapCircleVsCircle(
+				this.position,
+				this.radius,
+				playerPosition,
+				playerRadius
+			)
+		) {
+			_loc9_ =
+				this.position.x - (playerPosition.x - this.normal.x * playerRadius);
+			_loc10_ =
+				this.position.y - (playerPosition.y - this.normal.y * playerRadius);
 			if (-(param8 = 0.1) <= this.normal.x * _loc9_ + this.normal.y * _loc10_) {
 				_loc11_ = 1;
 				if (this.normal.y < 0) {
@@ -73,7 +83,7 @@ export class EntityLaunchPad extends EntityBase {
 		return null;
 	}
 
-	debugDraw(context: CanvasRenderingContext2D): void {
+	debugDraw(gfx: GraphicsManager): void {
 		// param1.SetStyle(0, 0, 100);
 		// param1.DrawBox(
 		// 	this.pos.x,

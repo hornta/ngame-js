@@ -1,4 +1,4 @@
-import type { EntityGraphics } from "../../entity-graphics.js";
+import type { EntityGraphics } from "../../graphics/entity-graphics.js";
 import { overlapCircleVsCircle } from "../../fns";
 import type { CollisionResultLogical } from "../collision-result-logical";
 import type { GridEntity } from "../grid-entity";
@@ -6,6 +6,7 @@ import type { Ninja } from "../ninja";
 import { PlayerKillType, SimulationRate, Simulator } from "../simulator";
 import type { Vector2 } from "../vector2";
 import { EntityDroneBase } from "./entity-drone-base";
+import type { GraphicsManager } from "../../graphics-manager.js";
 
 export class EntityDroneZap extends EntityDroneBase {
 	constructor(
@@ -19,7 +20,7 @@ export class EntityDroneZap extends EntityDroneBase {
 		super(entityGrid, x, y, speed, facingDirection, moveType);
 	}
 
-	collideVsCircleLogical(
+	collideVsNinjaLogical(
 		simulator: Simulator,
 		ninja: Ninja,
 		collision: CollisionResultLogical,
@@ -70,7 +71,7 @@ export class EntityDroneZap extends EntityDroneBase {
 	// 	_loc2_.orn = gfxorn;
 	// }
 
-	debugDraw(context: CanvasRenderingContext2D): void {
+	debugDraw(gfx: GraphicsManager): void {
 		// super.Debug_Draw(param1);
 		// param1.SetStyle(4, 8947967, 50);
 		// param1.DrawCircle(pos.x, pos.y, r / 2);

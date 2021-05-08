@@ -1,9 +1,7 @@
-import type { ByteArray } from "./byte-array";
+import { Buffer } from "buffer";
 import type { GridSegment } from "./simulation/grid-segment";
 import type { Ninja } from "./simulation/ninja";
 import { Vector2 } from "./simulation/vector2.js";
-
-export const prepareSessionFromBytes = (byteArray: ByteArray): void => {};
 
 // export const searchLevels = ({ name }) => {
 //   const params = new Map();
@@ -11,6 +9,35 @@ export const prepareSessionFromBytes = (byteArray: ByteArray): void => {};
 //   const path = SERVER_URL + '/search.php';
 //   http://nserver.thewayoftheninja.org/search.php?search[level_name]=&search[username]=&search[user_id]=&search[playername]=&search[player_id]=&search[min_date]=&search[max_date]=&search[genre]=&search[min_rating]=&search[max_rating]=&sort=username&row_count=10&offset=0
 // }
+
+const createHighscoreURLForLevel = (levelId: string): string => {
+	const paddedLevelId = levelId.padStart(6, "0");
+	const overflowLevelId =
+		paddedLevelId.length > 6 ? paddedLevelId.length - 6 : 0;
+
+	let overflown = "";
+	for (let i = 0; i <= overflowLevelId; ++i) {
+		overflown += paddedLevelId[i];
+	}
+
+	const _loc6_ =
+		paddedLevelId[1 + overflowLevelId] + paddedLevelId[2 + overflowLevelId];
+	const _loc7_ =
+		paddedLevelId[3 + overflowLevelId] +
+		paddedLevelId[4 + overflowLevelId] +
+		paddedLevelId[5 + overflowLevelId];
+	const now = new Date();
+	return `http://nserver.thewayoftheninja.org/highscores/${overflown}/${_loc6_}/${_loc7_}.txt?rnd=${
+		now.getTime() / 1000
+	}${Math.random() * 1000}`;
+};
+
+export const requestHighscores = async (levelId: string): Promise<Buffer> => {
+	const url = createHighscoreURLForLevel(levelId);
+	const response = await fetch(url);
+	const decoded = Buffer.from(await response.arrayBuffer());
+	return decoded;
+};
 
 export const overlapCircleVsCircle = (
 	centerA: Vector2,
@@ -129,47 +156,47 @@ export const overlapCircleVsSegment = (
 };
 
 export const timeOfIntersectionCircleVsCircle = (
-	param1: Vector2,
-	param2: Vector2,
-	param3: Vector2,
-	param4: Vector2,
-	param5: number
+	start: Vector2,
+	end: Vector2,
+	param3: Vector2
 ): number => {
-	let _loc14_ = NaN;
-	let _loc15_ = NaN;
-	let _loc16_ = NaN;
-	let _loc17_ = NaN;
-	const _loc6_ = param2.x - param4.x;
-	const _loc7_ = param2.y - param4.y;
-	const _loc8_ = param1.x - param3.x;
-	const _loc9_ = param1.y - param3.y;
-	const _loc10_ = _loc6_ * _loc6_ + _loc7_ * _loc7_;
-	const _loc11_ = 2 * (_loc8_ * _loc6_ + _loc9_ * _loc7_);
-	const _loc12_ = _loc8_ * _loc8_ + _loc9_ * _loc9_ - param5 * param5;
-	const _loc13_ = 0.0001;
-	if (_loc12_ <= 0) {
+	const endX = end.x;
+	const endY = end.y;
+	const deltaX = start.x - param3.x;
+	const deltaY = start.y - param3.y;
+	const a = endX * endX + endY * endY;
+	const b = 2 * (deltaX * endX + deltaY * endY);
+	const c = deltaX * deltaX + deltaY * deltaY;
+
+	if (c <= 0) {
 		return -1;
 	}
-	if (Math.abs(_loc10_) < _loc13_) {
+
+	if (Math.abs(a) < Number.EPSILON) {
 		return 2;
 	}
-	if (_loc11_ >= 0) {
+
+	if (b >= 0) {
 		return 2;
 	}
-	if ((_loc14_ = _loc11_ * _loc11_ - 4 * _loc10_ * _loc12_) < 0) {
+
+	const temp = b * b - 4 * a * c;
+	if (temp < 0) {
 		return 2;
 	}
-	_loc16_ = (_loc15_ = -0.5 * (_loc11_ - Math.sqrt(_loc14_))) / _loc10_;
-	_loc17_ = _loc12_ / _loc15_;
-	return Math.min(_loc16_, _loc17_);
+
+	const d = -0.5 * (b - Math.sqrt(temp));
+	const root1 = d / a;
+	const root2 = c / d;
+
+	return Math.min(root1, root2);
 };
 
 export const timeOfIntersectionPointVsLineSegment = (
 	param1: Vector2,
 	param2: Vector2,
 	param3: Vector2,
-	param4: Vector2,
-	param5: number
+	param4: Vector2
 ): number => {
 	let _loc18_ = NaN;
 	let _loc19_ = NaN;
@@ -186,8 +213,7 @@ export const timeOfIntersectionPointVsLineSegment = (
 	const _loc14_ = _loc9_ * param2.x + _loc10_ * param2.y;
 	const _loc15_ = _loc6_ * _loc11_ + _loc7_ * _loc12_;
 	let _loc17_;
-	let _loc16_;
-	if ((_loc17_ = (_loc16_ = Math.abs(_loc13_)) - param5) < 0) {
+	if ((_loc17_ = Math.abs(_loc13_)) < 0) {
 		if (_loc15_ < 0 || _loc15_ > _loc8_) {
 			return 2;
 		}
@@ -209,8 +235,7 @@ export const timeOfIntersectionCircleVsArc = (
 	param2: Vector2,
 	param3: Vector2,
 	param4: Vector2,
-	param5: Vector2,
-	param6: number
+	param5: Vector2
 ): number => {
 	const _loc7_ = param4.x - param3.x;
 	const _loc8_ = param4.y - param3.y;
@@ -221,7 +246,7 @@ export const timeOfIntersectionCircleVsArc = (
 		param3,
 		param4,
 		param5,
-		_loc9_ + param6
+		_loc9_
 	);
 	const _loc11_ = timeOfIntersectionCircleVsArcHelper(
 		param1,
@@ -229,7 +254,7 @@ export const timeOfIntersectionCircleVsArc = (
 		param3,
 		param4,
 		param5,
-		_loc9_ - param6
+		_loc9_
 	);
 	return Math.min(_loc10_, _loc11_);
 };
@@ -311,41 +336,47 @@ const timeOfIntersectionCircleVsArcHelper = (
 	return Math.min(_loc15_, _loc16_);
 };
 
+// 0 - no closest point
+// -1 - closest point backfacing
+// 1 - closest point frontfacing
 export const getSingleClosestPointSigned = (
 	gridSegment: GridSegment,
-	param2: Vector2,
-	offset: number,
-	closestPointOut: Vector2
+	queryPosition: Vector2,
+	queryRadius: number,
+	outClosestPoint: Vector2
 ): number => {
-	let _loc5_ = 0;
+	let closestSign = 0;
 	let smallestWidth = Number.POSITIVE_INFINITY;
 	const segments = gridSegment.gatherCellContentsFromWorldspaceRegion(
-		param2.x - offset,
-		param2.y - offset,
-		param2.x + offset,
-		param2.y + offset
+		queryPosition.x - queryRadius,
+		queryPosition.y - queryRadius,
+		queryPosition.x + queryRadius,
+		queryPosition.y + queryRadius
 	);
 
 	for (const segment of segments) {
 		const closestPoint = new Vector2();
-		const _loc8_ = segment.getClosestPointIsBackfacing(param2, closestPoint);
-		const diffX = closestPoint.x - param2.x;
-		const diffY = closestPoint.y - param2.y;
-		let squaredLength = diffX * diffX + diffY * diffY;
-		if (!_loc8_) {
+		const isPenetrating = segment.getClosestPointIsBackfacing(
+			queryPosition,
+			closestPoint
+		);
+		const dx = closestPoint.x - queryPosition.x;
+		const dy = closestPoint.y - queryPosition.y;
+		let squaredLength = dx * dx + dy * dy;
+		if (!isPenetrating) {
 			squaredLength -= 0.1;
 		}
 		if (squaredLength < smallestWidth) {
-			closestPointOut.setFrom(closestPoint);
+			outClosestPoint.setFrom(closestPoint);
 			smallestWidth = squaredLength;
-			if (_loc8_) {
-				_loc5_ = -1;
+			if (isPenetrating) {
+				closestSign = -1;
 			} else {
-				_loc5_ = 1;
+				closestSign = 1;
 			}
 		}
 	}
-	return _loc5_;
+	return closestSign;
 };
 
 export const penetrationSquareVsPoint = (

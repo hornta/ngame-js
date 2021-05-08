@@ -19,7 +19,7 @@ const convexNN = convexNP.generatePerpArchetype();
 const convexPN = convexNN.generatePerpArchetype();
 
 const concavePP = new TileEdgeArchetypeCircular(-1, 1, 1, -1, 1, 1);
-const concaveNP = convexPP.generatePerpArchetype();
+const concaveNP = concavePP.generatePerpArchetype();
 const concaveNN = concaveNP.generatePerpArchetype();
 const concavePN = concaveNN.generatePerpArchetype();
 
@@ -40,7 +40,7 @@ const large67PN = large22NN.generatePerpArchetype();
 
 const large67PP = new TileEdgeArchetypeLinear(0, 1, 1, -1);
 const large22NP = large67PP.generatePerpArchetype();
-const large67NN = large67NP.generatePerpArchetype();
+const large67NN = large22NP.generatePerpArchetype();
 const large22PN = large67NN.generatePerpArchetype();
 
 export const SegmentDefinition: Record<TileType, TileEdgeArchetype | null> = {

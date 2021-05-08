@@ -23,7 +23,6 @@ module.exports = {
     // "bundle": true,
   },
   packageOptions: {
-    /* ... */
   },
   devOptions: {
     /* ... */

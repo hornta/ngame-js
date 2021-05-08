@@ -54,7 +54,7 @@ export abstract class EntityDoorBase extends EntityBase {
 		entityGrid.addEntity(this.triggerPosition, this);
 	}
 
-	collideVsCircleLogical(
+	collideVsNinjaLogical(
 		simulator: Simulator,
 		ninja: Ninja,
 		collision: CollisionResultLogical,

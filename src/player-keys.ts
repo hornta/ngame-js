@@ -41,10 +41,10 @@ export class PlayerKeys {
 }
 
 export const soloKeys = new PlayerKeys();
-soloKeys.bindActionKeyForPlayer(PlayerKey.JUMP, "z", 0);
+soloKeys.bindActionKeyForPlayer(PlayerKey.JUMP, "KeyZ", 0);
 soloKeys.bindActionKeyForPlayer(PlayerKey.LEFT, "ArrowLeft", 0);
 soloKeys.bindActionKeyForPlayer(PlayerKey.RIGHT, "ArrowRight", 0);
-soloKeys.bindActionKeyForPlayer(PlayerKey.SUICIDE, "k", 0);
+soloKeys.bindActionKeyForPlayer(PlayerKey.SUICIDE, "KeyK", 0);
 
 export const coopKeys = new PlayerKeys();
 coopKeys.bindActionKeyForPlayer(PlayerKey.JUMP, "Shift", 0);

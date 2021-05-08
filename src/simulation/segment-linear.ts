@@ -2,6 +2,7 @@ import {
 	timeOfIntersectionCircleVsCircle,
 	timeOfIntersectionPointVsLineSegment,
 } from "../fns";
+import type { GraphicsManager } from "../graphics-manager.js";
 import { AABB } from "./aabb.js";
 import type { Segment } from "./segment";
 import { Vector2 } from "./vector2.js";
@@ -65,91 +66,67 @@ export class SegmentLinear implements Segment {
 	}
 
 	intersectWithRay(
-		param1: Vector2,
-		param2: Vector2,
-		param3: number,
-		param4: Vector2,
-		param5: Vector2
+		rayStart: Vector2,
+		rayEnd: Vector2,
+		outPosition: Vector2,
+		outNormal: Vector2
 	): number {
-		let _loc10_ = NaN;
-		let _loc11_ = NaN;
-		let _loc12_ = NaN;
 		let _loc13_ = NaN;
 		let _loc14_ = NaN;
 		let _loc15_ = NaN;
-		const _loc6_ = timeOfIntersectionCircleVsCircle(
-			param1,
-			param2,
-			this.p0,
-			new Vector2(0, 0),
-			param3
-		);
-		const _loc7_ = timeOfIntersectionCircleVsCircle(
-			param1,
-			param2,
-			this.p1,
-			new Vector2(0, 0),
-			param3
-		);
+		const _loc6_ = timeOfIntersectionCircleVsCircle(rayStart, rayEnd, this.p0);
+		const _loc7_ = timeOfIntersectionCircleVsCircle(rayStart, rayEnd, this.p1);
 		const _loc8_ = timeOfIntersectionPointVsLineSegment(
-			param1,
-			param2,
+			rayStart,
+			rayEnd,
 			this.p0,
-			this.p1,
-			param3
+			this.p1
 		);
 		let _loc9_;
 		const rayPoint = new Vector2();
-		const cp = new Vector2();
 		if ((_loc9_ = Math.min(_loc6_, _loc7_, _loc8_)) <= 1 && _loc9_ >= 0) {
-			rayPoint.x = param1.x + _loc9_ * param2.x;
-			rayPoint.y = param1.y + _loc9_ * param2.y;
-			if (param3 > 0) {
-				cp.x = 0;
-				cp.y = 0;
-				this.getClosestPoint(rayPoint, cp);
-				_loc10_ = rayPoint.x - cp.x;
-				_loc11_ = rayPoint.y - cp.y;
-				_loc12_ = Math.sqrt(_loc10_ * _loc10_ + _loc11_ * _loc11_);
-				_loc10_ /= _loc12_;
-				_loc11_ /= _loc12_;
-				param4.x = cp.x;
-				param4.y = cp.y;
-				param5.x = _loc10_;
-				param5.y = _loc11_;
-			} else {
-				_loc13_ = -(this.p1.y - this.p0.y);
-				_loc14_ = this.p1.x - this.p0.x;
-				_loc15_ = Math.sqrt(_loc13_ * _loc13_ + _loc14_ * _loc14_);
-				_loc13_ /= _loc15_;
-				_loc14_ /= _loc15_;
-				if (_loc13_ * param2.x + _loc14_ * param2.y > 0) {
-					_loc13_ *= -1;
-					_loc14_ *= -1;
-				}
-				param4.setFrom(rayPoint);
-				param5.x = _loc13_;
-				param5.y = _loc14_;
+			rayPoint.x = rayStart.x + _loc9_ * rayEnd.x;
+			rayPoint.y = rayStart.y + _loc9_ * rayEnd.y;
+			_loc13_ = -(this.p1.y - this.p0.y);
+			_loc14_ = this.p1.x - this.p0.x;
+			_loc15_ = Math.sqrt(_loc13_ * _loc13_ + _loc14_ * _loc14_);
+			_loc13_ /= _loc15_;
+			_loc14_ /= _loc15_;
+			if (_loc13_ * rayEnd.x + _loc14_ * rayEnd.y > 0) {
+				_loc13_ *= -1;
+				_loc14_ *= -1;
 			}
+			outPosition.setFrom(rayPoint);
+			outNormal.x = _loc13_;
+			outNormal.y = _loc14_;
 		}
 		return _loc9_;
 	}
 
-	debugDraw(ctx: CanvasRenderingContext2D): void {
-		this.debugDrawNoStyle(ctx);
+	debugDraw(gfx: GraphicsManager): void {
+		gfx.setStyle("black", 1);
+		this.debugDrawNoStyle(gfx);
 	}
 
-	debugDrawSimple(context: CanvasRenderingContext2D): void {
+	debugDrawSimple(gfx: GraphicsManager): void {
 		// param1.DrawLine(this.p0.x, this.p0.y, this.p1.x, this.p1.y);
 	}
 
-	debugDrawNoStyle(ctx: CanvasRenderingContext2D): void {
-		ctx.beginPath();
-		ctx.lineWidth = 2;
-		ctx.strokeStyle = "black";
-		ctx.moveTo(this.p0.x, this.p0.x);
-		ctx.lineTo(this.p1.x, this.p1.y);
-		ctx.stroke();
+	debugDrawNoStyle(gfx: GraphicsManager): void {
+		gfx.renderLine(this.p0, this.p1, "red");
+		gfx.renderSquare(this.p0.x, this.p0.y, 2);
+		gfx.renderSquare(this.p1.x, this.p1.y, 2);
+
+		const _loc2_ = this.p0.to(this.p1);
+		const _loc3_ = _loc2_.perp();
+		_loc3_.normalize();
+		gfx.renderLine(
+			new Vector2(this.p0.x + 0.5 * _loc2_.x, this.p0.y + 0.5 * _loc2_.y),
+			new Vector2(
+				this.p0.x + 0.5 * _loc2_.x + 4 * _loc3_.x,
+				this.p0.y + 0.5 * _loc2_.y + 4 * _loc3_.y
+			)
+		);
 		// param1.DrawLine(this.p0.x, this.p0.y, this.p1.x, this.p1.y);
 		// param1.DrawSquare(this.p0.x, this.p0.y, 2);
 		// param1.DrawSquare(this.p1.x, this.p1.y, 2);

@@ -23,6 +23,31 @@ const stickWeight = [0.4, 0.2, 0.26, 0.32, 0.37];
 const stickMinRatio = [0.8, 0.6, 0.6, 0.6, 0.6];
 const stickMaxLength = [6, 8, 8, 12, 12];
 
+const hackyScale = 0.2;
+const sMaxLen = [
+	30 * hackyScale,
+	40 * hackyScale,
+	40 * hackyScale,
+	60 * hackyScale,
+	60 * hackyScale,
+];
+const debugPosePosition = [
+	new Vector2(0, -sMaxLen[0]),
+	new Vector2(),
+	new Vector2(sMaxLen[1], -sMaxLen[0]),
+	new Vector2(-sMaxLen[2], -sMaxLen[0]),
+	new Vector2(Math.SQRT1_2 * sMaxLen[3], Math.SQRT1_2 * sMaxLen[3]),
+	new Vector2(Math.SQRT1_2 * -sMaxLen[4], Math.SQRT1_2 * sMaxLen[3]),
+];
+const debugPoseVelocity = [
+	new Vector2(),
+	new Vector2(),
+	new Vector2(),
+	new Vector2(),
+	new Vector2(),
+	new Vector2(),
+];
+
 export class Ragdoll {
 	currentState: RagdollState;
 	explosionAccumulator: number;
@@ -156,7 +181,7 @@ export class Ragdoll {
 			);
 			for (const entity of entityList) {
 				if (
-					entity.collideVsCirclePhysical(
+					entity.collideVsNinjaPhysical(
 						this.resultPhysical,
 						particle.solverPosition,
 						particle.velocity,
@@ -255,32 +280,30 @@ export class Ragdoll {
 
 		for (const particle of this.particleList[this.currentState]) {
 			let numIterations = 0;
-			const _loc6_ = getSingleClosestPointSigned(
-				simulator.segGrid,
-				particle.solverPosition,
-				particle.radius * 4,
-				closestPoint
-			);
-			while (_loc6_ !== 0) {
-				let _loc7_ = particle.solverPosition.x - closestPoint.x;
-				let _loc8_ = particle.solverPosition.y - closestPoint.y;
-				const _loc9_ = Math.sqrt(_loc7_ * _loc7_ + _loc8_ * _loc8_);
-				const _loc10_ = particle.radius - _loc6_ * _loc9_;
+			// eslint-disable-next-line no-constant-condition
+			while (true) {
+				const sign = getSingleClosestPointSigned(
+					simulator.segGrid,
+					particle.solverPosition,
+					particle.radius * 4,
+					closestPoint
+				);
+				if (sign === 0) {
+					break;
+				}
+				let dx = particle.solverPosition.x - closestPoint.x;
+				let dy = particle.solverPosition.y - closestPoint.y;
+				const distSquared = Math.sqrt(dx * dx + dy * dy);
+				const _loc10_ = particle.radius - sign * distSquared;
 				if (_loc10_ < 1e-7) {
 					break;
 				}
-				if (_loc9_ === 0) {
+				if (distSquared === 0) {
 					return;
 				}
-				_loc7_ /= _loc9_;
-				_loc8_ /= _loc9_;
-				this.respondToCollision(
-					simulator,
-					particle,
-					_loc7_,
-					_loc8_,
-					_loc6_ * _loc10_
-				);
+				dx /= distSquared;
+				dy /= distSquared;
+				this.respondToCollision(simulator, particle, dx, dy, sign * _loc10_);
 				numIterations++;
 				if (numIterations === maxIterations) {
 					throw new Error(
@@ -359,7 +382,7 @@ export class Ragdoll {
 			);
 			for (const entity of entities) {
 				if (
-					entity.collideVsCircleLogical(
+					entity.collideVsNinjaLogical(
 						simulator,
 						null,
 						this.resultLogical,
@@ -396,74 +419,76 @@ export class Ragdoll {
 	}
 
 	public activateRagdoll(
-		param1: Vector2,
-		param2: Vector2,
-		param3: Vector2,
-		param4: Vector2,
-		param5: Vector2[] | null,
-		param6: Vector2[] | null
+		position: Vector2,
+		velocity: Vector2,
+		shovePosition: Vector2,
+		shoveVelocity: Vector2,
+		positions: Vector2[] | null,
+		velocities: Vector2[] | null
 	): void {
-		let _loc7_: Vector2[];
-		let _loc8_: Vector2[];
+		let posePosition: Vector2[];
+		let poseVelocity: Vector2[];
 		this.currentState = RagdollState.UNEXPLODED;
 		this.explosionAccumulator = 0;
-		if (param5 !== null && param6 !== null) {
-			_loc7_ = param5;
-			_loc8_ = param6;
+		if (positions !== null && velocities !== null) {
+			posePosition = positions;
+			poseVelocity = velocities;
 		} else {
 			// throw new Error(
 			// 	"WARNING! ragdoll wasn't passed in a pose.. this should never happen."
 			// );
+			posePosition = debugPosePosition;
+			poseVelocity = debugPoseVelocity;
 		}
 		this.particleList[RagdollState.UNEXPLODED][0].setState(
-			param1.x + _loc7_[0].x,
-			param1.y + _loc7_[0].y,
-			param2.x + _loc8_[0].x,
-			param2.y + _loc8_[0].y
+			position.x + posePosition[0].x,
+			position.y + posePosition[0].y,
+			velocity.x + poseVelocity[0].x,
+			velocity.y + poseVelocity[0].y
 		);
 		this.particleList[RagdollState.UNEXPLODED][1].setState(
-			param1.x + _loc7_[1].x,
-			param1.y + _loc7_[1].y,
-			param2.x + _loc8_[1].x,
-			param2.y + _loc8_[1].y
+			position.x + posePosition[1].x,
+			position.y + posePosition[1].y,
+			velocity.x + poseVelocity[1].x,
+			velocity.y + poseVelocity[1].y
 		);
 		this.particleList[RagdollState.UNEXPLODED][2].setState(
-			param1.x + _loc7_[2].x,
-			param1.y + _loc7_[2].y,
-			param2.x + _loc8_[2].x,
-			param2.y + _loc8_[2].y
+			position.x + posePosition[2].x,
+			position.y + posePosition[2].y,
+			velocity.x + poseVelocity[2].x,
+			velocity.y + poseVelocity[2].y
 		);
 		this.particleList[RagdollState.UNEXPLODED][3].setState(
-			param1.x + _loc7_[3].x,
-			param1.y + _loc7_[3].y,
-			param2.x + _loc8_[3].x,
-			param2.y + _loc8_[3].y
+			position.x + posePosition[3].x,
+			position.y + posePosition[3].y,
+			velocity.x + poseVelocity[3].x,
+			velocity.y + poseVelocity[3].y
 		);
 		this.particleList[RagdollState.UNEXPLODED][4].setState(
-			param1.x + _loc7_[4].x,
-			param1.y + _loc7_[4].y,
-			param2.x + _loc8_[4].x,
-			param2.y + _loc8_[4].y
+			position.x + posePosition[4].x,
+			position.y + posePosition[4].y,
+			velocity.x + poseVelocity[4].x,
+			velocity.y + poseVelocity[4].y
 		);
 		this.particleList[RagdollState.UNEXPLODED][5].setState(
-			param1.x + _loc7_[5].x,
-			param1.y + _loc7_[5].y,
-			param2.x + _loc8_[5].x,
-			param2.y + _loc8_[5].y
+			position.x + posePosition[5].x,
+			position.y + posePosition[5].y,
+			velocity.x + poseVelocity[5].x,
+			velocity.y + poseVelocity[5].y
 		);
 
-		this.shoveRagdoll(param3, param4);
+		this.shoveRagdoll(shovePosition, shoveVelocity);
 	}
 
-	private shoveRagdoll(param1: Vector2, param2: Vector2): void {
+	private shoveRagdoll(position: Vector2, velocity: Vector2): void {
 		for (const particle of this.particleList[RagdollState.UNEXPLODED]) {
-			const _loc7_ = particle.position.x - param1.x;
-			const _loc8_ = particle.position.y - param1.y;
-			const _loc9_ = Math.sqrt(_loc7_ * _loc7_ + _loc8_ * _loc8_);
-			const _loc10_ = Math.min(1, _loc9_ / 12);
+			const deltaX = particle.position.x - position.x;
+			const deltaY = particle.position.y - position.y;
+			const length = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+			const _loc10_ = Math.min(1, length / 12);
 			const _loc11_ = 0.5 + (1 - _loc10_) * 1.5;
-			particle.velocity.x += param2.x * _loc11_;
-			particle.velocity.y += param2.y * _loc11_;
+			particle.velocity.x += velocity.x * _loc11_;
+			particle.velocity.y += velocity.y * _loc11_;
 		}
 	}
 }

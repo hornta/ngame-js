@@ -1,4 +1,5 @@
-import type { EntityGraphics } from "../../entity-graphics.js";
+import type { GraphicsManager } from "../../graphics-manager.js";
+import type { EntityGraphics } from "../../graphics/entity-graphics.js";
 import type { GridEdges } from "../grid-edges.js";
 import type { GridEntity } from "../grid-entity.js";
 import type { GridSegment } from "../grid-segment.js";
@@ -60,7 +61,7 @@ export class EntityDoorTrap extends EntityDoorBase {
 	// }
 	// }
 
-	debugDraw(context: CanvasRenderingContext2D): void {
+	debugDraw(gfx: GraphicsManager): void {
 		// Debug_Draw_Base(param1, IsDoorOpen());
 		// param1.SetStyle(4, 8921634, 10);
 		// seg.DebugDraw_NoStyle(param1);

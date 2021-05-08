@@ -1,4 +1,4 @@
-import type { EntityGraphics } from "../../entity-graphics.js";
+import type { EntityGraphics } from "../../graphics/entity-graphics.js";
 import { overlapCircleVsCircle } from "../../fns.js";
 import type { CollisionResultLogical } from "../collision-result-logical.js";
 import type { GridEntity } from "../grid-entity.js";
@@ -6,6 +6,7 @@ import type { Ninja } from "../ninja.js";
 import { PlayerKillType, Simulator } from "../simulator.js";
 import { Vector2 } from "../vector2.js";
 import { EntityBase } from "./entity-base";
+import type { GraphicsManager } from "../../graphics-manager.js";
 
 export class EntityMine extends EntityBase {
 	public position: Vector2;
@@ -20,7 +21,7 @@ export class EntityMine extends EntityBase {
 		entityGrid.addEntity(this.position, this);
 	}
 
-	collideVsCircleLogical(
+	collideVsNinjaLogical(
 		simulator: Simulator,
 		ninja: Ninja,
 		collision: CollisionResultLogical,
@@ -64,7 +65,7 @@ export class EntityMine extends EntityBase {
 		return null;
 	}
 
-	debugDraw(context: CanvasRenderingContext2D): void {
+	debugDraw(gfx: GraphicsManager): void {
 		// if (this.isExploded) {
 		// 	param1.SetStyle(0, 0, 30);
 		// } else {

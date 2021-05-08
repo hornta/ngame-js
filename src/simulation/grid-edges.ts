@@ -1,86 +1,81 @@
 import { getEdgeStateX, getEdgeStateY } from "../edge-definitions";
-import { EdgeType } from "../enum-data";
+import { EdgeState } from "../enum-data";
+import type { GraphicsManager } from "../graphics-manager.js";
 import type { TileType } from "../tile-type";
 import { GridBase } from "./grid-base";
+import { Vector2 } from "./vector2.js";
 
 export class GridEdges extends GridBase {
-	edgesTileX: number[];
-	edgesTileY: number[];
-	edgesDoorX: number[];
-	edgesDoorY: number[];
+	edgesTileX: EdgeState[];
+	edgesTileY: EdgeState[];
+	edgesDoorX: EdgeState[];
+	edgesDoorY: EdgeState[];
 
 	constructor(numCols: number, numRows: number, cellSize: number) {
 		super(numCols, numRows, cellSize);
 
-		this.edgesTileX = new Array<number>(this.numCells).fill(0);
-		this.edgesTileY = new Array<number>(this.numCells).fill(0);
-		this.edgesDoorX = new Array<number>(this.numCells).fill(0);
-		this.edgesDoorY = new Array<number>(this.numCells).fill(0);
+		this.edgesTileX = new Array<EdgeState>(this.numCells).fill(0);
+		this.edgesTileY = new Array<EdgeState>(this.numCells).fill(0);
+		this.edgesDoorX = new Array<EdgeState>(this.numCells).fill(0);
+		this.edgesDoorY = new Array<EdgeState>(this.numCells).fill(0);
 	}
 
 	clear(): void {
 		for (let i = 0; i < this.numCells; ++i) {
-			this.edgesTileX[i] = EdgeType.EMPTY;
-			this.edgesTileY[i] = EdgeType.EMPTY;
+			this.edgesTileX[i] = EdgeState.EMPTY;
+			this.edgesTileY[i] = EdgeState.EMPTY;
 			this.edgesDoorX[i] = 0;
 			this.edgesDoorY[i] = 0;
 		}
 	}
 
-	loadTileEdges(x: number, y: number, tileType: TileType): void {
-		let _loc7_ = 0;
-		let _loc8_ = 0;
-		let _loc9_ = 0;
-		let _loc10_ = 0;
-		let _loc11_ = 0;
-		let _loc12_ = 0;
-		let _loc13_ = 0;
-		let _loc14_ = 0;
-		const _loc4_ = x * 2;
-		const _loc5_ = y * 2;
-		let _loc6_ = 0;
-		while (_loc6_ < 3) {
-			_loc7_ = 0;
-			while (_loc7_ < 2) {
-				_loc8_ = _loc4_ - 1 + _loc6_;
-				_loc9_ = _loc5_ + _loc7_;
-				_loc10_ = _loc4_ + _loc7_;
-				_loc11_ = _loc5_ - 1 + _loc6_;
-				_loc12_ = this.getCellIndexFromGridspacePosition(_loc8_, _loc9_);
-				_loc13_ = this.getCellIndexFromGridspacePosition(_loc10_, _loc11_);
-				_loc14_ = _loc6_ + _loc7_ * 3;
-				this.loadEdgeStateX(_loc12_, getEdgeStateX(tileType, _loc14_));
-				this.loadEdgeStateY(_loc13_, getEdgeStateY(tileType, _loc14_));
-				_loc7_++;
+	loadTileEdges(tileX: number, tileY: number, tileType: TileType): void {
+		const originX = tileX * 2;
+		const originY = tileY * 2;
+
+		for (let i = 0; i < 3; i++) {
+			for (let j = 0; j < 2; j++) {
+				const Xu = originX - 1 + i;
+				const Xv = originY + j;
+
+				const Yu = originX + j;
+				const Yv = originY - 1 + i;
+
+				const Xid = this.getCellIndexFromGridspacePosition(Xu, Xv);
+				const Yid = this.getCellIndexFromGridspacePosition(Yu, Yv);
+
+				const offset = i + j * 3;
+
+				this.loadEdgeStateX(Xid, getEdgeStateX(tileType, offset));
+				this.loadEdgeStateY(Yid, getEdgeStateY(tileType, offset));
 			}
-			_loc6_++;
 		}
 	}
 
-	loadEdgeStateX(param1: number, param2: number): void {
+	loadEdgeStateX(index: number, state: EdgeState): void {
 		if (
-			this.edgesTileX[param1] === EdgeType.SOLID &&
-			param2 === EdgeType.SOLID
+			this.edgesTileX[index] === EdgeState.SOLID &&
+			state === EdgeState.SOLID
 		) {
-			this.edgesTileX[param1] = EdgeType.EMPTY;
+			this.edgesTileX[index] = EdgeState.EMPTY;
 		} else {
-			this.edgesTileX[param1] = Math.max(this.edgesTileX[param1], param2);
+			this.edgesTileX[index] = Math.max(this.edgesTileX[index], state);
 		}
 	}
 
 	loadEdgeStateY(param1: number, param2: number): void {
 		if (
-			this.edgesTileY[param1] === EdgeType.SOLID &&
-			param2 === EdgeType.SOLID
+			this.edgesTileY[param1] === EdgeState.SOLID &&
+			param2 === EdgeState.SOLID
 		) {
-			this.edgesTileY[param1] = EdgeType.EMPTY;
+			this.edgesTileY[param1] = EdgeState.EMPTY;
 		} else {
 			this.edgesTileY[param1] = Math.max(this.edgesTileY[param1], param2);
 		}
 	}
 
-	getGridCoordinateFromWorldspace1D(param1: number): number {
-		return this.worldspaceToGridspace(param1);
+	getGridCoordinateFromWorldspace1D(worldCoordinate: number): number {
+		return this.worldspaceToGridspace(worldCoordinate);
 	}
 
 	public getWorldspaceCoordinateFromGridEdge1D(
@@ -127,12 +122,12 @@ export class GridEdges extends GridBase {
 		);
 		if (param4 === 0) {
 			return (
-				this.edgesTileX[_loc5_] === EdgeType.EMPTY &&
+				this.edgesTileX[_loc5_] === EdgeState.EMPTY &&
 				this.edgesDoorX[_loc5_] === 0
 			);
 		}
 		return (
-			this.edgesTileY[_loc5_] === EdgeType.EMPTY &&
+			this.edgesTileY[_loc5_] === EdgeState.EMPTY &&
 			this.edgesDoorY[_loc5_] === 0
 		);
 	}
@@ -154,17 +149,15 @@ export class GridEdges extends GridBase {
 	}
 
 	isEmptyRow(
-		param1: number,
-		param2: number,
-		param3: number,
-		param4: number
+		y: number,
+		minX: number,
+		maxX: number,
+		direction: number
 	): boolean {
-		let _loc5_ = param2;
-		while (_loc5_ <= param3) {
-			if (!this.isEmpty(_loc5_, param1, 0, param4)) {
-				return false;
+		for (let x = minX; x <= maxX; x++) {
+			if (!this.isEmpty(x, y, 0, direction)) {
+				return false; //we hit something
 			}
-			_loc5_++;
 		}
 		return true;
 	}
@@ -289,21 +282,21 @@ export class GridEdges extends GridBase {
 	}
 
 	sweepVertical(
-		param1: number,
-		param2: number,
-		param3: number,
-		param4: number
+		minX: number,
+		maxX: number,
+		startY: number,
+		direction: number
 	): number {
-		let _loc5_ = param3;
-		while (this.isEmptyRow(_loc5_, param1, param2, param4)) {
-			_loc5_ += param4;
-			if (Math.abs(_loc5_) > 100) {
+		let y = startY;
+		while (this.isEmptyRow(y, minX, maxX, direction)) {
+			y += direction;
+			if (Math.abs(y) > 100) {
 				throw new Error(
-					`-infinite loop in sweepVertical: ${param1}-${param2} .. ${param3},${param4}`
+					`-infinite loop in sweepVertical: ${minX}-${maxX} .. ${startY},${direction}`
 				);
 			}
 		}
-		return _loc5_;
+		return y;
 	}
 	public isSolidIgnoreDoors(
 		param1: number,
@@ -318,8 +311,73 @@ export class GridEdges extends GridBase {
 			param4
 		);
 		if (param4 === 0) {
-			return this.edgesTileX[_loc5_] === EdgeType.SOLID;
+			return this.edgesTileX[_loc5_] === EdgeState.SOLID;
 		}
-		return this.edgesTileY[_loc5_] === EdgeType.SOLID;
+		return this.edgesTileY[_loc5_] === EdgeState.SOLID;
+	}
+
+	public debugDraw(gfx: GraphicsManager): void {
+		for (let x = 0; x < this.numCols; x++) {
+			for (let y = 0; y < this.numRows; y++) {
+				const halfWidth = this.cellSize * 0.5;
+				const index = this.getCellIndexFromGridspacePosition(x, y);
+				const cellPosition = this.debugGetWorldspaceCellCenterPositionFromIndex(
+					index
+				);
+
+				if (this.edgesTileX[index] !== EdgeState.EMPTY) {
+					if (this.edgesTileX[index] === EdgeState.PARTIAL) {
+						gfx.setStyle(0xaaaaaa, 0.4);
+					} else {
+						gfx.setStyle(0x222222, 0.4);
+					}
+					gfx.renderLine(
+						new Vector2(
+							cellPosition.x + halfWidth - 2,
+							cellPosition.y - halfWidth + 2
+						),
+						new Vector2(
+							cellPosition.x + halfWidth - 2,
+							cellPosition.y + halfWidth - 2
+						)
+					);
+				}
+				if (this.edgesTileY[index] !== EdgeState.EMPTY) {
+					if (this.edgesTileY[index] === EdgeState.PARTIAL) {
+						gfx.setStyle(0xaaaaaa, 0.4);
+					} else {
+						gfx.setStyle(0x222222, 0.4);
+					}
+					gfx.renderLine(
+						new Vector2(
+							cellPosition.x - halfWidth + 2,
+							cellPosition.y + halfWidth - 2
+						),
+						new Vector2(
+							cellPosition.x + halfWidth - 2,
+							cellPosition.y + halfWidth - 2
+						)
+					);
+				}
+
+				gfx.setStyle(0x228822);
+				if (this.edgesDoorX[index] !== 0) {
+					gfx.renderAABB(
+						cellPosition.x + halfWidth - 2,
+						cellPosition.x + halfWidth + 2,
+						cellPosition.y - halfWidth + 2,
+						cellPosition.y + halfWidth - 2
+					);
+				}
+				if (this.edgesDoorY[index] !== 0) {
+					gfx.renderAABB(
+						cellPosition.x - halfWidth + 2,
+						cellPosition.x + halfWidth - 2,
+						cellPosition.y + halfWidth - 2,
+						cellPosition.y + halfWidth + 2
+					);
+				}
+			}
+		}
 	}
 }

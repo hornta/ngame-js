@@ -1,4 +1,4 @@
-import type { EntityGraphics } from "../../entity-graphics.js";
+import type { EntityGraphics } from "../../graphics/entity-graphics.js";
 import { penetrationSquareVsPoint } from "../../fns.js";
 import type { CollisionResultLogical } from "../collision-result-logical.js";
 import type { CollisionResultPhysical } from "../collision-result-physical.js";
@@ -7,6 +7,13 @@ import type { Ninja } from "../ninja.js";
 import { PlayerKillType, SimulationRate, Simulator } from "../simulator.js";
 import { Vector2 } from "../vector2.js";
 import { EntityBase } from "./entity-base";
+import type { GraphicsManager } from "../../graphics-manager.js";
+
+enum ThwompState {
+	IDLE = 0,
+	RECEDING = -1,
+	FALLING = 1,
+}
 
 export class EntityThwomp extends EntityBase {
 	position: Vector2;
@@ -14,7 +21,7 @@ export class EntityThwomp extends EntityBase {
 	radius: number;
 	fallSpeed: number;
 	raiseSpeed: number;
-	currentState: number;
+	currentState: ThwompState;
 	fallDirection: number;
 	isHorizontal: boolean;
 	normal: Vector2;
@@ -32,26 +39,26 @@ export class EntityThwomp extends EntityBase {
 		this.radius = 12 * (3 / 4);
 		this.fallSpeed = 12 * (5 / 14) * (40 / SimulationRate);
 		this.raiseSpeed = 12 * (1 / 7) * (40 / SimulationRate);
-		this.currentState = 0;
+		this.currentState = ThwompState.IDLE;
 		this.fallDirection = fallDirection;
 		this.isHorizontal = isHorizontal;
 		entityGrid.addEntity(this.position, this);
 		this.normal = new Vector2();
 	}
 
-	collideVsCirclePhysical(
+	collideVsNinjaPhysical(
 		collision: CollisionResultPhysical,
-		param2: Vector2,
-		param3: Vector2,
-		param4: Vector2,
-		param5: number
+		position: Vector2,
+		velocity: Vector2,
+		oldPosition: Vector2,
+		radius: number
 	): boolean {
 		this.normal.x = 0;
 		this.normal.y = 0;
 		const _loc6_ = penetrationSquareVsPoint(
 			this.position,
-			this.radius + param5,
-			param2,
+			this.radius + radius,
+			position,
 			this.normal
 		);
 		if (_loc6_ !== 0) {
@@ -64,7 +71,7 @@ export class EntityThwomp extends EntityBase {
 		return false;
 	}
 
-	collideVsCircleLogical(
+	collideVsNinjaLogical(
 		simulator: Simulator,
 		ninja: Ninja,
 		collision: CollisionResultLogical,
@@ -120,16 +127,16 @@ export class EntityThwomp extends EntityBase {
 	}
 
 	think(simulator: Simulator): void {
-		if (this.currentState === 0) {
+		if (this.currentState === ThwompState.IDLE) {
 			for (const player of simulator.playerList) {
 				if (!player.isDead()) {
-					const playerPosition_ = player.getPosition();
+					const playerPosition = player.getPosition();
 					const playerRadius = player.getRadius();
-					const _loc7_ = playerPosition_.x - this.position.x;
-					const _loc8_ = playerPosition_.y - this.position.y;
+					const dx = playerPosition.x - this.position.x;
+					const dy = playerPosition.y - this.position.y;
 					const _loc9_ = 2 * (this.radius + playerRadius);
 					if (this.isHorizontal) {
-						if (Math.abs(_loc8_) < _loc9_) {
+						if (Math.abs(dy) < _loc9_) {
 							const _loc10_ = simulator.edgeGrid.getGridCoordinateFromWorldspace1D(
 								this.position.x - this.fallDirection * this.radius
 							);
@@ -146,7 +153,7 @@ export class EntityThwomp extends EntityBase {
 								this.fallDirection
 							);
 							const _loc14_ = simulator.edgeGrid.getGridCoordinateFromWorldspace1D(
-								playerPosition_.x
+								playerPosition.x
 							);
 							if (
 								!(
@@ -158,7 +165,7 @@ export class EntityThwomp extends EntityBase {
 								break;
 							}
 						}
-					} else if (Math.abs(_loc7_) < _loc9_) {
+					} else if (Math.abs(dx) < _loc9_) {
 						const _loc15_ = simulator.edgeGrid.getGridCoordinateFromWorldspace1D(
 							this.position.y - this.fallDirection * this.radius
 						);
@@ -168,14 +175,14 @@ export class EntityThwomp extends EntityBase {
 						const _loc17_ = simulator.edgeGrid.getGridCoordinateFromWorldspace1D(
 							this.position.x + this.radius
 						);
-						const _loc18_ = simulator.edgeGrid.sweepHorizontal(
+						const _loc18_ = simulator.edgeGrid.sweepVertical(
 							_loc16_,
 							_loc17_,
 							_loc15_,
 							this.fallDirection
 						);
 						const _loc19_ = simulator.edgeGrid.getGridCoordinateFromWorldspace1D(
-							playerPosition_.y
+							playerPosition.y
 						);
 						if (
 							!(
@@ -194,7 +201,7 @@ export class EntityThwomp extends EntityBase {
 	}
 
 	move(simulator: Simulator): void {
-		if (this.currentState === 0) {
+		if (this.currentState === ThwompState.IDLE) {
 			return;
 		}
 		const _loc3_ = this.fallDirection * this.currentState;
@@ -235,7 +242,7 @@ export class EntityThwomp extends EntityBase {
 			this.position.x = _loc6_;
 			simulator.entityGrid.moveEntity(this.position, this);
 			if (this.currentState === -1 && this.position.x === this.anchor.x) {
-				this.currentState = 0;
+				this.currentState = ThwompState.IDLE;
 			}
 		} else {
 			let _loc11_ = this.position.y + _loc3_ * _loc5_;
@@ -290,7 +297,7 @@ export class EntityThwomp extends EntityBase {
 		return null;
 	}
 
-	debugDraw(context: CanvasRenderingContext2D): void {
+	debugDraw(gfx: GraphicsManager): void {
 		// param1.SetStyle(0, 0, 100);
 		// param1.DrawSquare(this.pos.x, this.pos.y, this.r);
 		// let _loc2_: int = -4;

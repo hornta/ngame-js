@@ -1,9 +1,10 @@
-import type { EntityGraphics } from "../../entity-graphics.js";
+import type { EntityGraphics } from "../../graphics/entity-graphics.js";
 import { overlapCircleVsSegment, wrapAngleShortest } from "../../fns";
 import type { GridEntity } from "../grid-entity";
 import { PlayerKillType, SimulationRate, Simulator } from "../simulator";
 import { Vector2 } from "../vector2.js";
 import { EntityDroneShooterBase } from "./entity-drone-shooter-base";
+import type { GraphicsManager } from "../../graphics-manager.js";
 
 const CHAINGUN_MAX_BULLETS = 6;
 const CHAINGUN_SPREAD = 0.3;
@@ -196,7 +197,7 @@ export class EntityDroneChaingun extends EntityDroneShooterBase {
 	// 	 }
 	// }
 
-	public debugDraw(context: CanvasRenderingContext2D): void {
+	public debugDraw(gfx: GraphicsManager): void {
 		// super.Debug_Draw(param1);
 		// param1.SetStyle(4, 8947848, 50);
 		// param1.DrawCircle(pos.x, pos.y, r / 2);

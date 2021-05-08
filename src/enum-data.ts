@@ -3,7 +3,7 @@ import { Vector2 } from "./simulation/vector2";
 export const QUANTIZE_STEPS_PER_CELL = 4;
 export const QUANTIZE_STEP_SIZE = 6;
 
-export enum EdgeType {
+export enum EdgeState {
 	EMPTY = 0,
 	PARTIAL = 1,
 	SOLID = 2,

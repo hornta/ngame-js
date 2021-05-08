@@ -1,9 +1,10 @@
-import type { EntityGraphics } from "../../entity-graphics.js";
+import type { EntityGraphics } from "../../graphics/entity-graphics.js";
 import { overlapCircleVsSegment } from "../../fns";
 import type { GridEntity } from "../grid-entity";
 import { PlayerKillType, SimulationRate, Simulator } from "../simulator";
 import { Vector2 } from "../vector2.js";
 import { EntityDroneShooterBase } from "./entity-drone-shooter-base";
+import type { GraphicsManager } from "../../graphics-manager.js";
 
 export class EntityDroneLaser extends EntityDroneShooterBase {
 	laserDuration: number;
@@ -90,17 +91,17 @@ export class EntityDroneLaser extends EntityDroneShooterBase {
 						rayDistance
 					)
 				) {
-					const _loc4_ = player.getPosition().x - this.position.x;
-					const _loc5_ = player.getPosition().y - this.position.y;
+					const dx = player.getPosition().x - this.position.x;
+					const dy = player.getPosition().y - this.position.y;
 					const _loc6_ =
-						this.laserDirection.x * _loc4_ + this.laserDirection.y * _loc5_;
-					const _loc7_ = this.position.x + _loc6_ * this.laserDirection.x;
-					const _loc8_ = this.position.y + _loc6_ * this.laserDirection.y;
+						this.laserDirection.x * dx + this.laserDirection.y * dy;
+					const hitPositionX = this.position.x + _loc6_ * this.laserDirection.x;
+					const hitPositionY = this.position.y + _loc6_ * this.laserDirection.y;
 					simulator.killPlayer(
 						player,
 						PlayerKillType.LASER,
-						_loc7_,
-						_loc8_,
+						hitPositionX,
+						hitPositionY,
 						this.laserDirection.x * 6,
 						this.laserDirection.y * 6
 					);
@@ -149,7 +150,7 @@ export class EntityDroneLaser extends EntityDroneShooterBase {
 	// 	 }
 	// }
 
-	debugDraw(context: CanvasRenderingContext2D): void {
+	debugDraw(gfx: GraphicsManager): void {
 		// super.Debug_Draw(param1);
 		// param1.SetStyle(4, 8921634, 50);
 		// param1.DrawCircle(pos.x, pos.y, r / 2);

@@ -77,7 +77,7 @@ const loadLevelEditorStateEntities = (
 				move = entityProps[EntityProp.ENTITY_PROP_MOVE];
 			}
 		}
-
+		console.log(`Loading entity: ${type}`);
 		if (type === EntityType.BOUNCEBLOCK) {
 			registerEntity(entityList, new EntityBounceBlock(gridEntity, x, y));
 		} else if (type === EntityType.CHAINGUN) {
@@ -108,38 +108,32 @@ const loadLevelEditorStateEntities = (
 			type === EntityType.DOOR_TRAP
 		) {
 			const directionVector = DirectionToVector[direction as Direction];
-			const _loc20_ = Math.floor((x - directionVector.x * 12) / 24);
-			const _loc21_ = Math.floor((y - directionVector.y * 12) / 24);
+			const gridX = Math.floor((x - directionVector.x * 12) / 24);
+			const gridY = Math.floor((y - directionVector.y * 12) / 24);
 			const cellIndex = gridSegment.getCellIndexFromGridspacePosition(
-				_loc20_,
-				_loc21_
+				gridX,
+				gridY
 			);
 			const isHorizontal = direction === 0;
 			const edgeIndicies = new Array<number>(2);
 			if (!isHorizontal) {
 				edgeIndicies.push(
-					gridEdges.getCellIndexFromGridspacePosition(
-						_loc20_ * 2,
-						_loc21_ * 2 + 1
-					)
+					gridEdges.getCellIndexFromGridspacePosition(gridX * 2, gridY * 2 + 1)
 				);
 				edgeIndicies.push(
 					gridEdges.getCellIndexFromGridspacePosition(
-						_loc20_ * 2 + 1,
-						_loc21_ * 2 + 1
+						gridX * 2 + 1,
+						gridY * 2 + 1
 					)
 				);
 			} else {
 				edgeIndicies.push(
-					gridEdges.getCellIndexFromGridspacePosition(
-						_loc20_ * 2 + 1,
-						_loc21_ * 2
-					)
+					gridEdges.getCellIndexFromGridspacePosition(gridX * 2 + 1, gridY * 2)
 				);
 				edgeIndicies.push(
 					gridEdges.getCellIndexFromGridspacePosition(
-						_loc20_ * 2 + 1,
-						_loc21_ * 2 + 1
+						gridX * 2 + 1,
+						gridY * 2 + 1
 					)
 				);
 			}
@@ -243,6 +237,12 @@ const loadLevelEditorStateEntities = (
 			);
 		} else if (type === EntityType.LAUNCHPAD) {
 			const directionVector = DirectionToVector[direction as Direction];
+			console.log(
+				`Creating Launch pad at ${new Vector2(
+					x,
+					y
+				)} with direction ${directionVector}`
+			);
 			registerEntity(
 				entityList,
 				new EntityLaunchPad(
@@ -254,9 +254,12 @@ const loadLevelEditorStateEntities = (
 				)
 			);
 		} else if (type === EntityType.MINE) {
+			console.log(`Creating Mine at ${new Vector2(x, y)}`);
 			registerEntity(entityList, new EntityMine(gridEntity, x, y));
 		} else if (type === EntityType.ONEWAY) {
 			const directionVector = DirectionToVector[direction as Direction];
+
+			console.log(`Creating OneWayPlatform at ${new Vector2(x, y)}`);
 			registerEntity(
 				entityList,
 				new EntityOneWayPlatform(
@@ -304,6 +307,7 @@ const loadLevelEditorStateEntities = (
 			} else {
 				fallDirection = directionVector.y;
 			}
+			console.log(`Creating Thwomp at ${new Vector2(x, y)}`);
 			registerEntity(
 				entityList,
 				new EntityThwomp(gridEntity, x, y, fallDirection, isHorizontal)
@@ -311,6 +315,7 @@ const loadLevelEditorStateEntities = (
 		} else if (type === EntityType.TURRET) {
 			registerEntity(entityList, new EntityTurret(x, y));
 		} else if (type === EntityType.ZAP) {
+			console.log(`Creating zap at ${new Vector2(x, y)}`);
 			registerEntity(
 				entityList,
 				new EntityDroneZap(
@@ -356,32 +361,34 @@ const initTileIDGridWithBoundaryEdges = (
 
 const generateTileSegmentsFiltered = (
 	tileType: TileType,
-	param2: number[],
+	neighbors: TileType[],
 	param3: number,
 	param4: number,
 	param5: number
 ): Segment[] => {
-	let _loc9_ = false;
-	let _loc10_ = false;
-
 	if (tileType < 0 || tileType >= NUM_TILE_TYPES) {
 		throw new Error(
 			`generateTileSegmentsFiltered() was passed an invalid tiletype: ${tileType}`
 		);
 	}
+
 	const segments: Segment[] = [];
-	let _loc7_ = 0;
-	while (_loc7_ < 4) {
-		_loc9_ =
-			BoundaryFlags[tileType][_loc7_ * 2] &&
-			!BoundaryFlags[param2[_loc7_]][(_loc7_ * 2 + 4) % 8];
-		_loc10_ =
-			BoundaryFlags[tileType][_loc7_ * 2 + 1] &&
-			!BoundaryFlags[param2[_loc7_]][(_loc7_ * 2 + 1 + 4) % 8];
+	for (
+		let neighborIndex = 0;
+		neighborIndex < neighbors.length;
+		++neighborIndex
+	) {
+		const neighbor = neighbors[neighborIndex];
+		const _loc9_ =
+			BoundaryFlags[tileType][neighborIndex * 2] &&
+			!BoundaryFlags[neighbor][(neighborIndex * 2 + 4) % 8];
+		const _loc10_ =
+			BoundaryFlags[tileType][neighborIndex * 2 + 1] &&
+			!BoundaryFlags[neighbor][(neighborIndex * 2 + 1 + 4) % 8];
 		if (_loc9_) {
 			if (_loc10_) {
 				segments.push(
-					BoundaryDefinition[_loc7_ * 3 + 2].generateCollisionSegment(
+					BoundaryDefinition[neighborIndex * 3 + 2].generateCollisionSegment(
 						param3,
 						param4,
 						param5
@@ -389,7 +396,7 @@ const generateTileSegmentsFiltered = (
 				);
 			} else {
 				segments.push(
-					BoundaryDefinition[_loc7_ * 3].generateCollisionSegment(
+					BoundaryDefinition[neighborIndex * 3].generateCollisionSegment(
 						param3,
 						param4,
 						param5
@@ -398,14 +405,13 @@ const generateTileSegmentsFiltered = (
 			}
 		} else if (_loc10_) {
 			segments.push(
-				BoundaryDefinition[_loc7_ * 3 + 1].generateCollisionSegment(
+				BoundaryDefinition[neighborIndex * 3 + 1].generateCollisionSegment(
 					param3,
 					param4,
 					param5
 				)
 			);
 		}
-		_loc7_++;
 	}
 	const tileEdge = SegmentDefinition[tileType];
 	if (tileEdge !== null) {
@@ -421,11 +427,11 @@ const buildTileSegments = (
 	x: number,
 	y: number,
 	tileType: TileType,
-	param7: number[]
+	neighbors: TileType[]
 ): void => {
 	const segments = generateTileSegmentsFiltered(
 		tileType,
-		param7,
+		neighbors,
 		x * cellSize + halfCellSize,
 		y * cellSize + halfCellSize,
 		halfCellSize
@@ -455,29 +461,29 @@ const loadLevelEditorStateTiles = (
 		tileIDs[x + y * numCols] = editorTileIds[i];
 	}
 
-	const _loc10_ = new Array<number>(4);
+	const neighbors = new Array<TileType>(4);
 	for (let i = 0; i < tileIDs.length; ++i) {
 		const x = i % numCols;
 		const y = Math.floor(i / numCols);
 		if (x === 0) {
-			_loc10_[0] = TileType.EMPTY;
+			neighbors[0] = TileType.EMPTY;
 		} else {
-			_loc10_[0] = tileIDs[x - 1 + y * numCols];
+			neighbors[0] = tileIDs[x - 1 + y * numCols];
 		}
 		if (x === numCols - 1) {
-			_loc10_[2] = TileType.EMPTY;
+			neighbors[2] = TileType.EMPTY;
 		} else {
-			_loc10_[2] = tileIDs[x + 1 + y * numCols];
+			neighbors[2] = tileIDs[x + 1 + y * numCols];
 		}
 		if (y === 0) {
-			_loc10_[3] = TileType.EMPTY;
+			neighbors[3] = TileType.EMPTY;
 		} else {
-			_loc10_[3] = tileIDs[x + (y - 1) * numCols];
+			neighbors[3] = tileIDs[x + (y - 1) * numCols];
 		}
 		if (y === numRows - 1) {
-			_loc10_[1] = TileType.EMPTY;
+			neighbors[1] = TileType.EMPTY;
 		} else {
-			_loc10_[1] = tileIDs[x + (y + 1) * numCols];
+			neighbors[1] = tileIDs[x + (y + 1) * numCols];
 		}
 		buildTileSegments(
 			segmentGrid,
@@ -486,7 +492,7 @@ const loadLevelEditorStateTiles = (
 			x,
 			y,
 			tileIDs[i],
-			_loc10_
+			neighbors
 		);
 		edgeGrid.loadTileEdges(x, y, tileIDs[i]);
 	}

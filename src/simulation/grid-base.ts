@@ -1,6 +1,6 @@
-import type { Vector2 } from "./vector2";
+import { Vector2 } from "./vector2.js";
 
-export class GridBase {
+export abstract class GridBase {
 	numCols: number;
 	numRows: number;
 	numCells: number;
@@ -13,8 +13,8 @@ export class GridBase {
 		this.numCells = this.numCols * this.numRows;
 	}
 
-	worldspaceToGridspace(param1: number): number {
-		return Math.floor(param1 / this.cellSize);
+	worldspaceToGridspace(position: number): number {
+		return Math.floor(position / this.cellSize);
 	}
 
 	getCellIndexFromWorldspacePosition(x: number, y: number): number {
@@ -30,5 +30,16 @@ export class GridBase {
 			y = Math.max(0, Math.min(this.numRows - 1, y));
 		}
 		return y * this.numCols + x;
+	}
+
+	public debugGetWorldspaceCellCenterPositionFromIndex(id: number): Vector2 {
+		if (id !== -1) {
+			const x = id % this.numCols;
+			const y = Math.floor(id / this.numCols);
+
+			return new Vector2((x + 0.5) * this.cellSize, (y + 0.5) * this.cellSize);
+		} else {
+			return null;
+		}
 	}
 }

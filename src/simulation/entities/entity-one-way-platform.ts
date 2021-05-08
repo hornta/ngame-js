@@ -1,4 +1,5 @@
-import type { EntityGraphics } from "../../entity-graphics.js";
+import type { EntityGraphics } from "../../graphics/entity-graphics.js";
+import type { GraphicsManager } from "../../graphics-manager.js";
 import type { CollisionResultLogical } from "../collision-result-logical.js";
 import type { CollisionResultPhysical } from "../collision-result-physical.js";
 import type { GridEntity } from "../grid-entity.js";
@@ -10,7 +11,7 @@ import { EntityBase } from "./entity-base";
 export class EntityOneWayPlatform extends EntityBase {
 	private position: Vector2;
 	private normal: Vector2;
-	private r: number;
+	private radius: number;
 
 	constructor(
 		entityGrid: GridEntity,
@@ -22,32 +23,35 @@ export class EntityOneWayPlatform extends EntityBase {
 		super();
 		this.position = new Vector2(x, y);
 		this.normal = new Vector2(normalX, normalY);
-		this.r = 12;
+		this.radius = 12;
 		entityGrid.addEntity(this.position, this);
 	}
 
-	collideVsCirclePhysical(
+	collideVsNinjaPhysical(
 		collision: CollisionResultPhysical,
-		param2: Vector2,
-		param3: Vector2,
-		param4: Vector2,
-		param5: number
+		position: Vector2,
+		velocity: Vector2,
+		oldPosition: Vector2,
+		radius: number
 	): boolean {
-		let _loc6_ = NaN;
-		if (
-			(_loc6_ = this.calculatePenetration(param2, param3, param4, param5, 0)) >=
+		const penetration = this.calculatePenetration(
+			position,
+			velocity,
+			oldPosition,
+			radius,
 			0
-		) {
+		);
+		if (penetration >= 0) {
 			collision.isHardCollision = true;
 			collision.nx = this.normal.x;
 			collision.ny = this.normal.y;
-			collision.pen = _loc6_;
+			collision.pen = penetration;
 			return true;
 		}
 		return false;
 	}
 
-	collideVsCircleLogical(
+	collideVsNinjaLogical(
 		simulator: Simulator,
 		ninja: Ninja,
 		collision: CollisionResultLogical,
@@ -57,17 +61,15 @@ export class EntityOneWayPlatform extends EntityBase {
 		param7: number,
 		param8: number
 	): boolean {
-		let _loc9_ = NaN;
 		if (ninja !== null) {
-			if (
-				(_loc9_ = this.calculatePenetration(
-					param4,
-					param5,
-					param6,
-					param7,
-					param8
-				)) >= 0
-			) {
+			const penetration = this.calculatePenetration(
+				param4,
+				param5,
+				param6,
+				param7,
+				param8
+			);
+			if (penetration >= 0) {
 				collision.vectorX = this.normal.x;
 				collision.vectorY = this.normal.y;
 				return true;
@@ -85,64 +87,59 @@ export class EntityOneWayPlatform extends EntityBase {
 		return null;
 	}
 
-	debugDraw(context: CanvasRenderingContext2D): void {
-		// param1.SetStyle(0, 0, 100);
-		// param1.DrawLine(
-		// 	this.pos.x - -this.n.y * this.r,
-		// 	this.pos.y - this.n.x * this.r,
-		// 	this.pos.x + -this.n.y * this.r,
-		// 	this.pos.y + this.n.x * this.r
-		// );
-		// param1.DrawLine(
-		// 	this.pos.x,
-		// 	this.pos.y,
-		// 	this.pos.x + this.n.x * 4,
-		// 	this.pos.y + this.n.y * 4
-		// );
+	debugDraw(gfx: GraphicsManager): void {
+		gfx.renderLine(
+			new Vector2(
+				this.position.x - -this.normal.y * this.radius,
+				this.position.y - this.normal.x * this.radius
+			),
+			new Vector2(
+				this.position.x + -this.normal.y * this.radius,
+				this.position.y + this.normal.x * this.radius
+			)
+		);
+		gfx.renderLine(
+			new Vector2(this.position.x, this.position.y),
+			new Vector2(
+				this.position.x + this.normal.x * 4,
+				this.position.y + this.normal.y * 4
+			)
+		);
 	}
 
 	private calculatePenetration(
-		param1: Vector2,
-		param2: Vector2,
-		param3: Vector2,
-		param4: number,
+		position: Vector2,
+		velocity: Vector2,
+		oldPosition: Vector2,
+		radius: number,
 		param5: number
 	): number {
-		let _loc9_ = NaN;
-		let _loc10_ = NaN;
-		let _loc11_ = NaN;
-		let _loc12_ = NaN;
-		let _loc13_ = NaN;
-		let _loc14_ = NaN;
-		const _loc6_ = param1.x - this.position.x;
-		const _loc7_ = param1.y - this.position.y;
+		const deltaX = position.x - this.position.x;
+		const deltaY = position.y - this.position.y;
 		const _loc8_ =
-			this.r +
-			param4 -
-			Math.abs(-this.normal.y * _loc6_ + this.normal.x * _loc7_);
+			this.radius +
+			radius -
+			Math.abs(-this.normal.y * deltaX + this.normal.x * deltaY);
 		if (0 < _loc8_) {
-			_loc9_ =
-				param4 +
+			const _loc9_ =
+				radius +
 				param5 -
-				Math.abs(this.normal.x * _loc6_ + this.normal.y * _loc7_);
+				Math.abs(this.normal.x * deltaX + this.normal.y * deltaY);
 			if (0 < _loc9_) {
-				if (
-					(_loc10_ = this.normal.x * param2.x + this.normal.y * param2.y) <= 0
-				) {
-					_loc11_ = param3.x - this.position.x;
-					_loc12_ = param3.y - this.position.y;
-					if (
-						(_loc13_ =
-							param4 - (this.normal.x * _loc11_ + this.normal.y * _loc12_)) <=
-						1.1
-					) {
-						if (
-							(_loc14_ =
-								param4 - (this.normal.x * _loc6_ + this.normal.y * _loc7_)) < 0
-						) {
-							throw new Error(
-								`WARNING! EntityOneWayPlatform.calculatePenetration() found conflicting penetration: ${_loc8_},${_loc9_},${_loc14_}`
-							);
+				const _loc10_ = this.normal.x * velocity.x + this.normal.y * velocity.y;
+				if (_loc10_ <= 0) {
+					const _loc11_ = oldPosition.x - this.position.x;
+					const _loc12_ = oldPosition.y - this.position.y;
+					const _loc13_ =
+						radius - (this.normal.x * _loc11_ + this.normal.y * _loc12_);
+					if (_loc13_ <= 1.1) {
+						const _loc14_ =
+							radius - (this.normal.x * deltaX + this.normal.y * deltaY);
+						if (_loc14_ < 0) {
+							// return -1;
+							// throw new Error(
+							// 	`WARNING! EntityOneWayPlatform.calculatePenetration() found conflicting penetration: ${_loc8_},${_loc9_},${_loc14_}`
+							// );
 						}
 						return _loc14_;
 					}

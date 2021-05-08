@@ -1,19 +1,23 @@
-import type { EntityGraphics } from "./entity-graphics.js";
+import type { EntityGraphics } from "./graphics/entity-graphics.js";
 import type { EntityGraphicsNinja } from "./graphics/entity-graphics-ninja.js";
 import type { EntityBase } from "./simulation/entities/entity-base.js";
 import { EntityGold } from "./simulation/entities/entity-gold.js";
 import { EntityMine } from "./simulation/entities/entity-mine.js";
 import type { Ninja } from "./simulation/ninja.js";
 import { Simulator } from "./simulation/simulator.js";
+import { Vector2 } from "./simulation/vector2.js";
 import { TileType } from "./tile-type.js";
+import { EntityBounceBlock } from "./simulation/entities/entity-bounce-block.js";
+import { EntityLaunchPad } from "./simulation/entities/entity-launch-pad.js";
+import { EntityThwomp } from "./simulation/entities/entity-thwomp.js";
 
 class Tile {
 	x: number;
 	y: number;
 	type: TileType;
 	private color = 0x797988;
-	private currentFrame: number;
-	private isPlaying: boolean;
+	private currentFrame = 0;
+	private isPlaying = false;
 
 	constructor(x: number, y: number, type: TileType) {
 		this.x = x;
@@ -21,9 +25,7 @@ class Tile {
 		this.type = type;
 	}
 
-	render(ctx: CanvasRenderingContext2D) {
-		console.log(1);
-	}
+	render(ctx: CanvasRenderingContext2D) {}
 
 	goToAndStop(frame: number): void {}
 
@@ -68,7 +70,7 @@ export class GraphicsManager {
 		if (newCellSize !== this.fixedCellSize) {
 			this.scale = newCellSize / Simulator.GRID_CELL_SIZE;
 			this.fixedCellSize = newCellSize;
-			console.log("new cell size", newCellSize, "scale:", this.scale);
+			// console.log("new cell size", newCellSize, "scale:", this.scale);
 
 			if (this.tiles) {
 				for (let x = 0; x < this.numCols; ++x) {
@@ -110,6 +112,70 @@ export class GraphicsManager {
 
 		this.entityGFXList = entities;
 		this.playerGFXList = players;
+	}
+
+	shape893() {
+		this.ctx.fillStyle = "#b4b7c2";
+		this.ctx.fill(
+			new Path2D("M 0 -240 L 0 240 -100 139 -100 -139 0 -240"),
+			"evenodd"
+		);
+		this.ctx.strokeStyle = "#383838";
+		this.ctx.lineWidth = 20 * this.scale;
+		this.ctx.lineCap = "round";
+		this.ctx.lineJoin = "round";
+		this.ctx.stroke(new Path2D("M 0 -240 L 0 240"));
+
+		this.ctx.strokeStyle = "#8f94a7";
+		this.ctx.lineWidth = 10 * this.scale;
+		this.ctx.lineCap = "round";
+		this.ctx.lineJoin = "round";
+		this.ctx.stroke(new Path2D("M 0 240 L -100 139 -100 -139 0 -240 Z"));
+	}
+
+	shape901() {
+		this.ctx.fillStyle = "#838383";
+		this.ctx.fill(
+			new Path2D(
+				"M 144 -180 L 180 -180 180 180 144 180 -180 180 -180 -180 144 -180 144 180 144 -180"
+			),
+			"evenodd"
+		);
+		this.ctx.strokeStyle = "#00ccff";
+		this.ctx.lineWidth = 10 * this.scale;
+		this.ctx.lineCap = "round";
+		this.ctx.lineJoin = "round";
+		this.ctx.stroke(new Path2D("M 180 -180 L 180 180 M 144 -180 L 144 180"));
+
+		this.ctx.strokeStyle = "#484848";
+		this.ctx.lineWidth = 10 * this.scale;
+		this.ctx.lineCap = "round";
+		this.ctx.lineJoin = "round";
+		this.ctx.stroke(new Path2D("M 144 180 L -180 180 -180 -180 144 -180"));
+	}
+
+	shape984() {
+		this.ctx.fillStyle = "#b0b0b9";
+		this.ctx.fill(
+			new Path2D(
+				"M 0 -87 L 0 -150 94 -150 100 -150 100 -41 100 -37 100 -34 95 -37 94 -37 0 -87 M 100 35 L 100 143 100 146 100 150 0 150 0 95 100 35"
+			),
+			"evenodd"
+		);
+		this.ctx.fillStyle = "#878794";
+		this.ctx.fill(
+			new Path2D("M 100 -34 L 100 35 0 95 0 -87 94 -37 95 -37 100 -34"),
+			"evenodd"
+		);
+		this.ctx.strokeStyle = "#4b4b54";
+		this.ctx.lineWidth = 10 * this.scale;
+		this.ctx.lineCap = "round";
+		this.ctx.lineJoin = "round";
+		this.ctx.stroke(
+			new Path2D(
+				"M 0 -87 L 0 -150 94 -150 100 -150 100 -41 100 -37 100 -34 100 35 100 143 100 146 100 150 0 150 0 95 0 -87 Z"
+			)
+		);
 	}
 
 	render(): void {
@@ -253,6 +319,40 @@ export class GraphicsManager {
 					size,
 					size
 				);
+			} else if (entity instanceof EntityBounceBlock) {
+				this.setStyle("#666", 1);
+				this.ctx.fillStyle = "#ccc";
+				this.renderSquare(entity.position.x, entity.position.y, entity.radius);
+			} else if (entity instanceof EntityLaunchPad) {
+				this.ctx.save();
+				this.ctx.translate(
+					entity.position.x * this.scale,
+					entity.position.y * this.scale
+				);
+				this.ctx.rotate(Math.atan2(entity.normal.y, entity.normal.x));
+				this.ctx.scale(0.05 * this.scale, 0.05 * this.scale);
+				this.shape984();
+				this.ctx.restore();
+			} else if (entity instanceof EntityThwomp) {
+				this.ctx.save();
+				this.ctx.translate(
+					entity.position.x * this.scale,
+					entity.position.y * this.scale
+				);
+				let rotation = 0;
+				if (entity.isHorizontal) {
+					if (entity.falldir < 0) {
+						rotation = Math.PI;
+					}
+				} else if (entity.fallDirection < 0) {
+					rotation = 1.5 * Math.PI;
+				} else {
+					rotation = 0.5 * Math.PI;
+				}
+				this.ctx.rotate(rotation);
+				this.ctx.scale(0.05 * this.scale, 0.05 * this.scale);
+				this.shape901();
+				this.ctx.restore();
 			}
 		}
 
@@ -653,5 +753,139 @@ export class GraphicsManager {
 		for (const player of this.playerGFXList) {
 			// player.updateState();
 		}
+	}
+
+	public renderLine(point0: Vector2, point1: Vector2, color = "black"): void {
+		this.ctx.strokeStyle = color;
+		this.ctx.beginPath();
+		this.ctx.lineWidth = 1 * this.scale;
+		this.ctx.moveTo(point0.x * this.scale, point0.y * this.scale);
+		this.ctx.lineTo(point1.x * this.scale, point1.y * this.scale);
+		this.ctx.stroke();
+	}
+
+	public renderSquare(x: number, y: number, size = 2): void {
+		this.renderAABB(x - size, x + size, y - size, y + size);
+	}
+
+	public renderAABB(x1: number, x2: number, y1: number, y2: number): void {
+		this.ctx.beginPath();
+		this.ctx.moveTo(x1 * this.scale, y1 * this.scale);
+		this.ctx.lineTo(x1 * this.scale, y2 * this.scale);
+		this.ctx.lineTo(x2 * this.scale, y2 * this.scale);
+		this.ctx.lineTo(x2 * this.scale, y1 * this.scale);
+		this.ctx.lineTo(x1 * this.scale, y1 * this.scale);
+		this.ctx.stroke();
+	}
+
+	public setStyle(strokeColor: string, lineWidth: number): void {
+		this.ctx.lineWidth = lineWidth;
+		this.ctx.strokeStyle = strokeColor;
+	}
+
+	public renderPlus(param1: number, param2: number, param3 = 2): void {
+		this.ctx.beginPath();
+		this.ctx.moveTo((param1 - param3) * this.scale, param2 * this.scale);
+		this.ctx.lineTo((param1 + param3) * this.scale, param2 * this.scale);
+		this.ctx.moveTo(param1 * this.scale, (param2 - param3) * this.scale);
+		this.ctx.lineTo(param1 * this.scale, (param2 + param3) * this.scale);
+		this.ctx.stroke();
+	}
+
+	public renderBox(
+		param1: number,
+		param2: number,
+		param3: number,
+		param4: number,
+		param5: number,
+		param6: number
+	): void {
+		this.ctx.beginPath();
+		this.ctx.moveTo(
+			(param1 + param3 + param5) * this.scale,
+			(param2 + param4 + param6) * this.scale
+		);
+		this.ctx.lineTo(
+			(param1 + param3 - param5) * this.scale,
+			(param2 + param4 - param6) * this.scale
+		);
+		this.ctx.lineTo(
+			(param1 - param3 - param5) * this.scale,
+			(param2 - param4 - param6) * this.scale
+		);
+		this.ctx.lineTo(
+			(param1 - param3 + param5) * this.scale,
+			(param2 - param4 + param6) * this.scale
+		);
+		this.ctx.closePath();
+	}
+
+	public renderArcConvex(
+		param1: number,
+		param2: number,
+		param3: number,
+		param4: number,
+		param5: number,
+		param6: number,
+		param7: number
+	): void {
+		const _loc8_ =
+			(param4 - param2) * (param5 - param1) -
+			(param3 - param1) * (param6 - param2);
+		if (_loc8_ <= 0) {
+			this.renderArc(param1, param2, param3, param4, param5, param6, -param7);
+		} else {
+			this.renderArc(param1, param2, param3, param4, param5, param6, param7);
+		}
+	}
+
+	public renderArc(
+		param1: number,
+		param2: number,
+		param3: number,
+		param4: number,
+		param5: number,
+		param6: number,
+		param7: number
+	): void {
+		const _loc8_ = -1;
+		let _loc9_ = param3;
+		let _loc10_ = param4;
+		let _loc11_ = param5;
+		let _loc12_ = param6;
+		let _loc13_ = param7;
+		if (param7 < 0) {
+			_loc9_ = param5;
+			_loc10_ = param6;
+			_loc11_ = param3;
+			_loc12_ = param4;
+			_loc13_ = -param7;
+		}
+		let _loc14_ = Math.atan2(_loc10_ - param2, _loc9_ - param1);
+		let _loc15_ = Math.atan2(_loc12_ - param2, _loc11_ - param1);
+		let _loc16_ = Math.abs(_loc15_ - _loc14_);
+		if (Math.PI < _loc16_) {
+			_loc16_ = 2 * Math.PI - _loc16_;
+		}
+		const _loc17_ = Math.floor(_loc16_ / (Math.PI / 4)) + 1;
+		const _loc18_ = (_loc8_ * _loc16_) / (2 * _loc17_);
+		const _loc19_ = _loc13_ / Math.cos(_loc18_);
+		this.ctx.beginPath();
+		this.ctx.moveTo(
+			(param1 + Math.cos(_loc14_) * _loc13_) * this.scale,
+			(param2 + Math.sin(_loc14_) * _loc13_) * this.scale
+		);
+		let _loc20_ = 0;
+		while (_loc20_ < _loc17_) {
+			_loc14_ = (_loc15_ = _loc14_ + _loc18_) + _loc18_;
+			this.ctx.quadraticCurveTo(
+				(param1 + Math.cos(_loc15_) * _loc19_) * this.scale,
+				(param2 + Math.sin(_loc15_) * _loc19_) * this.scale,
+				(param1 + Math.cos(_loc14_) * _loc13_) * this.scale,
+				(param2 + Math.sin(_loc14_) * _loc13_) * this.scale
+			);
+			_loc20_++;
+		}
+		this.ctx.stroke();
 	}
 }

@@ -1,10 +1,11 @@
-import type { EntityGraphics } from "../../entity-graphics.js";
+import type { EntityGraphics } from "../../graphics/entity-graphics.js";
 import { overlapCircleVsCircle, tryToAcquireTarget } from "../../fns.js";
 import type { CollisionResultLogical } from "../collision-result-logical.js";
 import type { Ninja } from "../ninja.js";
 import { PlayerKillType, SimulationRate, Simulator } from "../simulator.js";
 import { Vector2 } from "../vector2.js";
 import { EntityBase } from "./entity-base";
+import type { GraphicsManager } from "../../graphics-manager.js";
 
 enum RocketState {
 	IDLE = 0,
@@ -55,7 +56,7 @@ export class EntityRocket extends EntityBase {
 		this.hitNormal = new Vector2();
 	}
 
-	collideVsCircleLogical(
+	collideVsNinjaLogical(
 		simulator: Simulator,
 		ninja: Ninja,
 		collision: CollisionResultLogical,
@@ -67,7 +68,7 @@ export class EntityRocket extends EntityBase {
 	): boolean {
 		if (this.currentState !== RocketState.HOMING) {
 			throw new Error(
-				`WARNING! EntityRocket.collideVsCircleLogical() was called with a rocket that's not active.. this should be impossible, the rocket shouldn't be in the grid?! ${this.currentState}`
+				`WARNING! EntityRocket.collideVsNinjaLogical() was called with a rocket that's not active.. this should be impossible, the rocket shouldn't be in the grid?! ${this.currentState}`
 			);
 		}
 		if (overlapCircleVsCircle(this.rocketPos, 0, param4, param7)) {
@@ -182,7 +183,6 @@ export class EntityRocket extends EntityBase {
 				const _loc9_ = segment.intersectWithRay(
 					this.oldPosition,
 					this.rocketVelocity,
-					0,
 					this.hitPosition,
 					this.hitNormal
 				);
@@ -247,7 +247,7 @@ export class EntityRocket extends EntityBase {
 		return null;
 	}
 
-	debugDraw(context: CanvasRenderingContext2D): void {
+	debugDraw(gfx: GraphicsManager): void {
 		// param1.SetStyle(0, 0, 100);
 		// param1.DrawCircle(this.pos.x, this.pos.y, 4);
 		// if (this.CUR_STATE == STATE_PREFIRE) {

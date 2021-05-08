@@ -1,13 +1,24 @@
+import { EdgeState } from "./enum-data.js";
 import { NUM_TILE_TYPES, TileType } from "./tile-type";
 
-const edgeStatesX = new Array<number>(NUM_TILE_TYPES * 6);
-const edgeStatesY = new Array<number>(NUM_TILE_TYPES * 6);
+const edgeStatesX = new Array<EdgeState>(NUM_TILE_TYPES * 6).fill(
+	EdgeState.EMPTY
+);
+const edgeStatesY = new Array<EdgeState>(NUM_TILE_TYPES * 6).fill(
+	EdgeState.EMPTY
+);
 
-export const getEdgeStateX = (tileType: TileType, param2: number): number => {
-	return edgeStatesX[tileType * 6 + param2];
+export const getEdgeStateX = (
+	tileType: TileType,
+	offset: number
+): EdgeState => {
+	return edgeStatesX[tileType * 6 + offset];
 };
 
-export const getEdgeStateY = (tileType: TileType, param2: number): number => {
+export const getEdgeStateY = (
+	tileType: TileType,
+	param2: number
+): EdgeState => {
 	return edgeStatesY[tileType * 6 + param2];
 };
 

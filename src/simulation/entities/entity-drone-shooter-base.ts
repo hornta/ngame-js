@@ -1,4 +1,5 @@
 import { tryToAcquireTarget } from "../../fns";
+import type { GraphicsManager } from "../../graphics-manager.js";
 import type { GridEntity } from "../grid-entity";
 import type { Simulator } from "../simulator";
 import type { Vector2 } from "../vector2";
@@ -160,7 +161,7 @@ export abstract class EntityDroneShooterBase extends EntityDroneBase {
 	}
 	startPostfiring(simulator: Simulator): void {}
 
-	debugDraw(context: CanvasRenderingContext2D): void {
+	debugDraw(gfx: GraphicsManager): void {
 		// let _loc2_ = NaN;
 		// let _loc3_ = NaN;
 		// super.Debug_Draw(param1);

@@ -1,4 +1,4 @@
-import type { EntityGraphics } from "../../entity-graphics.js";
+import type { EntityGraphics } from "../../graphics/entity-graphics.js";
 import { overlapCircleVsCircle } from "../../fns";
 import type { CollisionResultLogical } from "../collision-result-logical";
 import type { GridEntity } from "../grid-entity";
@@ -6,6 +6,7 @@ import type { Ninja } from "../ninja.js";
 import type { Simulator } from "../simulator";
 import { Vector2 } from "../vector2.js";
 import { EntityBase } from "./entity-base";
+import type { GraphicsManager } from "../../graphics-manager.js";
 
 export class EntityExitDoor extends EntityBase {
 	position: Vector2;
@@ -19,7 +20,7 @@ export class EntityExitDoor extends EntityBase {
 		this.isOpen = false;
 	}
 
-	collideVsCircleLogical(
+	collideVsNinjaLogical(
 		simulator: Simulator,
 		player: Ninja,
 		param3: CollisionResultLogical,
@@ -66,7 +67,7 @@ export class EntityExitDoor extends EntityBase {
 	// 	}
 	// }
 
-	public debugDraw(context: CanvasRenderingContext2D): void {
+	public debugDraw(gfx: GraphicsManager): void {
 		// if (this.isOpen) {
 		// 	param1.SetStyle(0, 0, 100);
 		// 	param1.DrawSquare(this.pos.x, this.pos.y, this.r);

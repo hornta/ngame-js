@@ -43,6 +43,7 @@ export class Game {
 	pausedTime = 0;
 	gameTooSlow = false;
 	ticker: Ticker;
+	private debug = true;
 	private canvas: HTMLCanvasElement;
 	private gfx: GraphicsManager;
 	private renderId: number;
@@ -50,6 +51,8 @@ export class Game {
 
 	constructor() {
 		this.ticker = new Ticker();
+		this.ticker.minFPS = SIMULATION_RATE;
+		this.ticker.maxFPS = SIMULATION_RATE;
 		this.ticker.add(() => {
 			this.tick();
 		});
@@ -70,8 +73,8 @@ export class Game {
 
 	private render(): void {
 		this.gfx.render();
-		if (this.simulator) {
-			this.simulator.segGrid.debugDraw(this.gfx.getContext());
+		if (this.simulator && this.debug) {
+			this.simulator.debugDraw(this.gfx);
 		}
 		this.renderId = requestAnimationFrame(this.boundRender);
 	}
@@ -102,7 +105,9 @@ export class Game {
 	tick(): void {
 		this.thisTick = Date.now();
 		this.input.tick();
-		// this.debugRenderer.Clear();
+		if (this.input.isKeyPressed("KeyQ")) {
+			this.debug = !this.debug;
+		}
 		switch (this.menuState) {
 			case MenuState.PLAYING_GAME:
 				this.tickGame();

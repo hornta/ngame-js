@@ -1,4 +1,5 @@
 import { NUM_COLS, NUM_ROWS } from "../editor-state";
+import type { GraphicsManager } from "../graphics-manager.js";
 import type { TileType } from "../tile-type.js";
 import type { EntityBase } from "./entities/entity-base";
 import type { GridEdges } from "./grid-edges";
@@ -56,7 +57,7 @@ export class Simulator {
 	static GRID_NUM_COLUMNS = NUM_COLS + 2;
 	static GRID_NUM_ROWS = NUM_ROWS + 2;
 	static GRID_CELL_SIZE = 24;
-	static GRID_CELL_HALFWIDTH = Simulator.GRID_CELL_SIZE / 2;
+	static GRID_CELL_HALFWIDTH = 12;
 
 	entityList: EntityBase[];
 	tileIDs: TileType[];
@@ -210,5 +211,13 @@ export class Simulator {
 			return true;
 		}
 		return false;
+	}
+
+	public debugDraw(gfx: GraphicsManager): void {
+		// this.segGrid.debugDraw(gfx);
+		this.edgeGrid.debugDraw(gfx);
+		for (const entity of this.entityList) {
+			entity.debugDraw(gfx);
+		}
 	}
 }

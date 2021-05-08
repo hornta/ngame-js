@@ -1,4 +1,5 @@
 import { wrapAngleShortest, wrapAnglePosition } from "../../fns";
+import type { GraphicsManager } from "../../graphics-manager.js";
 import type { GridEdges } from "../grid-edges";
 import type { GridEntity } from "../grid-entity";
 import type { GridSegment } from "../grid-segment";
@@ -175,7 +176,7 @@ export class EntityDroneBase extends EntityBase {
 		return true;
 	}
 
-	debugDraw(context: CanvasRenderingContext2D): void {
+	debugDraw(gfx: GraphicsManager): void {
 		// param1.SetStyle(0, 0, 100);
 		// param1.DrawCircle(this.pos.x, this.pos.y, this.r);
 		// const _loc2_: vec2 = new vec2(Math.cos(this.gfxorn), Math.sin(this.gfxorn));
