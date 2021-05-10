@@ -48,10 +48,15 @@ export class GraphicsManager {
 	private height: number;
 	private scale = 1;
 	private fixedCellSize: number;
-	private nearestPx: boolean;
+	private nearestX: number;
+	private nearestY: number;
 
-	private f(v: number) {
-		return Math.round(v + this.nearestPx) - this.nearestPx;
+	private x(v: number) {
+		return Math.round(v + this.nearestX) - this.nearestX;
+	}
+
+	private y(v: number) {
+		return Math.round(v + this.nearestY) - this.nearestY;
 	}
 
 	setContext(context: CanvasRenderingContext2D): void {
@@ -176,11 +181,11 @@ export class GraphicsManager {
 		this.ctx.lineCap = "round";
 		this.ctx.lineJoin = "round";
 		this.ctx.beginPath();
-		this.ctx.moveTo(this.f(-6 * this.scale), this.f(-3.75 * this.scale));
-		this.ctx.lineTo(this.f(6 * this.scale), this.f(-3.75 * this.scale));
-		this.ctx.lineTo(this.f(6 * this.scale), this.f(3.75 * this.scale));
-		this.ctx.lineTo(this.f(-6 * this.scale), this.f(3.75 * this.scale));
-		this.ctx.lineTo(this.f(-6 * this.scale), this.f(-3.75 * this.scale));
+		this.ctx.moveTo(this.x(-6 * this.scale), this.y(-3.75 * this.scale));
+		this.ctx.lineTo(this.x(6 * this.scale), this.y(-3.75 * this.scale));
+		this.ctx.lineTo(this.x(6 * this.scale), this.y(3.75 * this.scale));
+		this.ctx.lineTo(this.x(-6 * this.scale), this.y(3.75 * this.scale));
+		this.ctx.lineTo(this.x(-6 * this.scale), this.y(-3.75 * this.scale));
 		this.ctx.closePath();
 		this.ctx.stroke();
 
@@ -207,12 +212,12 @@ export class GraphicsManager {
 		this.ctx.lineCap = "round";
 		this.ctx.lineJoin = "round";
 		this.ctx.beginPath();
-		this.ctx.moveTo(this.f(3.75 * this.scale), this.f(2.25 * this.scale));
-		this.ctx.lineTo(this.f(0), this.f(0));
-		this.ctx.lineTo(this.f(-3.75 * this.scale), this.f(2.25 * this.scale));
-		this.ctx.moveTo(this.f(3.75 * this.scale), this.f(-2.25 * this.scale));
-		this.ctx.lineTo(this.f(0), this.f(0));
-		this.ctx.lineTo(this.f(-3.75 * this.scale), this.f(-2.25 * this.scale));
+		this.ctx.moveTo(this.x(3.75 * this.scale), this.y(2.25 * this.scale));
+		this.ctx.lineTo(this.x(0), this.y(0));
+		this.ctx.lineTo(this.x(-3.75 * this.scale), this.y(2.25 * this.scale));
+		this.ctx.moveTo(this.x(3.75 * this.scale), this.y(-2.25 * this.scale));
+		this.ctx.lineTo(this.x(0), this.y(0));
+		this.ctx.lineTo(this.x(-3.75 * this.scale), this.y(-2.25 * this.scale));
 		this.ctx.stroke();
 
 		this.ctx.strokeStyle = "#34343a";
@@ -220,10 +225,10 @@ export class GraphicsManager {
 		this.ctx.lineCap = "square";
 		this.ctx.lineJoin = "bevel";
 		this.ctx.beginPath();
-		this.ctx.moveTo(this.f(-3.75 * this.scale), this.f(2.25 * this.scale));
-		this.ctx.lineTo(this.f(3.75 * this.scale), this.f(2.25 * this.scale));
-		this.ctx.lineTo(this.f(3.75 * this.scale), this.f(-2.25 * this.scale));
-		this.ctx.lineTo(this.f(-3.75 * this.scale), this.f(-2.25 * this.scale));
+		this.ctx.moveTo(this.x(-3.75 * this.scale), this.y(2.25 * this.scale));
+		this.ctx.lineTo(this.x(3.75 * this.scale), this.y(2.25 * this.scale));
+		this.ctx.lineTo(this.x(3.75 * this.scale), this.y(-2.25 * this.scale));
+		this.ctx.lineTo(this.x(-3.75 * this.scale), this.y(-2.25 * this.scale));
 		this.ctx.closePath();
 		this.ctx.stroke();
 	}
@@ -455,7 +460,8 @@ export class GraphicsManager {
 					entity.position.x * this.scale,
 					entity.position.y * this.scale
 				);
-				this.nearestPx = this.ctx.getTransform().e % 1 === 0.5 ? 1 : 0.5;
+				this.nearestX = this.ctx.getTransform().e % 1 === 0.5 ? 1 : 0.5;
+				this.nearestY = this.ctx.getTransform().f % 1 === 0.5 ? 1 : 0.5;
 				this.shape967();
 				this.ctx.restore();
 			} else if (entity instanceof EntityExitDoor) {
