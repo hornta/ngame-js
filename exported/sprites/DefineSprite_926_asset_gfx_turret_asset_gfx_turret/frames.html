@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><script type="text/javascript" src="canvas.js"></script><style type="text/css">#resizable {position:relative; display:inline-block; margin:0; padding:0;font-size:0px;} #width_size {width:10px; position:absolute; right:-5px; top:0px; bottom:0px; cursor:e-resize;-webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;} #height_size {height:10px; position:absolute; bottom:-5px; left:0px; right:0px; cursor:n-resize;-webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;} #myCanvas {margin:0; padding:0;} </style></head><body>
+
+<div id="resizable"><canvas id="myCanvas" width="12" height="12" style="border:1px solid #c3c3c3;">
+Your browser does not support the HTML5 canvas tag.
+</canvas><div id="width_size">&nbsp;</div><div id="height_size">&nbsp;</div></div>
+
+<script>var canvas=document.getElementById("myCanvas");
+var ctx=canvas.getContext("2d");
+enhanceContext(ctx);
+var ctrans = new cxform(0,0,0,0,255,255,255,255);
+
+var scalingGrids = {};
+var boundRects = {};
+function shape922(ctx,ctrans,frame,ratio,time){
+	var pathData="M 63 -2 L 63 0 63 10 57 29 45 45 Q 29 61 7 64 L -1 64 -15 63 Q -33 59 -46 46 L -58 30 -64 10 -65 1 -65 -2 -62 -19 Q -58 -33 -46 -45 L -16 -62 -1 -63 6 -63 Q 28 -61 44 -45 56 -34 60 -19 L 63 -2";
+	var scaleMode = "NORMAL";
+	ctx.strokeStyle=tocolor(ctrans.apply([102,0,51,1]));
+	ctx.lineWidth=0.05;
+	ctx.lineCap="round";
+	ctx.lineJoin="round";
+	drawPath(ctx,pathData,true,scaleMode);
+
+	var pathData="M 6 -120 Q 52 -118 85 -86 113 -58 119 -20 M 120 10 L 119 15 111 47 86 85 Q 53 118 7 120 M -119 -19 Q -114 -57 -86 -85 -56 -115 -16 -120 M -15 119 Q -55 115 -85 86 -102 69 -111 48 L -120 16 -120 11";
+	var scaleMode = "NORMAL";
+	ctx.strokeStyle=tocolor(ctrans.apply([0,0,0,1]));
+	ctx.lineWidth=0.05;
+	ctx.lineCap="round";
+	ctx.lineJoin="round";
+	drawPath(ctx,pathData,true,scaleMode);
+
+}
+
+function shape923(ctx,ctrans,frame,ratio,time){
+	var pathData="M 3 17 L 0 10 3 3 Q 6 0 10 0 14 0 17 3 L 20 10 17 17 10 20 3 17";
+	ctx.fillStyle=tocolor(ctrans.apply([127,51,90,1]));
+	drawPath(ctx,pathData,false);
+	ctx.fill("evenodd");
+}
+
+function sprite926(ctx,ctrans,frame,ratio,time){
+	ctx.save();
+	ctx.transform(1,0,0,1,6.0,6.0);
+	var clips = [];
+	var frame_cnt = 17;
+	frame = frame % frame_cnt;
+	switch(frame){
+		case 0:
+			place("shape922",canvas,ctx,[0.05,0.0,0.0,0.05,0.0,0.0],ctrans,1,0,0,time);
+			break;
+		case 1:
+			place("shape922",canvas,ctx,[0.05,0.0,0.0,0.05,0.0,0.0],ctrans,1,0,0,time);
+			place("shape923",canvas,ctx,[0.05,0.0,0.0,0.05,-0.5,-0.5],ctrans,1,0,0,time);
+			break;
+		case 2:
+			place("shape922",canvas,ctx,[0.05,0.0,0.0,0.05,0.0,0.0],ctrans,1,0,0,time);
+			place("shape923",canvas,ctx,[0.1100006103515625,0.0,0.0,0.1100006103515625,-1.1,-1.1],ctrans,1,0,0,time);
+			break;
+		case 3:
+			place("shape922",canvas,ctx,[0.05,0.0,0.0,0.05,0.0,0.0],ctrans,1,0,0,time);
+			place("shape923",canvas,ctx,[0.170001220703125,0.0,0.0,0.170001220703125,-1.7,-1.7],ctrans,1,0,0,time);
+			break;
+		case 4:
+			place("shape922",canvas,ctx,[0.05,0.0,0.0,0.05,0.0,0.0],ctrans,1,0,0,time);
+			place("shape923",canvas,ctx,[0.23000259399414064,0.0,0.0,0.23000259399414064,-2.3,-2.3],ctrans,1,0,0,time);
+			break;
+		case 5:
+			place("shape922",canvas,ctx,[0.05,0.0,0.0,0.05,0.0,0.0],ctrans,1,0,0,time);
+			place("shape923",canvas,ctx,[0.29000320434570315,0.0,0.0,0.29000320434570315,-2.9,-2.9],ctrans,1,0,0,time);
+			break;
+		case 6:
+			place("shape922",canvas,ctx,[0.05,0.0,0.0,0.05,0.0,0.0],ctrans,1,0,0,time);
+			place("shape923",canvas,ctx,[0.35000457763671877,0.0,0.0,0.35000457763671877,-3.5,-3.5],ctrans,1,0,0,time);
+			break;
+		case 7:
+			place("shape922",canvas,ctx,[0.05,0.0,0.0,0.05,0.0,0.0],ctrans,1,0,0,time);
+			place("shape923",canvas,ctx,[0.41000518798828123,0.0,0.0,0.41000518798828123,-4.1,-4.1],ctrans,1,0,0,time);
+			break;
+		case 8:
+			place("shape922",canvas,ctx,[0.05,0.0,0.0,0.05,0.0,0.0],ctrans,1,0,0,time);
+			place("shape923",canvas,ctx,[0.47000579833984374,0.0,0.0,0.47000579833984374,-4.7,-4.7],ctrans,1,0,0,time);
+			break;
+		case 9:
+			place("shape922",canvas,ctx,[0.05,0.0,0.0,0.05,0.0,0.0],ctrans,1,0,0,time);
+			place("shape923",canvas,ctx,[0.47000579833984374,0.0,0.0,0.47000579833984374,-4.7,-4.7],ctrans,1,0,0,time);
+			break;
+		case 10:
+			place("shape922",canvas,ctx,[0.05,0.0,0.0,0.05,0.0,0.0],ctrans,1,0,0,time);
+			place("shape923",canvas,ctx,[0.47000579833984374,0.0,0.0,0.47000579833984374,-4.7,-4.7],ctrans,1,0,0,time);
+			break;
+		case 11:
+			place("shape922",canvas,ctx,[0.05,0.0,0.0,0.05,0.0,0.0],ctrans,1,0,0,time);
+			place("shape923",canvas,ctx,[0.386004638671875,0.0,0.0,0.386004638671875,-3.85,-3.85],ctrans,1,0,0,time);
+			break;
+		case 12:
+			place("shape922",canvas,ctx,[0.05,0.0,0.0,0.05,0.0,0.0],ctrans,1,0,0,time);
+			place("shape923",canvas,ctx,[0.30200347900390623,0.0,0.0,0.30200347900390623,-3.0,-3.0],ctrans,1,0,0,time);
+			break;
+		case 13:
+			place("shape922",canvas,ctx,[0.05,0.0,0.0,0.05,0.0,0.0],ctrans,1,0,0,time);
+			place("shape923",canvas,ctx,[0.2180023193359375,0.0,0.0,0.2180023193359375,-2.2,-2.2],ctrans,1,0,0,time);
+			break;
+		case 14:
+			place("shape922",canvas,ctx,[0.05,0.0,0.0,0.05,0.0,0.0],ctrans,1,0,0,time);
+			place("shape923",canvas,ctx,[0.13400115966796874,0.0,0.0,0.13400115966796874,-1.35,-1.35],ctrans,1,0,0,time);
+			break;
+		case 15:
+			place("shape922",canvas,ctx,[0.05,0.0,0.0,0.05,0.0,0.0],ctrans,1,0,0,time);
+			place("shape923",canvas,ctx,[0.05,0.0,0.0,0.05,-0.5,-0.5],ctrans,1,0,0,time);
+			break;
+		case 16:
+			place("shape922",canvas,ctx,[0.05,0.0,0.0,0.05,0.0,0.0],ctrans,1,0,0,time);
+			break;
+	}
+	ctx.restore();
+}
+
+var frame = -1;
+var time = 0;
+var frames = [];
+frames.push(0);
+frames.push(1);
+frames.push(2);
+frames.push(3);
+frames.push(4);
+frames.push(5);
+frames.push(6);
+frames.push(7);
+frames.push(8);
+frames.push(9);
+frames.push(10);
+frames.push(11);
+frames.push(12);
+frames.push(13);
+frames.push(14);
+frames.push(15);
+frames.push(16);
+
+var backgroundColor = "#cacad0";
+var originalWidth = 12;
+var originalHeight= 12;
+function nextFrame(ctx,ctrans){
+	var oldframe = frame;
+	frame = (frame+1)%frames.length;
+	if(frame==oldframe){time++;}else{time=0;};
+	drawFrame();
+}
+
+function drawFrame(){
+	ctx.fillStyle = backgroundColor;
+	ctx.fillRect(0,0,canvas.width,canvas.height);
+	ctx.save();
+	ctx.transform(canvas.width/originalWidth,0,0,canvas.height/originalHeight,0,0);
+	sprite926(ctx,ctrans,frames[frame],0,time);
+	ctx.restore();
+}
+
+window.setInterval(function(){nextFrame(ctx,ctrans);},16);
+nextFrame(ctx,ctrans);
+</script>
+</body>
+</html>

@@ -57,14 +57,17 @@ export const Utils = () => {
 						break;
 					case "L":
 						{
-							let currentPair = 1;
+							let currentPair = 0;
 							const points = [];
+							console.log(parts2);
 							while (true) {
-								const next1 = parts2[i + currentPair * 2 + 1];
+								const nextIndex = i + currentPair * 2 + 1;
+								console.log(nextIndex, nextIndex + 1);
+								const next1 = parts2[nextIndex];
 								if (Number.isNaN(Number(next1))) {
 									break;
 								}
-								const next2 = parts2[i + currentPair * 2 + 2];
+								const next2 = parts2[nextIndex + 1];
 
 								lines.push(`this.ctx.lineTo(${next1}, ${next2});`);
 								points.push([next1, next2]);

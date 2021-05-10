@@ -10,6 +10,8 @@ import { TileType } from "./tile-type.js";
 import { EntityBounceBlock } from "./simulation/entities/entity-bounce-block.js";
 import { EntityLaunchPad } from "./simulation/entities/entity-launch-pad.js";
 import { EntityThwomp } from "./simulation/entities/entity-thwomp.js";
+import { EntityExitSwitch } from "./simulation/entities/entity-exit-switch.js";
+import { EntityExitDoor } from "./simulation/entities/entity-exit-door.js";
 
 class Tile {
 	x: number;
@@ -46,6 +48,11 @@ export class GraphicsManager {
 	private height: number;
 	private scale = 1;
 	private fixedCellSize: number;
+	private nearestPx: boolean;
+
+	private f(v: number) {
+		return Math.round(v + this.nearestPx) - this.nearestPx;
+	}
 
 	setContext(context: CanvasRenderingContext2D): void {
 		context.imageSmoothingEnabled = false;
@@ -152,6 +159,95 @@ export class GraphicsManager {
 		this.ctx.lineCap = "round";
 		this.ctx.lineJoin = "round";
 		this.ctx.stroke(new Path2D("M 144 180 L -180 180 -180 -180 144 -180"));
+	}
+
+	shape967() {
+		this.ctx.fillStyle = "#b3b3bb";
+		this.ctx.beginPath();
+		this.ctx.moveTo(-6 * this.scale, -3.75 * this.scale);
+		this.ctx.lineTo(6 * this.scale, -3.75 * this.scale);
+		this.ctx.lineTo(6 * this.scale, 3.75 * this.scale);
+		this.ctx.lineTo(-6 * this.scale, 3.75 * this.scale);
+		this.ctx.closePath();
+		this.ctx.fill("evenodd");
+
+		this.ctx.strokeStyle = "#585863";
+		this.ctx.lineWidth = 1;
+		this.ctx.lineCap = "round";
+		this.ctx.lineJoin = "round";
+		this.ctx.beginPath();
+		this.ctx.moveTo(this.f(-6 * this.scale), this.f(-3.75 * this.scale));
+		this.ctx.lineTo(this.f(6 * this.scale), this.f(-3.75 * this.scale));
+		this.ctx.lineTo(this.f(6 * this.scale), this.f(3.75 * this.scale));
+		this.ctx.lineTo(this.f(-6 * this.scale), this.f(3.75 * this.scale));
+		this.ctx.lineTo(this.f(-6 * this.scale), this.f(-3.75 * this.scale));
+		this.ctx.closePath();
+		this.ctx.stroke();
+
+		this.ctx.fillStyle = "#b5cae1";
+		this.ctx.beginPath();
+		this.ctx.moveTo(-3.75 * this.scale, 2.25 * this.scale);
+		this.ctx.lineTo(0, 0);
+		this.ctx.lineTo(3.75 * this.scale, 2.25 * this.scale);
+		this.ctx.lineTo(0, 0);
+		this.ctx.lineTo(-3.75 * this.scale, 2.25 * this.scale);
+		this.ctx.lineTo(-3.75 * this.scale, -2.25 * this.scale);
+		this.ctx.lineTo(3.75 * this.scale, -2.25 * this.scale);
+		this.ctx.lineTo(3.75 * this.scale, 2.25 * this.scale);
+		this.ctx.lineTo(-3.75 * this.scale, 2.25 * this.scale);
+		this.ctx.moveTo(-3.75 * this.scale, -2.25 * this.scale);
+		this.ctx.lineTo(0, 0);
+		this.ctx.lineTo(3.75 * this.scale, -2.25 * this.scale);
+		this.ctx.lineTo(0, 0);
+		this.ctx.closePath();
+		this.ctx.fill("evenodd");
+
+		this.ctx.strokeStyle = "#6994c2";
+		this.ctx.lineWidth = 1;
+		this.ctx.lineCap = "round";
+		this.ctx.lineJoin = "round";
+		this.ctx.beginPath();
+		this.ctx.moveTo(this.f(3.75 * this.scale), this.f(2.25 * this.scale));
+		this.ctx.lineTo(this.f(0), this.f(0));
+		this.ctx.lineTo(this.f(-3.75 * this.scale), this.f(2.25 * this.scale));
+		this.ctx.moveTo(this.f(3.75 * this.scale), this.f(-2.25 * this.scale));
+		this.ctx.lineTo(this.f(0), this.f(0));
+		this.ctx.lineTo(this.f(-3.75 * this.scale), this.f(-2.25 * this.scale));
+		this.ctx.stroke();
+
+		this.ctx.strokeStyle = "#34343a";
+		this.ctx.lineWidth = 1;
+		this.ctx.lineCap = "square";
+		this.ctx.lineJoin = "bevel";
+		this.ctx.beginPath();
+		this.ctx.moveTo(this.f(-3.75 * this.scale), this.f(2.25 * this.scale));
+		this.ctx.lineTo(this.f(3.75 * this.scale), this.f(2.25 * this.scale));
+		this.ctx.lineTo(this.f(3.75 * this.scale), this.f(-2.25 * this.scale));
+		this.ctx.lineTo(this.f(-3.75 * this.scale), this.f(-2.25 * this.scale));
+		this.ctx.closePath();
+		this.ctx.stroke();
+	}
+
+	shape970() {
+		this.ctx.fillStyle = "#a48cb9";
+		this.ctx.fill(
+			new Path2D("M 30 -75 L 30 -36 -240 234 -240 -240 30 -240 30 -75"),
+			"evenodd"
+		);
+
+		this.ctx.fillStyle = "#ba9eb5";
+		this.ctx.fill(
+			new Path2D(
+				"M -240 234 L 30 -36 30 -75 240 -75 240 240 -240 240 -240 234"
+			),
+			"evenodd"
+		);
+
+		this.ctx.fillStyle = "#a56391";
+		this.ctx.fill(
+			new Path2D("M 30 -75 L 30 -240 240 -240 240 -75 30 -75"),
+			"evenodd"
+		);
 	}
 
 	shape984() {
@@ -352,6 +448,24 @@ export class GraphicsManager {
 				this.ctx.rotate(rotation);
 				this.ctx.scale(0.05 * this.scale, 0.05 * this.scale);
 				this.shape901();
+				this.ctx.restore();
+			} else if (entity instanceof EntityExitSwitch) {
+				this.ctx.save();
+				this.ctx.translate(
+					entity.position.x * this.scale,
+					entity.position.y * this.scale
+				);
+				this.nearestPx = this.ctx.getTransform().e % 1 === 0.5 ? 1 : 0.5;
+				this.shape967();
+				this.ctx.restore();
+			} else if (entity instanceof EntityExitDoor) {
+				this.ctx.save();
+				this.ctx.translate(
+					entity.position.x * this.scale,
+					entity.position.y * this.scale
+				);
+				this.ctx.scale(0.05 * this.scale, 0.05 * this.scale);
+				this.shape970();
 				this.ctx.restore();
 			}
 		}

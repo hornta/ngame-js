@@ -214,7 +214,7 @@ export class Simulator {
 	}
 
 	public debugDraw(gfx: GraphicsManager): void {
-		// this.segGrid.debugDraw(gfx);
+		this.segGrid.debugDraw(gfx);
 		this.edgeGrid.debugDraw(gfx);
 		for (const entity of this.entityList) {
 			entity.debugDraw(gfx);

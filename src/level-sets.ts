@@ -24,7 +24,7 @@ while (bytes.position < bytes.length) {
 
 export const getLevelByID = (id: number): ByteArray => {
 	const levelIndex = id - 1;
-	const _loc3_ = levelIndex / 5;
+	const _loc3_ = Math.floor(levelIndex / 5);
 	const _loc4_ = levelIndex % 5;
 	return downloaded[_loc3_][_loc4_];
 };
