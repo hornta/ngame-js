@@ -125,7 +125,7 @@ const Level = () => {
 				game.playSingleLevelFromBytes(data, numLevelId);
 			} else {
 				const response = await fetch(
-					`http://bucket.thewayoftheninja.org/${numLevelId}.txt`
+					`https://bucket.thewayoftheninja.org/${numLevelId}.txt`
 				);
 				const base64 = await response.text();
 				const decoded = Buffer.from(base64, "base64");
