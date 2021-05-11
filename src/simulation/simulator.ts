@@ -219,5 +219,8 @@ export class Simulator {
 		for (const entity of this.entityList) {
 			entity.debugDraw(gfx);
 		}
+		for (const player of this.playerList) {
+			player.debugDraw(gfx);
+		}
 	}
 }

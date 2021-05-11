@@ -33,13 +33,9 @@ export abstract class GridBase {
 	}
 
 	public debugGetWorldspaceCellCenterPositionFromIndex(id: number): Vector2 {
-		if (id !== -1) {
-			const x = id % this.numCols;
-			const y = Math.floor(id / this.numCols);
+		const x = id % this.numCols;
+		const y = Math.floor(id / this.numCols);
 
-			return new Vector2((x + 0.5) * this.cellSize, (y + 0.5) * this.cellSize);
-		} else {
-			return null;
-		}
+		return new Vector2((x + 0.5) * this.cellSize, (y + 0.5) * this.cellSize);
 	}
 }

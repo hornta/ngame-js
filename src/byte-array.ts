@@ -24,7 +24,7 @@ export class ByteArray {
 
 	newFromAvailable(): ByteArray {
 		const byteArray = new ByteArray(Buffer.alloc(this.bytesAvailable));
-		this.readBytes(byteArray);
+		this.readBytes(byteArray, 0);
 		byteArray.reset();
 		return byteArray;
 	}

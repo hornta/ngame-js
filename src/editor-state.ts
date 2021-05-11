@@ -59,8 +59,10 @@ export class EditorState {
 					"WARNING! Someone passed loadFromBytes() a bunch of bullshit; we didn't load it."
 				);
 			}
+			console.log(`Checking entities of type: ${structureId}`);
 			const num = byteArray.readShort();
 			const prevPosition = byteArray.position;
+			console.log(`Found ${num}`);
 
 			for (let k = 0; k < num; ++k) {
 				const entity: EntityProps = ([] as unknown) as EntityProps;
@@ -129,7 +131,6 @@ export class EditorState {
 				);
 			}
 		}
-
 		return editorState;
 	}
 }

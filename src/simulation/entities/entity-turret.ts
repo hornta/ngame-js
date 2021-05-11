@@ -18,7 +18,6 @@ export class EntityTurret extends EntityBase {
 	private aimSpeed: number[];
 	private timerStep: number[];
 	private predictionScale: number;
-	private position: Vector2;
 	private aimPosition: Vector2;
 	private aimRegion: number;
 	private shotTimer: number;
@@ -32,8 +31,8 @@ export class EntityTurret extends EntityBase {
 	private prefireDelay: number;
 	private postfireDelay: number;
 
-	constructor(x: number, y: number) {
-		super();
+	constructor(position: Vector2) {
+		super(position);
 		this.timerFiretime = 60 * (SimulationRate / 40);
 		this.prefireDelay = 10 * (SimulationRate / 40);
 		this.postfireDelay = 10 * (SimulationRate / 40);
@@ -46,8 +45,7 @@ export class EntityTurret extends EntityBase {
 		];
 		this.timerStep = [0, 0.5, 1.5, 3.5];
 		this.predictionScale = SimulationRate / 40;
-		this.position = new Vector2(x, y);
-		this.aimPosition = new Vector2(x, y);
+		this.aimPosition = this.position.clone();
 		this.aimRegion = 0;
 		this.shotTimer = 0;
 		this.currentState = TurretState.IDLE;

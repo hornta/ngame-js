@@ -21,15 +21,14 @@ export abstract class EntityDroneShooterBase extends EntityDroneBase {
 
 	constructor(
 		entityGrid: GridEntity,
-		x: number,
-		y: number,
+		position: Vector2,
 		speed: number,
 		facingDirection: number,
 		moveType: number,
 		preFireDelay: number,
 		postFireDelay: number
 	) {
-		super(entityGrid, x, y, speed, facingDirection, moveType);
+		super(entityGrid, position, speed, facingDirection, moveType);
 		this.currentFiringState = FiringState.IDLE;
 		this.firingTimer = 0;
 		this.preFireDelay = preFireDelay;

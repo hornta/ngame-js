@@ -9,10 +9,12 @@ import type { Vector2 } from "../vector2";
 export abstract class EntityBase {
 	private id: number;
 	private gridIndex: number;
+	public position: Vector2;
 
-	constructor() {
+	constructor(position: Vector2) {
 		this.id = -1;
 		this.gridIndex = -1;
+		this.position = position;
 	}
 
 	setId(id: number): void {

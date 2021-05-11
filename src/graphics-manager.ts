@@ -166,6 +166,77 @@ export class GraphicsManager {
 		this.ctx.stroke(new Path2D("M 144 180 L -180 180 -180 -180 144 -180"));
 	}
 
+	shape911(): void {
+		this.ctx.beginPath();
+		this.ctx.moveTo(3 * this.scale, -3 * this.scale);
+		this.ctx.lineTo(3 * this.scale, 3 * this.scale);
+		this.ctx.lineTo(-3 * this.scale, 3 * this.scale);
+		this.ctx.lineTo(-3 * this.scale, -3 * this.scale);
+		this.ctx.closePath();
+		this.ctx.fillStyle = "#cc9900";
+		this.ctx.fill("evenodd");
+
+		this.ctx.beginPath();
+		this.ctx.moveTo(-1.8 * this.scale, -1.8 * this.scale);
+		this.ctx.lineTo(1.8 * this.scale, -1.8 * this.scale);
+		this.ctx.lineTo(1.8 * this.scale, 1.8 * this.scale);
+		this.ctx.lineTo(-1.8 * this.scale, 1.8 * this.scale);
+		this.ctx.closePath();
+		this.ctx.fillStyle = "#dbbd11";
+		this.ctx.fill("evenodd");
+
+		this.ctx.beginPath();
+		this.ctx.moveTo(0.85 * this.scale, -0.9 * this.scale);
+		this.ctx.lineTo(0.85 * this.scale, 0.85 * this.scale);
+		this.ctx.lineTo(-0.9 * this.scale, 0.85 * this.scale);
+		this.ctx.lineTo(-0.9 * this.scale, -0.9 * this.scale);
+		this.ctx.closePath();
+		this.ctx.fillStyle = "#e2e200";
+		this.ctx.fill("evenodd");
+
+		this.ctx.beginPath();
+		this.ctx.moveTo(2.25 * this.scale, -0.7 * this.scale);
+		this.ctx.lineTo(0.7 * this.scale, -0.7 * this.scale);
+		this.ctx.lineTo(0.7 * this.scale, -2.3 * this.scale);
+		this.ctx.lineTo(2.25 * this.scale, -2.3 * this.scale);
+		this.ctx.closePath();
+		this.ctx.fillStyle = "#ffffcc";
+		this.ctx.fill("evenodd");
+
+		this.ctx.beginPath();
+		this.ctx.moveTo(this.x(3 * this.scale), this.y(3 * this.scale));
+		this.ctx.lineTo(this.x(-3 * this.scale), this.y(3 * this.scale));
+		this.ctx.lineTo(this.x(-3 * this.scale), this.y(-3 * this.scale));
+		this.ctx.lineTo(this.x(3 * this.scale), this.y(-3 * this.scale));
+		this.ctx.closePath();
+		this.ctx.strokeStyle = "#a67c00";
+		this.ctx.lineWidth = 1;
+		this.ctx.lineCap = "round";
+		this.ctx.lineJoin = "round";
+		this.ctx.stroke();
+	}
+
+	shape932(): void {
+		this.ctx.beginPath();
+		const size = 19.2 * this.scale;
+		const left = this.x(-9.6 * this.scale);
+		const right = this.x(left + size);
+		const top = this.y(9.6 * this.scale);
+		const bottom = this.y(top - size);
+		this.ctx.moveTo(right, top);
+		this.ctx.lineTo(left, top);
+		this.ctx.lineTo(left, bottom);
+		this.ctx.lineTo(right, bottom);
+		this.ctx.closePath();
+		this.ctx.fillStyle = "#cccccc";
+		this.ctx.strokeStyle = "#666666";
+		this.ctx.lineWidth = 1;
+		this.ctx.lineCap = "round";
+		this.ctx.lineJoin = "round";
+		this.ctx.fill();
+		this.ctx.stroke();
+	}
+
 	shape967() {
 		this.ctx.fillStyle = "#b3b3bb";
 		this.ctx.beginPath();
@@ -255,6 +326,142 @@ export class GraphicsManager {
 		);
 	}
 
+	shape975(): void {
+		this.ctx.beginPath();
+		this.ctx.moveTo(this.x(0 * this.scale), this.y(-2.4 * this.scale));
+		this.ctx.lineTo(this.x(0 * this.scale), this.y(-4.15 * this.scale));
+		this.ctx.moveTo(this.x(1.8 * this.scale), this.y(-1.6 * this.scale));
+		this.ctx.lineTo(this.x(3.35 * this.scale), this.y(-3.25 * this.scale));
+		this.ctx.moveTo(this.x(0 * this.scale), this.y(2.55 * this.scale));
+		this.ctx.lineTo(this.x(0 * this.scale), this.y(3.85 * this.scale));
+		this.ctx.moveTo(this.x(1.6 * this.scale), this.y(1.95 * this.scale));
+		this.ctx.lineTo(this.x(3.35 * this.scale), this.y(3.75 * this.scale));
+		this.ctx.moveTo(this.x(2.4 * this.scale), this.y(0.05 * this.scale));
+		this.ctx.lineTo(this.x(3.95 * this.scale), this.y(0.05 * this.scale));
+		this.ctx.moveTo(this.x(-2.35 * this.scale), this.y(-0.05 * this.scale));
+		this.ctx.lineTo(this.x(-3.85 * this.scale), this.y(-0.05 * this.scale));
+		this.ctx.moveTo(this.x(-1.55 * this.scale), this.y(-1.8 * this.scale));
+		this.ctx.lineTo(this.x(-3.45 * this.scale), this.y(-3.75 * this.scale));
+		this.ctx.moveTo(this.x(-1.75 * this.scale), this.y(1.75 * this.scale));
+		this.ctx.lineTo(this.x(-3.25 * this.scale), this.y(3.35 * this.scale));
+		this.ctx.strokeStyle = "#990000";
+		this.ctx.lineWidth = 1;
+		this.ctx.lineCap = "round";
+		this.ctx.lineJoin = "round";
+		this.ctx.stroke();
+
+		this.ctx.beginPath();
+		this.ctx.moveTo(1.7 * this.scale, -1.7 * this.scale);
+		this.ctx.quadraticCurveTo(
+			2.4 * this.scale,
+			-0.95 * this.scale,
+			2.4 * this.scale,
+			0.05 * this.scale
+		);
+		this.ctx.quadraticCurveTo(
+			2.4 * this.scale,
+			1.1 * this.scale,
+			1.7 * this.scale,
+			1.8 * this.scale
+		);
+		this.ctx.quadraticCurveTo(
+			1 * this.scale,
+			2.55 * this.scale,
+			0 * this.scale,
+			2.55 * this.scale
+		);
+		this.ctx.quadraticCurveTo(
+			-1 * this.scale,
+			2.55 * this.scale,
+			-1.7 * this.scale,
+			1.8 * this.scale
+		);
+		this.ctx.quadraticCurveTo(
+			-2.4 * this.scale,
+			1.1 * this.scale,
+			-2.4 * this.scale,
+			0.05 * this.scale
+		);
+		this.ctx.quadraticCurveTo(
+			-2.4 * this.scale,
+			-0.95 * this.scale,
+			-1.7 * this.scale,
+			-1.7 * this.scale
+		);
+		this.ctx.quadraticCurveTo(
+			-1 * this.scale,
+			-2.45 * this.scale,
+			0 * this.scale,
+			-2.45 * this.scale
+		);
+		this.ctx.quadraticCurveTo(
+			1 * this.scale,
+			-2.45 * this.scale,
+			1.7 * this.scale,
+			-1.7 * this.scale
+		);
+		this.ctx.closePath();
+		this.ctx.strokeStyle = "#990000";
+		this.ctx.lineWidth = 1 * this.scale;
+		this.ctx.lineCap = "round";
+		this.ctx.lineJoin = "round";
+		this.ctx.stroke();
+
+		// this is just a black circle, use the arc()?
+		this.ctx.beginPath();
+		this.ctx.moveTo(1.7 * this.scale, -1.7 * this.scale);
+		this.ctx.quadraticCurveTo(
+			2.4 * this.scale,
+			-0.95 * this.scale,
+			2.4 * this.scale,
+			0.05 * this.scale
+		);
+		this.ctx.quadraticCurveTo(
+			2.4 * this.scale,
+			1.1 * this.scale,
+			1.7 * this.scale,
+			1.8 * this.scale
+		);
+		this.ctx.quadraticCurveTo(
+			1 * this.scale,
+			2.55 * this.scale,
+			0 * this.scale,
+			2.55 * this.scale
+		);
+		this.ctx.quadraticCurveTo(
+			-1 * this.scale,
+			2.55 * this.scale,
+			-1.7 * this.scale,
+			1.8 * this.scale
+		);
+		this.ctx.quadraticCurveTo(
+			-2.4 * this.scale,
+			1.1 * this.scale,
+			-2.4 * this.scale,
+			0.05 * this.scale
+		);
+		this.ctx.quadraticCurveTo(
+			-2.4 * this.scale,
+			-0.95 * this.scale,
+			-1.7 * this.scale,
+			-1.7 * this.scale
+		);
+		this.ctx.quadraticCurveTo(
+			-1 * this.scale,
+			-2.45 * this.scale,
+			0 * this.scale,
+			-2.45 * this.scale
+		);
+		this.ctx.quadraticCurveTo(
+			1 * this.scale,
+			-2.45 * this.scale,
+			1.7 * this.scale,
+			-1.7 * this.scale
+		);
+		this.ctx.fillStyle = "black";
+		this.ctx.fill("evenodd");
+	}
+
 	shape984() {
 		this.ctx.fillStyle = "#b0b0b9";
 		this.ctx.fill(
@@ -285,161 +492,28 @@ export class GraphicsManager {
 
 		for (const entity of this.entityGFXList) {
 			// entity.updateState();
+			this.ctx.save();
+			this.ctx.translate(
+				entity.position.x * this.scale,
+				entity.position.y * this.scale
+			);
+
+			const x = this.ctx.getTransform().e % 1;
+			this.nearestX = x > 0.25 && x < 0.75 ? 1 : 0.5;
+
+			const y = this.ctx.getTransform().f % 1;
+			this.nearestY = y > 0.25 && y < 0.75 ? 1 : 0.5;
 			if (entity instanceof EntityMine) {
-				const radius = entity.radius * 0.6 * this.scale;
-				this.ctx.strokeStyle = "#990000";
-				this.ctx.lineWidth = 0.6 * this.scale;
-				const spokeLength = 2 * this.scale;
-				const spokeDiagonalLength = Math.sqrt(spokeLength);
-				this.ctx.beginPath();
-				this.ctx.moveTo(
-					entity.position.x * this.scale,
-					entity.position.y * this.scale
-				);
-				this.ctx.lineTo(
-					entity.position.x * this.scale,
-					entity.position.y * this.scale + radius + spokeLength
-				);
-				this.ctx.moveTo(
-					entity.position.x * this.scale,
-					entity.position.y * this.scale
-				);
-				this.ctx.lineTo(
-					entity.position.x * this.scale,
-					entity.position.y * this.scale - radius - spokeLength
-				);
-				this.ctx.moveTo(
-					entity.position.x * this.scale,
-					entity.position.y * this.scale
-				);
-				this.ctx.lineTo(
-					entity.position.x * this.scale - radius - spokeLength,
-					entity.position.y * this.scale
-				);
-				this.ctx.moveTo(
-					entity.position.x * this.scale,
-					entity.position.y * this.scale
-				);
-				this.ctx.lineTo(
-					entity.position.x * this.scale + radius + spokeLength,
-					entity.position.y * this.scale
-				);
-				this.ctx.moveTo(
-					entity.position.x * this.scale,
-					entity.position.y * this.scale
-				);
-				this.ctx.lineTo(
-					entity.position.x * this.scale + radius + spokeDiagonalLength,
-					entity.position.y * this.scale + radius + spokeDiagonalLength
-				);
-				this.ctx.moveTo(
-					entity.position.x * this.scale,
-					entity.position.y * this.scale
-				);
-				this.ctx.lineTo(
-					entity.position.x * this.scale + radius + spokeDiagonalLength,
-					entity.position.y * this.scale - radius - spokeDiagonalLength
-				);
-				this.ctx.moveTo(
-					entity.position.x * this.scale,
-					entity.position.y * this.scale
-				);
-				this.ctx.lineTo(
-					entity.position.x * this.scale - radius - spokeDiagonalLength,
-					entity.position.y * this.scale + radius + spokeDiagonalLength
-				);
-				this.ctx.moveTo(
-					entity.position.x * this.scale,
-					entity.position.y * this.scale
-				);
-				this.ctx.lineTo(
-					entity.position.x * this.scale - radius - spokeDiagonalLength,
-					entity.position.y * this.scale - radius - spokeDiagonalLength
-				);
-				this.ctx.stroke();
-
-				this.ctx.fillStyle = "black";
-				this.ctx.lineWidth = 0.5 * this.scale;
-				this.ctx.lineCap = "round";
-				this.ctx.lineJoin = "round";
-				this.ctx.beginPath();
-				this.ctx.arc(
-					entity.position.x * this.scale,
-					entity.position.y * this.scale,
-					radius,
-					0,
-					Math.PI * 2
-				);
-				this.ctx.fill();
-				this.ctx.stroke();
+				this.shape975();
 			} else if (entity instanceof EntityGold) {
-				const glimmerColor = "#ffffcc";
-				const firstLayer = "#cc9900";
-				const secondLayer = "#dbbd11";
-				const thirdLayer = "#e2e200";
-				const strokeColor = "#a67c00";
-
-				this.ctx.fillStyle = firstLayer;
-				this.ctx.strokeStyle = strokeColor;
-				this.ctx.lineWidth = 1 * this.scale;
-				this.ctx.lineJoin = "miter";
-				let size = 6 * this.scale;
-				this.ctx.beginPath();
-				this.ctx.rect(
-					entity.position.x * this.scale - size / 2,
-					entity.position.y * this.scale - size / 2,
-					size,
-					size
-				);
-				this.ctx.stroke();
-				this.ctx.fill();
-
-				this.ctx.fillStyle = secondLayer;
-				size = 4 * this.scale;
-				this.ctx.fillRect(
-					entity.position.x * this.scale - size / 2,
-					entity.position.y * this.scale - size / 2,
-					size,
-					size
-				);
-
-				this.ctx.fillStyle = thirdLayer;
-				size = 2 * this.scale;
-				this.ctx.fillRect(
-					entity.position.x * this.scale - size / 2,
-					entity.position.y * this.scale - size / 2,
-					size,
-					size
-				);
-
-				this.ctx.fillStyle = glimmerColor;
-				size = 1 * this.scale * 1.6;
-				this.ctx.fillRect(
-					entity.position.x * this.scale - size / 2 + 1.4 * this.scale,
-					entity.position.y * this.scale - size / 2 - 1.4 * this.scale,
-					size,
-					size
-				);
+				this.shape911();
 			} else if (entity instanceof EntityBounceBlock) {
-				this.setStyle("#666", 1);
-				this.ctx.fillStyle = "#ccc";
-				this.renderSquare(entity.position.x, entity.position.y, entity.radius);
+				this.shape932();
 			} else if (entity instanceof EntityLaunchPad) {
-				this.ctx.save();
-				this.ctx.translate(
-					entity.position.x * this.scale,
-					entity.position.y * this.scale
-				);
 				this.ctx.rotate(Math.atan2(entity.normal.y, entity.normal.x));
 				this.ctx.scale(0.05 * this.scale, 0.05 * this.scale);
 				this.shape984();
-				this.ctx.restore();
 			} else if (entity instanceof EntityThwomp) {
-				this.ctx.save();
-				this.ctx.translate(
-					entity.position.x * this.scale,
-					entity.position.y * this.scale
-				);
 				let rotation = 0;
 				if (entity.isHorizontal) {
 					if (entity.falldir < 0) {
@@ -453,27 +527,14 @@ export class GraphicsManager {
 				this.ctx.rotate(rotation);
 				this.ctx.scale(0.05 * this.scale, 0.05 * this.scale);
 				this.shape901();
-				this.ctx.restore();
 			} else if (entity instanceof EntityExitSwitch) {
-				this.ctx.save();
-				this.ctx.translate(
-					entity.position.x * this.scale,
-					entity.position.y * this.scale
-				);
-				this.nearestX = this.ctx.getTransform().e % 1 === 0.5 ? 1 : 0.5;
-				this.nearestY = this.ctx.getTransform().f % 1 === 0.5 ? 1 : 0.5;
 				this.shape967();
-				this.ctx.restore();
 			} else if (entity instanceof EntityExitDoor) {
-				this.ctx.save();
-				this.ctx.translate(
-					entity.position.x * this.scale,
-					entity.position.y * this.scale
-				);
 				this.ctx.scale(0.05 * this.scale, 0.05 * this.scale);
 				this.shape970();
-				this.ctx.restore();
 			}
+
+			this.ctx.restore();
 		}
 
 		for (const player of this.playerGFXList) {
@@ -898,7 +959,10 @@ export class GraphicsManager {
 		this.ctx.stroke();
 	}
 
-	public setStyle(strokeColor: string, lineWidth: number): void {
+	public setStyle(
+		strokeColor: CanvasFillStrokeStyles["strokeStyle"],
+		lineWidth: number
+	): void {
 		this.ctx.lineWidth = lineWidth;
 		this.ctx.strokeStyle = strokeColor;
 	}
@@ -957,6 +1021,20 @@ export class GraphicsManager {
 		} else {
 			this.renderArc(param1, param2, param3, param4, param5, param6, param7);
 		}
+	}
+
+	public renderCircle(position: Vector2, radius: number): void {
+		this.ctx.strokeStyle = "black";
+		this.ctx.lineWidth = 0.5 * this.scale;
+		this.ctx.beginPath();
+		this.ctx.arc(
+			position.x * this.scale,
+			position.y * this.scale,
+			radius,
+			0,
+			Math.PI * 2
+		);
+		this.ctx.stroke();
 	}
 
 	public renderArc(

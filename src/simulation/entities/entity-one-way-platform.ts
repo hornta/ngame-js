@@ -9,19 +9,16 @@ import { Vector2 } from "../vector2.js";
 import { EntityBase } from "./entity-base";
 
 export class EntityOneWayPlatform extends EntityBase {
-	private position: Vector2;
 	private normal: Vector2;
 	private radius: number;
 
 	constructor(
 		entityGrid: GridEntity,
-		x: number,
-		y: number,
+		position: Vector2,
 		normalX: number,
 		normalY: number
 	) {
-		super();
-		this.position = new Vector2(x, y);
+		super(position);
 		this.normal = new Vector2(normalX, normalY);
 		this.radius = 12;
 		entityGrid.addEntity(this.position, this);

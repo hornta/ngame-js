@@ -67,8 +67,10 @@ const loadLevelEditorStateEntities = (
 	for (let i = 0; i < entities.length; ++i) {
 		const entityProps = entities[i];
 		const type = entityProps[EntityProp.ENTITY_PROP_TYPE];
-		const x = entityProps[EntityProp.ENTITY_PROP_X] * QUANTIZE_STEP_SIZE;
-		const y = entityProps[EntityProp.ENTITY_PROP_Y] * QUANTIZE_STEP_SIZE;
+		const position = new Vector2(
+			entityProps[EntityProp.ENTITY_PROP_X] * QUANTIZE_STEP_SIZE,
+			entityProps[EntityProp.ENTITY_PROP_Y] * QUANTIZE_STEP_SIZE
+		);
 		let direction: Direction | null = null;
 		let move;
 		if (entityProps.length > 3) {
@@ -79,14 +81,13 @@ const loadLevelEditorStateEntities = (
 		}
 		console.log(`Loading entity: ${type}`);
 		if (type === EntityType.BOUNCEBLOCK) {
-			registerEntity(entityList, new EntityBounceBlock(gridEntity, x, y));
+			registerEntity(entityList, new EntityBounceBlock(gridEntity, position));
 		} else if (type === EntityType.CHAINGUN) {
 			registerEntity(
 				entityList,
 				new EntityDroneChaingun(
 					gridEntity,
-					x,
-					y,
+					position,
 					newDirectionEnumToOldDirectionEnum(direction as Direction),
 					move as number
 				)
@@ -96,8 +97,7 @@ const loadLevelEditorStateEntities = (
 				entityList,
 				new EntityDroneChaser(
 					gridEntity,
-					x,
-					y,
+					position,
 					newDirectionEnumToOldDirectionEnum(direction as Direction),
 					move as number
 				)
@@ -108,8 +108,8 @@ const loadLevelEditorStateEntities = (
 			type === EntityType.DOOR_TRAP
 		) {
 			const directionVector = DirectionToVector[direction as Direction];
-			const gridX = Math.floor((x - directionVector.x * 12) / 24);
-			const gridY = Math.floor((y - directionVector.y * 12) / 24);
+			const gridX = Math.floor((position.x - directionVector.x * 12) / 24);
+			const gridY = Math.floor((position.y - directionVector.y * 12) / 24);
 			const cellIndex = gridSegment.getCellIndexFromGridspacePosition(
 				gridX,
 				gridY
@@ -137,7 +137,7 @@ const loadLevelEditorStateEntities = (
 					)
 				);
 			}
-			const _loc26_ = new Vector2(x, y);
+			const _loc26_ = position.clone();
 			const _loc27_ = directionVector.perp();
 			_loc27_.scale(12);
 			const _loc28_ = _loc26_.plus(_loc27_);
@@ -159,13 +159,10 @@ const loadLevelEditorStateEntities = (
 						gridEdges,
 						edgeIndicies,
 						isHorizontal,
-						x,
-						y
+						position
 					)
 				);
 			} else {
-				const x = entityProps[EntityProp.ENTITY_PROP_X] * QUANTIZE_STEP_SIZE;
-				const y = entityProps[EntityProp.ENTITY_PROP_Y] * QUANTIZE_STEP_SIZE;
 				if (type === EntityType.DOOR_LOCKED) {
 					registerEntity(
 						entityList,
@@ -177,8 +174,7 @@ const loadLevelEditorStateEntities = (
 							gridEdges,
 							edgeIndicies,
 							isHorizontal,
-							x,
-							y
+							position
 						)
 					);
 				} else if (type === EntityType.DOOR_TRAP) {
@@ -192,22 +188,22 @@ const loadLevelEditorStateEntities = (
 							gridEdges,
 							edgeIndicies,
 							isHorizontal,
-							x,
-							y
+							position
 						)
 					);
 				}
 			}
 		} else if (type === EntityType.EXIT_DOOR) {
-			const exitDoor = new EntityExitDoor(x, y);
+			const exitDoor = new EntityExitDoor(position);
 			registerEntity(entityList, exitDoor);
 			const nextEntity = entities[i + 1];
-			const xSwitch = nextEntity[EntityProp.ENTITY_PROP_X] * QUANTIZE_STEP_SIZE;
-			const ySwitch = nextEntity[EntityProp.ENTITY_PROP_Y] * QUANTIZE_STEP_SIZE;
-
+			const switchPosition = new Vector2(
+				nextEntity[EntityProp.ENTITY_PROP_X] * QUANTIZE_STEP_SIZE,
+				nextEntity[EntityProp.ENTITY_PROP_Y] * QUANTIZE_STEP_SIZE
+			);
 			registerEntity(
 				entityList,
-				new EntityExitSwitch(gridEntity, xSwitch, ySwitch, exitDoor)
+				new EntityExitSwitch(gridEntity, switchPosition, exitDoor)
 			);
 		} else if (type === EntityType.EXIT_SWITCH) {
 			if (i > 0) {
@@ -221,16 +217,15 @@ const loadLevelEditorStateEntities = (
 				`loadLevelEditorStateEntities() found an exit switch without preceeding exit door!: ${i}`
 			);
 		} else if (type === EntityType.FLOORGUARD) {
-			registerEntity(entityList, new EntityFloorGuard(gridEntity, x, y));
+			registerEntity(entityList, new EntityFloorGuard(gridEntity, position));
 		} else if (type === EntityType.GOLD) {
-			registerEntity(entityList, new EntityGold(gridEntity, x, y));
+			registerEntity(entityList, new EntityGold(gridEntity, position));
 		} else if (type === EntityType.LASER) {
 			registerEntity(
 				entityList,
 				new EntityDroneLaser(
 					gridEntity,
-					x,
-					y,
+					position,
 					newDirectionEnumToOldDirectionEnum(direction as Direction),
 					move as number
 				)
@@ -238,42 +233,37 @@ const loadLevelEditorStateEntities = (
 		} else if (type === EntityType.LAUNCHPAD) {
 			const directionVector = DirectionToVector[direction as Direction];
 			console.log(
-				`Creating Launch pad at ${new Vector2(
-					x,
-					y
-				)} with direction ${directionVector}`
+				`Creating Launch pad at ${position} with direction ${directionVector}`
 			);
 			registerEntity(
 				entityList,
 				new EntityLaunchPad(
 					gridEntity,
-					x,
-					y,
+					position,
 					directionVector.x,
 					directionVector.y
 				)
 			);
 		} else if (type === EntityType.MINE) {
-			console.log(`Creating Mine at ${new Vector2(x, y)}`);
-			registerEntity(entityList, new EntityMine(gridEntity, x, y));
+			console.log(`Creating Mine at ${position}`);
+			registerEntity(entityList, new EntityMine(gridEntity, position));
 		} else if (type === EntityType.ONEWAY) {
 			const directionVector = DirectionToVector[direction as Direction];
 
-			console.log(`Creating OneWayPlatform at ${new Vector2(x, y)}`);
+			console.log(`Creating OneWayPlatform at ${position}`);
 			registerEntity(
 				entityList,
 				new EntityOneWayPlatform(
 					gridEntity,
-					x,
-					y,
+					position,
 					directionVector.x,
 					directionVector.y
 				)
 			);
 		} else if (type === EntityType.PLAYER) {
-			playerLocations.push(new Vector2(x, y));
+			playerLocations.push(position);
 		} else if (type === EntityType.ROCKET) {
-			registerEntity(entityList, new EntityRocket(x, y));
+			registerEntity(entityList, new EntityRocket(position));
 		} else if (type === EntityType.SWITCH_LOCKED) {
 			if (i > 0) {
 				if (
@@ -307,21 +297,20 @@ const loadLevelEditorStateEntities = (
 			} else {
 				fallDirection = directionVector.y;
 			}
-			console.log(`Creating Thwomp at ${new Vector2(x, y)}`);
+			console.log(`Creating Thwomp at ${position}`);
 			registerEntity(
 				entityList,
-				new EntityThwomp(gridEntity, x, y, fallDirection, isHorizontal)
+				new EntityThwomp(gridEntity, position, fallDirection, isHorizontal)
 			);
 		} else if (type === EntityType.TURRET) {
-			registerEntity(entityList, new EntityTurret(x, y));
+			registerEntity(entityList, new EntityTurret(position));
 		} else if (type === EntityType.ZAP) {
-			console.log(`Creating zap at ${new Vector2(x, y)}`);
+			console.log(`Creating zap at ${position}`);
 			registerEntity(
 				entityList,
 				new EntityDroneZap(
 					gridEntity,
-					x,
-					y,
+					position,
 					newDirectionEnumToOldDirectionEnum(direction as Direction),
 					move as number
 				)

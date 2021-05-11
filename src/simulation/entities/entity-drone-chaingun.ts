@@ -21,8 +21,7 @@ export class EntityDroneChaingun extends EntityDroneShooterBase {
 
 	constructor(
 		entityGrid: GridEntity,
-		x: number,
-		y: number,
+		position: Vector2,
 		facingDirection: number,
 		moveType: number
 	) {
@@ -31,8 +30,7 @@ export class EntityDroneChaingun extends EntityDroneShooterBase {
 		const postfireDelay = 60 * (SimulationRate / 40);
 		super(
 			entityGrid,
-			x,
-			y,
+			position,
 			speed,
 			facingDirection,
 			moveType,

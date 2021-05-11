@@ -11,13 +11,12 @@ import type { GraphicsManager } from "../../graphics-manager.js";
 export class EntityDroneZap extends EntityDroneBase {
 	constructor(
 		entityGrid: GridEntity,
-		x: number,
-		y: number,
+		position: Vector2,
 		facingDirection: number,
 		moveType: number
 	) {
 		const speed = 12 * (1 / 14) * 2 * (40 / SimulationRate);
-		super(entityGrid, x, y, speed, facingDirection, moveType);
+		super(entityGrid, position, speed, facingDirection, moveType);
 	}
 
 	collideVsNinjaLogical(

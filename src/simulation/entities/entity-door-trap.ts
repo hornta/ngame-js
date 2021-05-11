@@ -5,6 +5,7 @@ import type { GridEntity } from "../grid-entity.js";
 import type { GridSegment } from "../grid-segment.js";
 import type { Segment } from "../segment.js";
 import type { Simulator } from "../simulator";
+import type { Vector2 } from "../vector2.js";
 import { EntityDoorBase } from "./entity-door-base";
 
 export class EntityDoorTrap extends EntityDoorBase {
@@ -16,8 +17,7 @@ export class EntityDoorTrap extends EntityDoorBase {
 		edgeGrid: GridEdges,
 		edgeIndicies: number[],
 		isHorizontal: boolean,
-		x: number,
-		y: number
+		position: Vector2
 	) {
 		const triggerRadius = 12 * (5 / 12);
 		super(
@@ -28,8 +28,7 @@ export class EntityDoorTrap extends EntityDoorBase {
 			edgeGrid,
 			edgeIndicies,
 			isHorizontal,
-			x,
-			y,
+			position,
 			triggerRadius,
 			false
 		);

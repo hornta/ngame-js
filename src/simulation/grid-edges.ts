@@ -86,26 +86,26 @@ export class GridEdges extends GridBase {
 	}
 
 	getIndexFromGridspaceAndOffset(
-		param1: number,
-		param2: number,
-		param3: number,
-		param4: number
+		x: number,
+		y: number,
+		directionX: number,
+		directionY: number
 	): number {
-		let _loc5_ = -1;
-		if (param4 === 0) {
-			if (param3 === -1) {
-				_loc5_ = this.getCellIndexFromGridspacePosition(param1 - 1, param2);
-			} else if (param3 === 1) {
-				_loc5_ = this.getCellIndexFromGridspacePosition(param1, param2);
+		let index = -1;
+		if (directionY === 0) {
+			if (directionX === -1) {
+				index = this.getCellIndexFromGridspacePosition(x - 1, y);
+			} else if (directionX === 1) {
+				index = this.getCellIndexFromGridspacePosition(x, y);
 			}
-		} else if (param3 === 0) {
-			if (param4 === -1) {
-				_loc5_ = this.getCellIndexFromGridspacePosition(param1, param2 - 1);
-			} else if (param4 === 1) {
-				_loc5_ = this.getCellIndexFromGridspacePosition(param1, param2);
+		} else if (directionX === 0) {
+			if (directionY === -1) {
+				index = this.getCellIndexFromGridspacePosition(x, y - 1);
+			} else if (directionY === 1) {
+				index = this.getCellIndexFromGridspacePosition(x, y);
 			}
 		}
-		return _loc5_;
+		return index;
 	}
 
 	isEmpty(
@@ -327,9 +327,9 @@ export class GridEdges extends GridBase {
 
 				if (this.edgesTileX[index] !== EdgeState.EMPTY) {
 					if (this.edgesTileX[index] === EdgeState.PARTIAL) {
-						gfx.setStyle(0xaaaaaa, 0.4);
+						gfx.setStyle("#aaaaaa", 0.4);
 					} else {
-						gfx.setStyle(0x222222, 0.4);
+						gfx.setStyle("#222222", 0.4);
 					}
 					gfx.renderLine(
 						new Vector2(
@@ -344,9 +344,9 @@ export class GridEdges extends GridBase {
 				}
 				if (this.edgesTileY[index] !== EdgeState.EMPTY) {
 					if (this.edgesTileY[index] === EdgeState.PARTIAL) {
-						gfx.setStyle(0xaaaaaa, 0.4);
+						gfx.setStyle("#aaaaaa", 0.4);
 					} else {
-						gfx.setStyle(0x222222, 0.4);
+						gfx.setStyle("#222222", 0.4);
 					}
 					gfx.renderLine(
 						new Vector2(
@@ -360,7 +360,7 @@ export class GridEdges extends GridBase {
 					);
 				}
 
-				gfx.setStyle(0x228822);
+				gfx.setStyle("#228822", 1);
 				if (this.edgesDoorX[index] !== 0) {
 					gfx.renderAABB(
 						cellPosition.x + halfWidth - 2,

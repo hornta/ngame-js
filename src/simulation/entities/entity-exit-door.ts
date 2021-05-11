@@ -4,18 +4,16 @@ import type { CollisionResultLogical } from "../collision-result-logical";
 import type { GridEntity } from "../grid-entity";
 import type { Ninja } from "../ninja.js";
 import type { Simulator } from "../simulator";
-import { Vector2 } from "../vector2.js";
+import type { Vector2 } from "../vector2.js";
 import { EntityBase } from "./entity-base";
 import type { GraphicsManager } from "../../graphics-manager.js";
 
 export class EntityExitDoor extends EntityBase {
-	position: Vector2;
 	radius: number;
 	isOpen: boolean;
 
-	constructor(x: number, y: number) {
-		super();
-		this.position = new Vector2(x, y);
+	constructor(position: Vector2) {
+		super(position);
 		this.radius = 12;
 		this.isOpen = false;
 	}

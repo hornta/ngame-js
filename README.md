@@ -6,4 +6,7 @@ todo
 * Use "auto" replays for regression testing.
 * figure out animations
 * record video using captureStream
+* cache renders into image
 
+## Routes
+/level/:id

@@ -12,6 +12,7 @@ import { Vector2 } from "./vector2.js";
 import { CollisionResultLogical } from "./collision-result-logical.js";
 import { CollisionResultPhysical } from "./collision-result-physical.js";
 import { EntityThwomp } from "./entities/entity-thwomp.js";
+import type { GraphicsManager } from "../graphics-manager.js";
 
 enum PlayerState {
 	STATE_STANDING = 0,
@@ -862,5 +863,9 @@ export class Ninja {
 		if (this.currentState !== PlayerState.STATE_CELEBRATING) {
 			this.fall();
 		}
+	}
+
+	public debugDraw(gfx: GraphicsManager): void {
+		gfx.renderCircle(this.position, this.radius);
 	}
 }

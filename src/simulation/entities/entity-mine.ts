@@ -4,18 +4,16 @@ import type { CollisionResultLogical } from "../collision-result-logical.js";
 import type { GridEntity } from "../grid-entity.js";
 import type { Ninja } from "../ninja.js";
 import { PlayerKillType, Simulator } from "../simulator.js";
-import { Vector2 } from "../vector2.js";
 import { EntityBase } from "./entity-base";
 import type { GraphicsManager } from "../../graphics-manager.js";
+import type { Vector2 } from "../vector2.js";
 
 export class EntityMine extends EntityBase {
-	public position: Vector2;
 	public radius: number;
 	private isExploded: boolean;
 
-	constructor(entityGrid: GridEntity, x: number, y: number) {
-		super();
-		this.position = new Vector2(x, y);
+	constructor(entityGrid: GridEntity, position: Vector2) {
+		super(position);
 		this.radius = 12 * (1 / 3);
 		this.isExploded = false;
 		entityGrid.addEntity(this.position, this);

@@ -9,7 +9,6 @@ import { EntityBase } from "./entity-base";
 import type { GraphicsManager } from "../../graphics-manager.js";
 
 export class EntityLaunchPad extends EntityBase {
-	public position: Vector2;
 	public normal: Vector2;
 	public radius: number;
 	private strength: number;
@@ -17,13 +16,11 @@ export class EntityLaunchPad extends EntityBase {
 
 	constructor(
 		entityGrid: GridEntity,
-		x: number,
-		y: number,
+		position: Vector2,
 		normalX: number,
 		normalY: number
 	) {
-		super();
-		this.position = new Vector2(x, y);
+		super(position);
 		this.normal = new Vector2(normalX, normalY);
 		this.radius = 12 * 0.5;
 		this.strength = 12 * (3 / 7);

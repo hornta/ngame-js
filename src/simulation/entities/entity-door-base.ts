@@ -10,7 +10,6 @@ import { Vector2 } from "../vector2.js";
 import { EntityBase } from "./entity-base";
 
 export abstract class EntityDoorBase extends EntityBase {
-	triggerPosition: Vector2;
 	triggerRadius: number;
 	segmentGrid: GridSegment;
 	segment: Segment;
@@ -28,13 +27,11 @@ export abstract class EntityDoorBase extends EntityBase {
 		edgeGrid: GridEdges,
 		edgeIndicies: number[],
 		isHorizontal: boolean,
-		x: number,
-		y: number,
+		position: Vector2,
 		triggerRadius: number,
 		isOpen: boolean
 	) {
-		super();
-		this.triggerPosition = new Vector2(x, y);
+		super(position);
 		this.triggerRadius = triggerRadius;
 		this.segmentGrid = segmentGrid;
 		this.segmentIndex = segmentIndex;
@@ -51,7 +48,7 @@ export abstract class EntityDoorBase extends EntityBase {
 			this.addDoorToWorld();
 		}
 
-		entityGrid.addEntity(this.triggerPosition, this);
+		entityGrid.addEntity(this.position, this);
 	}
 
 	collideVsNinjaLogical(
@@ -67,7 +64,7 @@ export abstract class EntityDoorBase extends EntityBase {
 		if (ninja !== null) {
 			if (
 				overlapCircleVsCircle(
-					this.triggerPosition,
+					this.position,
 					this.triggerRadius,
 					position,
 					radius

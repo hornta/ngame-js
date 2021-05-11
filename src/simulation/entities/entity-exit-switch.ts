@@ -4,24 +4,17 @@ import type { CollisionResultLogical } from "../collision-result-logical";
 import type { GridEntity } from "../grid-entity";
 import type { Ninja } from "../ninja";
 import type { Simulator } from "../simulator";
-import { Vector2 } from "../vector2.js";
+import type { Vector2 } from "../vector2.js";
 import { EntityBase } from "./entity-base";
 import type { EntityExitDoor } from "./entity-exit-door";
 import type { GraphicsManager } from "../../graphics-manager.js";
 
 export class EntityExitSwitch extends EntityBase {
-	position: Vector2;
 	radius: number;
 	door: EntityExitDoor;
 
-	constructor(
-		entityGrid: GridEntity,
-		x: number,
-		y: number,
-		door: EntityExitDoor
-	) {
-		super();
-		this.position = new Vector2(x, y);
+	constructor(entityGrid: GridEntity, position: Vector2, door: EntityExitDoor) {
+		super(position);
 		this.radius = 12 * 0.5;
 		this.door = door;
 		entityGrid.addEntity(this.position, this);

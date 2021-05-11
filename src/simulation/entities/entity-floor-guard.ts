@@ -4,20 +4,18 @@ import type { CollisionResultLogical } from "../collision-result-logical.js";
 import type { GridEntity } from "../grid-entity.js";
 import type { Ninja } from "../ninja.js";
 import { PlayerKillType, SimulationRate, Simulator } from "../simulator.js";
-import { Vector2 } from "../vector2.js";
+import type { Vector2 } from "../vector2.js";
 import { EntityBase } from "./entity-base";
 import type { GraphicsManager } from "../../graphics-manager.js";
 
 export class EntityFloorGuard extends EntityBase {
-	private position: Vector2;
 	private speed: number;
 	private radius: number;
 	private currentState: number;
 	private margin: number;
 
-	constructor(entityGrid: GridEntity, x: number, y: number) {
-		super();
-		this.position = new Vector2(x, y);
+	constructor(entityGrid: GridEntity, position: Vector2) {
+		super(position);
 		this.radius = 12 * 0.5;
 		this.speed = 12 * (3 / 7) * (40 / SimulationRate);
 		this.currentState = 0;

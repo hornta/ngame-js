@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 import React, { useEffect, useRef, useState } from "react";
 
 const getInitialScale = () => {
@@ -17,9 +19,9 @@ export const Utils = () => {
 		window.innerHeight,
 	]);
 
-	const textElement = useRef();
-	const canvasElement = useRef<HTMLCanvasElement>();
-	const ctx = useRef<CanvasRenderingContext2D>();
+	const textElement = useRef(null);
+	const canvasElement = useRef<HTMLCanvasElement>(null);
+	const ctx = useRef<CanvasRenderingContext2D | null>(null);
 
 	useEffect(() => {
 		localStorage.setItem("scale", scale);
@@ -62,7 +64,6 @@ export const Utils = () => {
 							console.log(parts2);
 							while (true) {
 								const nextIndex = i + currentPair * 2 + 1;
-								console.log(nextIndex, nextIndex + 1);
 								const next1 = parts2[nextIndex];
 								if (Number.isNaN(Number(next1))) {
 									break;
@@ -86,6 +87,34 @@ export const Utils = () => {
 						data.push({
 							type: "Z",
 						});
+						break;
+					case "Q":
+						{
+							let currentSet = 0;
+							const points = [];
+							console.log(parts2);
+							while (true) {
+								const nextIndex = i + currentSet * 4 + 1;
+								const next1 = parts2[nextIndex];
+								if (Number.isNaN(Number(next1))) {
+									break;
+								}
+								const next2 = parts2[nextIndex + 1];
+								const next3 = parts2[nextIndex + 2];
+								const next4 = parts2[nextIndex + 3];
+
+								lines.push(
+									`this.ctx.quadraticCurveTo(${next1}, ${next2}, ${next3}, ${next4});`
+								);
+								points.push([next1, next2, next3, next4]);
+								currentSet += 1;
+							}
+
+							data.push({
+								type: "Q",
+								points: points,
+							});
+						}
 						break;
 					default:
 				}
@@ -117,6 +146,10 @@ export const Utils = () => {
 					}
 				} else if (d.type === "Z") {
 					ctx.current.closePath();
+				} else if (d.type === "Q") {
+					for (const p of d.points) {
+						ctx.current.quadraticCurveTo(p[0], p[1], p[2], p[3]);
+					}
 				}
 			}
 			ctx.current.stroke();
@@ -145,8 +178,10 @@ export const Utils = () => {
 
 	useEffect(() => {
 		const handleResize = () => {
-			canvasElement.current.width = window.innerWidth;
-			canvasElement.current.height = window.innerHeight;
+			if (canvasElement.current) {
+				canvasElement.current.width = window.innerWidth;
+				canvasElement.current.height = window.innerHeight;
+			}
 			setWindowSize([window.innerWidth, window.innerHeight]);
 		};
 
@@ -159,7 +194,7 @@ export const Utils = () => {
 	}, [setWindowSize]);
 
 	useEffect(() => {
-		if (!ctx.current) {
+		if (!ctx.current && canvasElement.current) {
 			ctx.current = canvasElement.current.getContext("2d");
 		}
 	}, []);

@@ -4,7 +4,7 @@ import type { GridEdges } from "../grid-edges";
 import type { GridEntity } from "../grid-entity";
 import type { GridSegment } from "../grid-segment";
 import type { Simulator } from "../simulator";
-import { Vector2 } from "../vector2.js";
+import type { Vector2 } from "../vector2.js";
 import { EntityBase } from "./entity-base.js";
 import {
 	EntityDroneDirectionToRadians,
@@ -12,8 +12,7 @@ import {
 	EntityDroneMoveList,
 } from "./entity-drone-utils";
 
-export class EntityDroneBase extends EntityBase {
-	position: Vector2;
+export abstract class EntityDroneBase extends EntityBase {
 	speed: number;
 	radius: number;
 	gfxOrientation: number;
@@ -24,14 +23,12 @@ export class EntityDroneBase extends EntityBase {
 
 	constructor(
 		entityGrid: GridEntity,
-		x: number,
-		y: number,
+		position: Vector2,
 		speed: number,
 		facingDirection: number,
 		moveType: number
 	) {
-		super();
-		this.position = new Vector2(x, y);
+		super(position);
 		this.radius = 12 * (3 / 4);
 		this.speed = speed;
 		this.stepSize = 24;

@@ -20,7 +20,6 @@ export class EntityRocket extends EntityBase {
 	private prefireDelay: number;
 	private predictionScale: number;
 	private gfxPrevState: number;
-	private position: Vector2;
 	private rocketPos: Vector2;
 	private rocketDir: Vector2;
 	private rocketSpeed: number;
@@ -33,16 +32,15 @@ export class EntityRocket extends EntityBase {
 	private hitPosition: Vector2;
 	private hitNormal: Vector2;
 
-	constructor(x: number, y: number) {
-		super();
+	constructor(position: Vector2) {
+		super(position);
 		this.accelStart = 0.1 * (40 / SimulationRate) * (40 / SimulationRate);
 		this.maxSpeed = 12 * (2 / 7) * (40 / SimulationRate);
 		this.accelRate = Math.pow(1.1, 40 / SimulationRate);
 		this.turnRate = 0.1 * (40 / SimulationRate);
 		this.prefireDelay = 10 * (SimulationRate / 40);
 		this.predictionScale = SimulationRate / 40;
-		this.position = new Vector2(x, y);
-		this.rocketPos = new Vector2(x, y);
+		this.rocketPos = this.position.clone();
 		this.rocketDir = new Vector2(1, 0);
 		this.rocketSpeed = 0;
 		this.rocketAccel = this.accelStart;

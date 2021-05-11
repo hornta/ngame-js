@@ -16,7 +16,6 @@ enum ThwompState {
 }
 
 export class EntityThwomp extends EntityBase {
-	position: Vector2;
 	anchor: Vector2;
 	radius: number;
 	fallSpeed: number;
@@ -28,14 +27,12 @@ export class EntityThwomp extends EntityBase {
 
 	constructor(
 		entityGrid: GridEntity,
-		x: number,
-		y: number,
+		position: Vector2,
 		fallDirection: number,
 		isHorizontal: boolean
 	) {
-		super();
-		this.position = new Vector2(x, y);
-		this.anchor = new Vector2(x, y);
+		super(position);
+		this.anchor = this.position.clone();
 		this.radius = 12 * (3 / 4);
 		this.fallSpeed = 12 * (5 / 14) * (40 / SimulationRate);
 		this.raiseSpeed = 12 * (1 / 7) * (40 / SimulationRate);

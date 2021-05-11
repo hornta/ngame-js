@@ -4,18 +4,16 @@ import type { CollisionResultLogical } from "../collision-result-logical.js";
 import type { GridEntity } from "../grid-entity.js";
 import type { Ninja } from "../ninja.js";
 import type { Simulator } from "../simulator.js";
-import { Vector2 } from "../vector2.js";
+import type { Vector2 } from "../vector2.js";
 import { EntityBase } from "./entity-base";
 import type { GraphicsManager } from "../../graphics-manager.js";
 
 export class EntityGold extends EntityBase {
-	public position: Vector2;
 	private radius: number;
 	private isCollected: boolean;
 
-	constructor(entityGrid: GridEntity, x: number, y: number) {
-		super();
-		this.position = new Vector2(x, y);
+	constructor(entityGrid: GridEntity, position: Vector2) {
+		super(position);
 		this.radius = 12 * 0.5;
 		this.isCollected = false;
 		entityGrid.addEntity(this.position, this);

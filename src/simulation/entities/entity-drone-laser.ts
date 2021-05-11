@@ -15,8 +15,7 @@ export class EntityDroneLaser extends EntityDroneShooterBase {
 
 	constructor(
 		entityGrid: GridEntity,
-		x: number,
-		y: number,
+		position: Vector2,
 		facingDirection: number,
 		moveType: number
 	) {
@@ -25,8 +24,7 @@ export class EntityDroneLaser extends EntityDroneShooterBase {
 		const postFireDelay = 40 * (SimulationRate / 40);
 		super(
 			entityGrid,
-			x,
-			y,
+			position,
 			speed,
 			facingDirection,
 			moveType,
@@ -35,7 +33,7 @@ export class EntityDroneLaser extends EntityDroneShooterBase {
 		);
 		this.laserDuration = 80;
 		this.laserTimer = 0;
-		this.laserDirection = new Vector2(0, 0);
+		this.laserDirection = new Vector2();
 		this.laserHitPosition = new Vector2();
 		this.laserHitNormal = new Vector2();
 	}

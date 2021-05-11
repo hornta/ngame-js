@@ -6,6 +6,7 @@ import {
 	EntityDroneDirectionToVector,
 	EntityDroneMoveList,
 } from "./entity-drone-utils";
+import type { Vector2 } from "../vector2.js";
 
 export class EntityDroneChaser extends EntityDroneZap {
 	isChasing: boolean;
@@ -15,12 +16,11 @@ export class EntityDroneChaser extends EntityDroneZap {
 
 	constructor(
 		entityGrid: GridEntity,
-		x: number,
-		y: number,
+		position: Vector2,
 		facingDirection: number,
 		moveType: number
 	) {
-		super(entityGrid, x, y, facingDirection, moveType);
+		super(entityGrid, position, facingDirection, moveType);
 		this.isChasing = false;
 		this.speedRegular = this.speed;
 		this.speedChasing = this.speed * 2;

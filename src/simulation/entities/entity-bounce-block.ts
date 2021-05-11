@@ -8,10 +8,7 @@ import type { Ninja } from "../ninja.js";
 import { SimulationRate, Simulator } from "../simulator.js";
 import { Vector2 } from "../vector2.js";
 import { EntityBase } from "./entity-base";
-import type { EntityGraphicsBounceBlock } from "../../graphics/entity-graphics-bounce-block.js";
-
 export class EntityBounceBlock extends EntityBase {
-	public position: Vector2;
 	private velocity: Vector2;
 	private anchor: Vector2;
 	public radius: number;
@@ -20,11 +17,10 @@ export class EntityBounceBlock extends EntityBase {
 	private mass: number;
 	private normal: Vector2;
 
-	constructor(entityGrid: GridEntity, x: number, y: number) {
-		super();
-		this.position = new Vector2(x, y);
-		this.velocity = new Vector2(0, 0);
-		this.anchor = new Vector2(x, y);
+	constructor(entityGrid: GridEntity, position: Vector2) {
+		super(position);
+		this.velocity = new Vector2();
+		this.anchor = this.position.clone();
 		this.radius = 0.8 * 12;
 		this.stiff = 0.05 * (40 / SimulationRate) * (40 / SimulationRate);
 		this.damp = 0.99;
